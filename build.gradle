@@ -25,19 +25,50 @@ repositories {
 }
 
 dependencies {
-//    implementation 'org.springframework.boot:spring-boot-starter-flyway'
-//    implementation 'org.springframework.boot:spring-boot-starter-security'
-    implementation 'org.springframework.boot:spring-boot-starter-webmvc'
-//    implementation 'org.flywaydb:flyway-database-postgresql'
-//    implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:4.0.1'
-    compileOnly 'org.projectlombok:lombok'
-//    runtimeOnly 'org.postgresql:postgresql'
-    annotationProcessor 'org.projectlombok:lombok'
-//    testImplementation 'org.springframework.boot:spring-boot-starter-flyway-test'
-//    testImplementation 'org.springframework.boot:spring-boot-starter-security-test'
+    // ================ Spring Boot 核心 Starter ================
+    implementation 'org.springframework.boot:spring-boot-starter-webmvc'      // Web MVC 支持（基于 Servlet）
+    implementation 'org.springframework.boot:spring-boot-starter-security'   // Spring Security 安全框架
+    implementation 'org.springframework.boot:spring-boot-starter-validation' // Bean Validation (Hibernate Validator)
+    implementation 'org.springframework.boot:spring-boot-starter-cache'      // 缓存抽象（如 Caffeine, Redis）
+    implementation 'org.springframework.boot:spring-boot-starter-mail'       // 邮件发送支持
+    implementation 'org.springframework.boot:spring-boot-starter-flyway'     // Flyway 数据库迁移
+
+    // ================ 数据库相关 ================
+    implementation 'com.baomidou:mybatis-plus-spring-boot4-starter:3.5.15'    // MyBatis 集成
+    implementation 'org.flywaydb:flyway-database-postgresql'                  // Flyway 对 PostgreSQL 的扩展支持
+    runtimeOnly 'org.postgresql:postgresql'                                   // PostgreSQL JDBC 驱动
+
+    // ================ 安全认证 ================
+    // JWT
+    implementation 'io.jsonwebtoken:jjwt-api:0.13.0'
+    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.13.0'
+    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.13.0'
+
+    // ================ 工具库 ================
+    compileOnly 'org.projectlombok:lombok'                                    // Lombok（编译时注解）
+    annotationProcessor 'org.projectlombok:lombok'                            // Lombok 注解处理器
+
+    // ================ MapStruct ================
+    compileOnly "org.mapstruct:mapstruct:1.6.3"
+    annotationProcessor "org.mapstruct:mapstruct-processor:1.6.3"
+    testAnnotationProcessor "org.mapstruct:mapstruct-processor:1.6.3"
+
+    // // ================ 缓存 ================
+    implementation 'com.github.ben-manes.caffeine:caffeine:3.2.1' // Caffeine 缓存
+
+    // ================ 测试相关 ================
+    testImplementation 'org.springframework.boot:spring-boot-starter-cache-test'
+    testImplementation 'org.springframework.boot:spring-boot-starter-flyway-test'
+    testImplementation 'org.springframework.boot:spring-boot-starter-mail-test'
+    testImplementation 'org.springframework.boot:spring-boot-starter-security-test'        // 安全测试支持
+    testImplementation 'org.springframework.boot:spring-boot-starter-validation-test'
     testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
-//    testImplementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter-test:4.0.1'
-    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    testImplementation 'com.baomidou:mybatis-plus-boot-starter-test:3.5.15'                 // MyBatis 测试支持
+    // Testcontainers - 容器化集成测试
+    testImplementation 'org.testcontainers:testcontainers-junit-jupiter'                  // JUnit 5 集成
+    testImplementation 'org.testcontainers:testcontainers-postgresql'                     // PostgreSQL 容器模块
+    testImplementation 'org.springframework.boot:spring-boot-testcontainers'              // Spring Boot Testcontainers 自动配置
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'                       // JUnit 平台运行时（IDEA/Eclipse 需要）
 }
 
 tasks.named('test') {
