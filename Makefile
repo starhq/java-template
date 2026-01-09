@@ -40,11 +40,25 @@ help:
 	@echo "make help             显示此帮助"
 
 # 启动应用（开发模式）
+#.PHONY: run
+#run:
+#	@echo "🚀 启动 $(APP_NAME) [profile=$(SPRING_PROFILES_ACTIVE), port=$(SERVER_PORT)]"
+#	$(GRADLE) bootRun \
+#		--args='--spring.profiles.active=$(SPRING_PROFILES_ACTIVE) --server.port=$(SERVER_PORT)'
 .PHONY: run
 run:
-	@echo "🚀 启动 $(APP_NAME) [profile=$(SPRING_PROFILES_ACTIVE), port=$(SERVER_PORT)]"
-	$(GRADLE) bootRun \
-		--args='--spring.profiles.active=$(SPRING_PROFILES_ACTIVE) --server.port=$(SERVER_PORT)'
+ifeq ($(HAS_ENTR)$(HAS_FD),)
+	@echo "❌ 错误：需要安装 entr 和 fd"
+	@echo "   macOS: brew install entr fd"
+	@echo "   Ubuntu: sudo apt install entr fd-find"
+	@exit 1
+endif
+	@echo "🔥 启动 $(APP_NAME) 并启用热更新（监听 src/main/java）"
+	@echo "   按 Ctrl+C 退出"
+	@while true; do \
+		fd -e java -p 'src/main/java' | entr -rcd $(GRADLE) bootRun \
+			--args='--spring.profiles.active=$(SPRING_PROFILES_ACTIVE) --server.port=$(SERVER_PORT)'; \
+	done
 
 # 运行测试
 .PHONY: test
