@@ -1,0 +1,20 @@
+[versions]
+mybatis-plus = "3.5.16"
+jjwt = "0.13.0"
+mapstruct = "1.6.3"
+caffeine = "3.2.3"
+
+[libraries]
+mybatis-plus-starter = { module = "com.baomidou:mybatis-plus-spring-boot4-starter", version.ref = "mybatis-plus" }
+mybatis-plus-jsqlparser = { module = "com.baomidou:mybatis-plus-jsqlparser", version.ref = "mybatis-plus" }
+mybatis-plus-test = { module = "com.baomidou:mybatis-plus-spring-boot4-starter-test", version.ref="mybatis-plus" }
+
+jjwt-api = { module = "io.jsonwebtoken:jjwt-api", version.ref = "jjwt" }
+jjwt-impl = { module = "io.jsonwebtoken:jjwt-impl", version.ref = "jjwt" }
+jjwt-jackson = { module = "io.jsonwebtoken:jjwt-jackson", version.ref="jjwt" }
+
+mapstruct = { module = "org.mapstruct:mapstruct", version.ref = "mapstruct" }
+mapstruct-processor = { module = "org.mapstruct:mapstruct-processor", version.ref = "mapstruct" }
+mapstruct-processor-test = { module = "org.mapstruct:mapstruct-processor", version.ref = "mapstruct" }
+
+caffeine = { module = "com.github.ben-manes.caffeine:caffeine", version.ref = "caffeine" }

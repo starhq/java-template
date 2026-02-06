@@ -1,0 +1,12 @@
+# .dockerignore
+.git
+.gitignore
+*.iml
+.idea/
+.gradle/
+build/          # 忽略本地构建产物（容器内重新构建）
+node_modules/
+target/
+*.log
+*.tmp
+.DS_Store
