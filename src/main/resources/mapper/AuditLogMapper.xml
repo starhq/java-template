@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.github.starhq.template.mapper.SysAuditLogMapper">
+
+    <select id="selectAuditLogPage" resultType="com.github.starhq.template.vo.AuditLogVO">
+        SELECT 
+            sal.id,
+            sal.action,
+            sal.target_id,
+            sal.target_type,
+            sal.value,
+            sal.created_at,
+            COALESCE(creator.username, 'Unknown') AS creator
+        FROM sys_audit_log sal
+        LEFT JOIN sys_user creator 
+            ON sal.created_by = creator.id
+        <where>
+            <if test="username != null and username != ''">
+                AND creator.username LIKE #{username} || '%'
+            </if>
+            <if test="targetType != null">
+                AND sal.target_type = #{targetType}
+            </if>
+        </where>
+        ${ew.customSqlSegment}
+    </select>
+</mapper>

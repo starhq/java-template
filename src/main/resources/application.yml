@@ -1,0 +1,80 @@
+spring:
+  application:
+    name: java-template
+
+  security:
+    user:
+      name: watcher
+      password: strong_password_123
+      roles:
+        - ACTUATOR_ADMIN
+
+  threads:
+    virtual:
+      enabled: true
+
+  output:
+    ansi:
+      enabled: always
+
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+    default-property-inclusion: NON_EMPTY
+    serialization:
+      fail-on-empty-beans: false # only ture in dev env
+    json:
+      write:
+        write-numbers-as-strings: false
+
+  mvc:
+    format:
+      date-time: yyyy-MM-dd HH:mm:ss
+
+  main:
+    log-startup-info: false
+
+mybatis-plus:
+  type-handlers-package: com.github.starhq.template.config.handler
+  mapper-locations: classpath*:/mapper/**/*.xml
+  #实体扫描，多个package用逗号或者分号分隔
+  typeAliasesPackage: com.github.starhq.template.entity
+  global-config:
+    #数据库相关配置
+    db-config:
+      #主键类型
+      id-type: ASSIGN_ID
+    banner: false
+  #原生配置
+  configuration:
+    map-underscore-to-camel-case: true
+    cache-enabled: false
+    call-setters-on-nulls: true
+    jdbc-type-for-null: "null"
+
+server:
+  port: 8000
+  forward-headers-strategy: native
+  tomcat:
+    uri-encoding: UTF-8
+  compression:
+    enabled: true
+    mime-types:
+      - "application/json"
+    min-response-size: 2048
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include:
+          - health
+          - info
+          - metrics
+  endpoint:
+    health:
+      show-details: always
+      show-components: always
+  health:
+    db:
+      enabled: true

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.github.starhq.template.mapper.SysTokenMapper">
+
+    <select id="selectTokenPage" resultType="com.github.starhq.template.vo.TokenVO">
+        SELECT 
+            st.id,
+            st.expired_at,
+            st.created_at,
+            st.revoked,
+            st.login_ip,
+            u.username
+        FROM sys_token st
+        JOIN sys_user u ON st.user_id = u.id 
+        <where>
+            <if test="username != null and username != ''">
+                AND u.username LIKE #{username} || '%'
+            </if>
+        </where>
+        ${ew.customSqlSegment}
+    </select>
+</mapper>

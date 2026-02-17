@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.github.starhq.template.mapper.SysMenuMapper">
+
+    <select id="selectMenus" resultType="com.github.starhq.template.vo.MenuVO">
+        SELECT 
+            m.id,
+            COALESCE(m.parent_id, 0) as parent_id,
+            m.name,
+            m.url,
+            m.icon,
+            m.sort_order,
+            m.created_at,
+            creator.username AS creator,
+            m.updated_at,
+            m.open_style,
+            COALESCE(updater.username, 'Unknown') AS updater
+        FROM sys_menu m
+        LEFT JOIN sys_user creator ON m.created_by = creator.id
+        LEFT JOIN sys_user updater ON m.updated_by = updater.id
+        ORDER BY m.sort_order
+    </select>
+
+    <select id="selectMenusByRoleId" resultType="com.github.starhq.template.vo.MenuVO">
+        SELECT 
+            sm.id,
+            COALESCE(sm.parent_id, 0) as parent_id,
+            sm.name,
+            sm.url,
+            sm.icon,
+            sm.sort_order,
+            sm.open_style,
+            srm.role_id IS NOT NULL AS checked
+        FROM sys_menu sm
+        LEFT JOIN sys_role_menu srm 
+            ON srm.menu_id = sm.id 
+            AND srm.role_id = #{roleId}
+        ORDER BY sm.sort_order
+    </select>
+
+    <select id="selectAssignedMenusByRoleIds" resultType="com.github.starhq.template.vo.MenuVO">
+        SELECT 
+            sm.id,
+            COALESCE(sm.parent_id, 0) as parent_id,
+            sm.name,
+            sm.url,
+            sm.icon,
+            sm.sort_order,
+            sm.open_style
+        FROM sys_menu sm
+        JOIN sys_role_menu srm ON srm.menu_id = sm.id
+        <where>
+            <if test="roleIds!= null and roleIds.size() > 0">
+                AND srm.role_id IN
+                <foreach collection="roleIds" item="roleId" open="(" separator="," close=")">
+                    #{roleId}
+                </foreach>
+            </if>
+        </where>
+        ORDER BY sm.sort_order
+    </select>
+</mapper>

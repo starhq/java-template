@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.github.starhq.template.mapper.SysResourceMapper">
+
+    <select id="selectResourcePage" resultType="com.github.starhq.template.vo.ResourceVO">
+        SELECT 
+            r.id,
+            r.name,
+            r.url,
+            r.method,
+            r.description,
+            r.created_at,
+            creator.username AS creator,
+            r.updated_at,
+            COALESCE(updater.username, 'Unknown') AS updater
+        FROM sys_resource r
+        LEFT JOIN sys_user creator ON r.created_by = creator.id
+        LEFT JOIN sys_user updater ON r.updated_by = updater.id
+        ${ew.customSqlSegment}
+    </select>
+
+    <select id="selectResourcesByRoleId" resultType="com.github.starhq.template.vo.ResourceVO">
+        SELECT 
+            r.id,
+            r.name,
+            r.url,
+            r.method,
+            r.description,
+            rr.resource_id IS NOT NULL AS checked
+        FROM sys_resource r
+        LEFT JOIN sys_role_resource rr 
+            ON rr.resource_id = r.id 
+            AND rr.role_id = #{roleId}
+    </select>
+
+    <select id="selectAssignedResourceByRoleIds" resultType="com.github.starhq.template.vo.ResourceVO">
+        SELECT 
+            r.url,
+            r.method 
+        FROM sys_role_resource rr
+        JOIN sys_resource r ON rr.resource_id = r.id
+        <where>
+            <if test="roleIds!= null and roleIds.size() > 0">
+                AND rr.role_id IN
+                <foreach collection="roleIds" item="roleId" open="(" separator="," close=")">
+                    #{roleId}
+                </foreach>
+            </if>
+        </where>
+    </select>
+</mapper>

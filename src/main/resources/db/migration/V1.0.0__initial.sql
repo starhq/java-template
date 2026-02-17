@@ -332,7 +332,7 @@ INSERT INTO sys_role_button (role_id, button_id) VALUES (1, 25);
 INSERT INTO sys_role_button (role_id, button_id) VALUES (1, 26);
 INSERT INTO sys_role_button (role_id, button_id) VALUES (1, 27);
 
-INSERT INTO sys_default_role (id, role_id, created_at, created_by, updated_at, updated_by) VALUES (1, 2, CURRENT_TIMESTAMP, 1, CURRENT_TIMESTAMP, 1);
+-- INSERT INTO sys_default_role (id, role_id, created_at, created_by, updated_at, updated_by) VALUES (1, 2, CURRENT_TIMESTAMP, 1, CURRENT_TIMESTAMP, 1);
 
 INSERT INTO sys_resource (id, name, url, method, description, created_at, created_by, updated_at, updated_by) VALUES (1, '用户api', '/users/**', 31, '用户模块管理', CURRENT_TIMESTAMP, 1, CURRENT_TIMESTAMP, 1);
 INSERT INTO sys_resource (id, name, url, method, description, created_at, created_by, updated_at, updated_by) VALUES (2, '角色api', '/roles/**', 31, '角色模块管理', CURRENT_TIMESTAMP, 1, CURRENT_TIMESTAMP, 1);
