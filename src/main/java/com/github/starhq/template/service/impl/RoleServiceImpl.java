@@ -1,5 +1,10 @@
 package com.github.starhq.template.service.impl;
 
+import java.time.OffsetDateTime;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.github.starhq.template.converter.RoleConverter;
@@ -11,12 +16,9 @@ import com.github.starhq.template.exception.BusinessException;
 import com.github.starhq.template.mapper.SysRoleMapper;
 import com.github.starhq.template.service.RoleService;
 import com.github.starhq.template.vo.RoleVO;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.time.OffsetDateTime;
 
 /**
  * 角色服务实现类
@@ -79,7 +81,7 @@ public class RoleServiceImpl implements RoleService {
 
     @Override
     public Page<RoleVO> listRoles(PageRequest pageRequest) {
-        Page<SysRole> page = new Page<>(pageRequest.getCurrent(), pageRequest.getSize());
+        Page<SysRole> page = new Page<>(pageRequest.getPage(), pageRequest.getSize());
         Page<SysRole> rolePage = roleMapper.selectPage(page, null);
         return (Page<RoleVO>) rolePage.convert(RoleConverter.INSTANCE::toVO);
     }
