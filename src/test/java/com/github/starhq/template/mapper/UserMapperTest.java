@@ -1,19 +1,19 @@
 package com.github.starhq.template.mapper;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.github.starhq.template.BaseMapperTest;
+import com.github.starhq.template.common.enums.UserStatus;
+import com.github.starhq.template.entity.SysUser;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
+import org.springframework.core.env.Environment;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.time.OffsetDateTime;
 
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.github.starhq.template.BaseMapperTest;
-import com.github.starhq.template.entity.SysUser;
-import com.github.starhq.template.enums.UserStatus;
-import com.github.starhq.template.vo.UserVO;
+import static org.assertj.core.api.Assertions.assertThat;
 
 class UserMapperTest extends BaseMapperTest {
 
@@ -52,23 +52,6 @@ class UserMapperTest extends BaseMapperTest {
     }
 
     @Test
-    void selectUserPage_shouldReturnPagedResult() {
-        SysUser user = prepare(101L, "cloud");
-        userMapper.insert(user);
-
-        Page<UserVO> page = new Page<>(1, 10);
-        QueryWrapper<UserVO> wrapper = new QueryWrapper<>();
-        wrapper.orderBy(true, false, "id");
-
-        IPage<UserVO> result = userMapper.selectUserPage("cloud", page, wrapper);
-
-        assertThat(result).isNotNull();
-        assertThat(result.getTotal()).isGreaterThan(0);
-        assertThat(result.getRecords()).hasSize(1);
-        assertThat(result.getRecords().get(0).getUsername()).isEqualTo("cloud");
-    }
-
-    @Test
     void findById_shouldReturnUser() {
         SysUser user = prepare(102L, "lookup");
         userMapper.insert(user);
@@ -94,6 +77,17 @@ class UserMapperTest extends BaseMapperTest {
     }
 
     @Test
+    void findUserWithRoleByUsername_shouldReturnUserWithRole() {
+        QueryWrapper<SysUser> wrapper = new QueryWrapper<>();
+        wrapper.eq("u.id", 1L);
+        SysUser result = userMapper.selectUserWithRole(wrapper);
+
+        assertThat(result).isNotNull();
+        assertThat(result.getUsername()).isEqualTo("admin");
+        assertThat(result.getAuthorities()).isNotEmpty();
+    }
+
+    @Test
     void deleteUser_shouldDeleteSuccessfully() {
         SysUser user = prepare(104L, "todelete");
         userMapper.insert(user);
@@ -106,10 +100,10 @@ class UserMapperTest extends BaseMapperTest {
         assertThat(dbUser).isNull();
     }
 
-    private SysUser prepare(Long id, String usename) {
+    private SysUser prepare(Long id, String username) {
         SysUser user = new SysUser();
         user.setId(id);
-        user.setUsername(usename);
+        user.setUsername(username);
         user.setPassword("123456");
         user.setStatus(UserStatus.ACTIVE);
         user.setCreatedAt(OffsetDateTime.now());

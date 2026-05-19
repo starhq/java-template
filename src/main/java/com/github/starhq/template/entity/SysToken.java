@@ -12,7 +12,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
 /**
- * 系统Token实体
+ * 系统 Token 实体
  *
  * @author starhq
  */
@@ -21,13 +21,13 @@ import lombok.Data;
 @TableName("sys_token")
 public class SysToken {
     /**
-     * 主键ID
+     * 主键 ID
      */
     @TableId
     private Long id;
 
     /**
-     * 用户ID
+     * 用户 ID
      */
     private Long userId;
 
@@ -58,7 +58,7 @@ public class SysToken {
     private Boolean revoked;
 
     /**
-     * 登录IP
+     * 登录 IP
      */
     private String loginIp;
 

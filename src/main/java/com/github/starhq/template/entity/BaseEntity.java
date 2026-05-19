@@ -1,33 +1,22 @@
 package com.github.starhq.template.entity;
 
-import java.time.OffsetDateTime;
-
 import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
+import java.time.OffsetDateTime;
+
+/**
+ * @author wangjian
+ * @version v1.0.0
+ * Copyright (C), 2020-2026, starimba@outlook.com
+ * @description: creator and updater base entity
+ * @date 2026/3/24 10:32
+ */
 @Data
-public class BaseEntity {
-
-    /**
-     * 主键ID
-     */
-    @TableId
-    private Long id;
-
-    /**
-     * 创建时间
-     */
-    @TableField(fill = FieldFill.INSERT)
-    private OffsetDateTime createdAt;
-
-    /**
-     * 创建人ID
-     */
-    @TableField(fill = FieldFill.INSERT)
-    private Long createdBy;
+@EqualsAndHashCode(callSuper = false)
+public class BaseEntity extends BaseCreatorEntity {
 
     /**
      * 更新时间
@@ -36,7 +25,7 @@ public class BaseEntity {
     private OffsetDateTime updatedAt;
 
     /**
-     * 更新人ID
+     * 更新人 ID
      */
     @TableField(fill = FieldFill.UPDATE)
     private Long updatedBy;

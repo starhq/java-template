@@ -1,29 +1,25 @@
 package com.github.starhq.template.mapper;
 
-import java.util.List;
-
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.github.starhq.template.entity.SysResource;
+import com.github.starhq.template.model.vo.resource.ResourceCheckVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.github.starhq.template.entity.SysResource;
-import com.github.starhq.template.vo.ResourceVO;
+import java.io.Serializable;
+import java.util.List;
 
 /**
- * 系统资源Mapper
+ * 系统资源 Mapper
  *
  * @author starhq
  */
 @Mapper
 public interface SysResourceMapper extends BaseMapper<SysResource> {
 
-    IPage<ResourceVO> selectResourcePage(Page<ResourceVO> page, @Param("ew") Wrapper<ResourceVO> queryWrapper);
+    List<ResourceCheckVO> selectResourcesByRoleId(@Param("roleId") Serializable roleId);
 
-    List<ResourceVO> selectResourcesByRoleId(@Param("roleId") Long roleId);
+    List<SysResource> selectAssignedResourceByUserId(@Param("userId") Serializable userId);
 
-    List<ResourceVO> selectAssignedResourceByRoleIds(@Param("roleIds") List<Long> roleIds);
-
+    List<Long> selectUserIdsByResourceId(@Param("resourceId") Serializable resourceId);
 }

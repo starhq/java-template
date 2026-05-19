@@ -1,43 +1,29 @@
 package com.github.starhq.template.service;
 
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.github.starhq.template.dto.LoginDTO;
-import com.github.starhq.template.dto.PageRequest;
-import com.github.starhq.template.dto.UserCreateDTO;
-import com.github.starhq.template.dto.UserUpdateDTO;
-import com.github.starhq.template.vo.LoginVO;
-import com.github.starhq.template.vo.UserVO;
+import java.io.Serializable;
+
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.service.IService;
+import com.github.starhq.template.entity.SysUser;
+import com.github.starhq.template.model.dto.page.KeyWordPageRequest;
+import com.github.starhq.template.model.dto.user.UserDTO;
+import com.github.starhq.template.model.vo.user.UserPageVO;
+import com.github.starhq.template.model.vo.user.UserSimpleVO;
 
 /**
  * 用户服务接口
  *
  * @author starhq
  */
-public interface UserService {
-    /**
-     * 用户登录
-     *
-     * @param loginDTO 登录信息
-     * @return 登录结果
-     */
-    LoginVO login(LoginDTO loginDTO);
+public interface UserService extends IService<SysUser> {
 
     /**
-     * 创建用户
+     * Retrieves a paginated list of users based on the provided user page DTO.
      *
-     * @param dto 用户创建DTO
-     * @return 用户VO
+     * @param pageRequest the DTO containing pagination and filtering information
+     * @return a paginated response of users
      */
-    UserVO createUser(UserCreateDTO dto);
-
-    /**
-     * 更新用户
-     *
-     * @param id  用户ID
-     * @param dto 用户更新DTO
-     * @return 用户VO
-     */
-    UserVO updateUser(Long id, UserUpdateDTO dto);
+    IPage<UserPageVO> page(KeyWordPageRequest pageRequest);
 
     /**
      * 根据ID查询用户
@@ -45,28 +31,16 @@ public interface UserService {
      * @param id 用户ID
      * @return 用户VO
      */
-    UserVO getUserById(Long id);
+    UserSimpleVO getUserById(Serializable id);
 
     /**
-     * 根据用户名查询用户
+     * 更新用户
      *
-     * @param username 用户名
-     * @return 用户VO
+     * @param id  用户ID
+     * @param dto 用户更新DTO
+     * @return 是否成功
      */
-    UserVO getUserByUsername(String username);
+    boolean updateUser(Serializable id, UserDTO dto);
 
-    /**
-     * 分页查询用户
-     *
-     * @param pageRequest 分页请求
-     * @return 分页结果
-     */
-    Page<UserVO> listUsers(PageRequest pageRequest);
-
-    /**
-     * 删除用户
-     *
-     * @param id 用户ID
-     */
-    void deleteUser(Long id);
+    boolean createUser(UserDTO userDTO);
 }

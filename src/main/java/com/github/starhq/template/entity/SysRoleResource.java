@@ -1,6 +1,5 @@
 package com.github.starhq.template.entity;
 
-import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 
 import lombok.AllArgsConstructor;
@@ -18,13 +17,12 @@ import lombok.NoArgsConstructor;
 @TableName("sys_role_resource")
 public class SysRoleResource {
     /**
-     * 角色ID
+     * 角色 ID
      */
-    @TableId
     private Long roleId;
 
     /**
-     * 资源ID
+     * 资源 ID
      */
     private Long resourceId;
 }

@@ -1,8 +1,6 @@
 package com.github.starhq.template.entity;
 
-import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -18,13 +16,12 @@ import lombok.NoArgsConstructor;
 @TableName("sys_role_button")
 public class SysRoleButton {
     /**
-     * 角色ID
+     * 角色 ID
      */
-    @TableId
     private Long roleId;
 
     /**
-     * 按钮ID
+     * 按钮 ID
      */
     private Long buttonId;
 }

@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.github.starhq.template.mapper.SysDictDataMapper">
 
-    <select id="selectDictDataPage" resultType="com.github.starhq.template.vo.DictDataVO">
+    <select id="selectDictDataPage" resultType="com.github.starhq.template.model.vo.DictDataVO">
         SELECT 
             dd.id,
             dd.value,
@@ -11,15 +11,15 @@
             dd.created_at,
             creator.username AS creator,
             dd.updated_at,
-            COALESCE(updater.username, 'Unknown') AS updater
+            updater.username AS updater
         FROM sys_dict_data dd
         LEFT JOIN sys_user creator ON dd.created_by = creator.id
         LEFT JOIN sys_user updater ON dd.updated_by = updater.id
-        <where>
+        <!-- <where>
             <if test="dictTypeId != null and dictTypeId > 0">
                 AND dd.type_id = #{dictTypeId}
             </if>
-        </where>
+        </where> -->
         ${ew.customSqlSegment}
     </select>
 </mapper>

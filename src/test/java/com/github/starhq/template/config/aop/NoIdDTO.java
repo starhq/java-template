@@ -1,0 +1,11 @@
+package com.github.starhq.template.config.aop;
+
+/**
+ * @author wangjian
+ * @version v1.0.0
+ * Copyright (C), 2020-2026, starimba@outlook.com
+ * @description:
+ * @date 2026/5/17 22:30
+ */
+public class NoIdDTO {
+}

@@ -1,19 +1,15 @@
 package com.github.starhq.template.mapper;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import com.github.starhq.template.BaseMapperTest;
+import com.github.starhq.template.entity.SysButton;
+import com.github.starhq.template.model.vo.button.ButtonCheckVO;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.OffsetDateTime;
 import java.util.List;
 
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.github.starhq.template.BaseMapperTest;
-import com.github.starhq.template.entity.SysButton;
-import com.github.starhq.template.vo.ButtonVO;
+import static org.assertj.core.api.Assertions.assertThat;
 
 class SysButtonMapperTest extends BaseMapperTest {
 
@@ -53,39 +49,6 @@ class SysButtonMapperTest extends BaseMapperTest {
     }
 
     @Test
-    void selectButtonPage_shouldReturnPagedResult() {
-        SysButton button = prepare(103L, "btn_cancel", "Cancel Button");
-        buttonMapper.insert(button);
-
-        Page<ButtonVO> page = new Page<>(1, 10);
-        QueryWrapper<ButtonVO> wrapper = new QueryWrapper<>();
-        wrapper.orderBy(true, false, "id");
-
-        IPage<ButtonVO> result = buttonMapper.selectButtonPage(1L, page, wrapper);
-
-        assertThat(result).isNotNull();
-        assertThat(result.getTotal()).isGreaterThan(0);
-        assertThat(result.getRecords()).hasSize(1);
-        assertThat(result.getRecords().get(0).getName()).isEqualTo("Cancel Button");
-    }
-
-    @Test
-    void selectButtonsByRoleId_shouldReturnResource() {
-        List<ButtonVO> result = buttonMapper.selectButtonsByRoleId(1L);
-
-        assertThat(result).isNotNull();
-        assertThat(result.size()).isGreaterThan(0);
-    }
-
-    @Test
-    void selectAssignedResourcesByRoleIds_shouldReturnResource() {
-        List<SysButton> result = buttonMapper.selectAssignedButtonsByRoleIds(List.of(1L));
-
-        assertThat(result).isNotNull();
-        assertThat(result.size()).isGreaterThan(0);
-    }
-
-    @Test
     void findById_shouldReturnButton() {
         SysButton button = prepare(104L, "btn_delete", "Delete Button");
         buttonMapper.insert(button);
@@ -95,6 +58,33 @@ class SysButtonMapperTest extends BaseMapperTest {
         assertThat(result).isNotNull();
         assertThat(result.getId()).isEqualTo(button.getId());
         assertThat(result.getCode()).isEqualTo("btn_delete");
+    }
+
+    @Test
+    void selectButtonsByRoleId_shouldReturnButtonCheckVO() {
+        List<ButtonCheckVO> result = buttonMapper.selectButtonsByRoleId(1L);
+
+        assertThat(result).isNotNull();
+        assertThat(result.getFirst().getChecked()).isEqualTo(true);
+        assertThat(result.size()).isGreaterThan(0);
+    }
+
+    @Test
+    void selectAssignedButtonsByUserId_shouldReturnButton() {
+        List<SysButton> result = buttonMapper.selectAssignedButtonsByUserId(1L);
+
+        assertThat(result).isNotNull();
+        assertThat(result.getFirst().getCode()).isNotEmpty();
+        assertThat(result.size()).isGreaterThan(0);
+    }
+
+    @Test
+    void selectUserIdsByButtonId_shouldReturnButtonIds() {
+        List<Long> result = buttonMapper.selectUserIdsByButtonId(1L);
+
+        assertThat(result).isNotNull();
+        assertThat(result.getFirst()).isEqualTo(1L);
+        assertThat(result.size()).isGreaterThan(0);
     }
 
     @Test

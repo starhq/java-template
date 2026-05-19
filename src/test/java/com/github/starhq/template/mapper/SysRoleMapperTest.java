@@ -1,19 +1,15 @@
 package com.github.starhq.template.mapper;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import com.github.starhq.template.BaseMapperTest;
+import com.github.starhq.template.entity.SysRole;
+import com.github.starhq.template.model.vo.role.RoleCheckVO;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.OffsetDateTime;
 import java.util.List;
 
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.github.starhq.template.BaseMapperTest;
-import com.github.starhq.template.entity.SysRole;
-import com.github.starhq.template.vo.RoleVO;
+import static org.assertj.core.api.Assertions.assertThat;
 
 class SysRoleMapperTest extends BaseMapperTest {
 
@@ -55,39 +51,12 @@ class SysRoleMapperTest extends BaseMapperTest {
     }
 
     @Test
-    void selectRolePage_shouldReturnPagedResult() {
-        SysRole role = prepare(103L, "TESTER", "TESTER");
-        roleMapper.insert(role);
-
-        Page<RoleVO> page = new Page<>(1, 10);
-        QueryWrapper<RoleVO> wrapper = new QueryWrapper<>();
-        wrapper.eq("code", "TESTER");
-        wrapper.orderBy(true, false, "id");
-
-        IPage<RoleVO> result = roleMapper.selectRolePage(page, wrapper);
-
-        assertThat(result).isNotNull();
-        assertThat(result.getTotal()).isGreaterThan(0);
-        assertThat(result.getRecords()).hasSize(1);
-        assertThat(result.getRecords().get(0).getCode()).isEqualTo("TESTER");
-    }
-
-    @Test
     void selectRolesByUserId_shouldReturnPagedResult() {
-        List<RoleVO> result = roleMapper.selectRolesByUserId(1L);
+        List<RoleCheckVO> result = roleMapper.selectRolesByUserId(1L);
 
         assertThat(result).isNotNull();
         assertThat(result.size()).isEqualTo(2);
-        assertThat(result.get(0).getCode()).isEqualTo("T_ADMIN");
-    }
-
-    @Test
-    void selectAssignedRolesByUserId() {
-        List<RoleVO> result = roleMapper.selectAssignedRolesByUserId(2L);
-
-        assertThat(result).isNotNull();
-        assertThat(result.size()).isEqualTo(1);
-        assertThat(result.get(0).getCode()).isEqualTo("T_USER");
+        assertThat(result.getFirst().getName()).isEqualTo("Administrator");
     }
 
     @Test

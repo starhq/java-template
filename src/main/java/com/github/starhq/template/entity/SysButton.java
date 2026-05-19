@@ -13,13 +13,13 @@ import lombok.EqualsAndHashCode;
  * @author starhq
  */
 @Data
-@EqualsAndHashCode(callSuper = false)
 @Alias("button")
 @TableName("sys_button")
+@EqualsAndHashCode(callSuper = false)
 public class SysButton extends BaseEntity {
 
     /**
-     * 菜单ID
+     * 菜单 ID
      */
     private Long menuId;
 

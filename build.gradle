@@ -1,6 +1,6 @@
 plugins {
     id 'java'
-    id 'org.springframework.boot' version '4.0.2'
+    id 'org.springframework.boot' version '4.0.6'
     id 'io.spring.dependency-management' version '1.1.7'
     id 'org.sonarqube' version '7.2.2.6593'
     id 'jacoco'
@@ -31,6 +31,13 @@ configurations {
 }
 
 repositories {
+    mavenLocal()
+    maven { url "https://maven.aliyun.com/nexus/content/repositories/central/" }
+    maven { url "https://maven.aliyun.com/repository/public" }
+    maven { url "https://maven.aliyun.com/repository/google" }
+    maven { url "https://maven.aliyun.com/repository/jcenter" }
+    maven { url "https://maven.aliyun.com/nexus/content/groups/public/" }
+    maven { url "https://maven.aliyun.com/repository/gradle-plugin" }
     mavenCentral()
 }
 
@@ -46,6 +53,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-cache'
     implementation 'org.springframework.boot:spring-boot-starter-mail'
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'org.springframework.boot:spring-boot-starter-aspectj'
 
 
     // --- Database ---
@@ -76,9 +84,6 @@ dependencies {
     developmentOnly 'org.springframework.boot:spring-boot-docker-compose'
     implementation libs.caffeine
 
-    // --- Others ---
-    implementation 'com.github.penggle:kaptcha:2.3.2'
-
     // --- Test Dependencies ---
     testImplementation 'org.springframework.boot:spring-boot-starter-cache-test'
     testImplementation 'org.springframework.boot:spring-boot-starter-flyway-test'
@@ -108,28 +113,32 @@ jacocoTestReport {
     afterEvaluate {
         classDirectories.setFrom(files(classDirectories.files.collect {
             fileTree(dir: it, excludes: [
-                // 基础包
-                '**/config/**',
-                '**/dto/**',
-                '**/vo/**',
-                '**/entity/**',
-                '**/constant/**',
-                '**/enums/**',
-                // 基础组件
-                '**/filter/**',
-                '**/aop/**',
-                '**/converter/**',
-                // 主类与生成类
-                '**/Application.class',
-                '**/*$*',
-                '**/*Builder.class',
-                '**/*_.class'
-            ])
+                    // 基础包
+//                    '**/dto/**',
+//                    '**/vo/**',
+//                    '**/entity/**',
+//                    '**/enums/**',
+//                    // 基础组件
+//                    '**/aop/**',
+//                    '**/converter/**',
+                    '**/filter/**',
+                    '**/config/**',
+                    '**/constant/**',
+                    '**/exception/',
+                    '**/ResourceConverter.class',
+                    '**/Result.class',
+                    '**/*ConverterImpl.class',
+                    '**/Null*.class',
+                    // 主类与生成类
+                    '**/*Application.class',
+                    '**/*$*',
+                    '**/*Builder.class',
+                    '**/*_.class'])
         }))
     }
 
     reports {
-        xml.required = false
+        xml.required = true
         html.required = true
         csv.required = false
     }
@@ -137,6 +146,33 @@ jacocoTestReport {
 
 // 验证覆盖率
 jacocoTestCoverageVerification {
+    afterEvaluate {
+        classDirectories.setFrom(files(classDirectories.files.collect {
+            fileTree(dir: it, excludes: [
+                    // 基础包
+//                    '**/dto/**',
+//                    '**/vo/**',
+//                    '**/entity/**',
+//                    '**/enums/**',
+//                    // 基础组件
+//                    '**/aop/**',
+//                    '**/converter/**',
+                    '**/filter/**',
+                    '**/config/**',
+                    '**/constant/**',
+                    '**/exception/',
+                    '**/ResourceConverter.class',
+                    '**/Result.class',
+                    '**/*ConverterImpl.class',
+                    '**/Null*.class',
+                    // 主类与生成类
+                    '**/*Application.class',
+                    '**/*$*',
+                    '**/*Builder.class',
+                    '**/*_.class'])
+        }))
+    }
+
     violationRules {
         rule {
             limit {
@@ -160,13 +196,13 @@ sonar {
         property "sonar.projectKey", "starhq_sonardemo"
         property "sonar.organization", "starhq"
         property "sonar.host.url", "https://sonarcloud.io"
-        
+
         property "sonar.sources", "src/main/java"
         property "sonar.tests", "src/test/java"
         property "sonar.java.binaries", "build/classes/java/main"
         property "sonar.java.source", "25"
         property "sonar.token", System.getenv("SONAR_TOKEN")
-        
+
         // 注意：这里引用的是 xml 报告，但上面 jacocoTestReport 设置了 xml.required = false
         // 如果 Sonar 需要上传覆盖率，请确保 XML 报告是开启的，或者此处路径正确
         property "sonar.coverage.jacoco.xmlReportPaths", layout.buildDirectory.dir("reports/jacoco/test/jacocoTestReport.xml").get().asFile
@@ -181,7 +217,7 @@ sonar {
 tasks.named('bootJar') {
     enabled = true
     archiveClassifier = '' // 清空 classifier (如 -boot)
-    archiveFileName = "sonardemo.jar"
+    archiveFileName = "java-template.jar"
 
     // 启用分层构建，优化 Docker 镜像构建
     layered {
@@ -193,15 +229,13 @@ tasks.named('bootJar') {
 jar {
     enabled = false
     archiveClassifier = ''
-    archiveFileName = "sonardemo.jar"
+    archiveFileName = "java-template.jar"
 
     manifest {
-        attributes(
-            'Main-Class': 'com.github.starhq.sonar.sonardemo.SonardemoApplication',
-            'Class-Path': configurations.runtimeClasspath.files
-                .collect { "lib/${it.name}" }
-                .join(' ')
-        )
+        attributes('Main-Class': 'com.github.starhq.template.JavaTemplateApplication',
+                'Class-Path': configurations.runtimeClasspath.files
+                        .collect { "lib/${it.name}" }
+                        .join(' '))
     }
 }
 

@@ -1,14 +1,10 @@
 package com.github.starhq.template.entity;
 
-import java.time.OffsetDateTime;
-
-import org.apache.ibatis.type.Alias;
-
-import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.github.starhq.template.enums.TargetType;
-
+import com.github.starhq.template.common.enums.TargetType;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import org.apache.ibatis.type.Alias;
 
 /**
  * 系统审计日志实体
@@ -18,12 +14,9 @@ import lombok.Data;
 @Data
 @Alias("auditLog")
 @TableName("sys_audit_log")
-public class SysAuditLog {
-    /**
-     * 主键ID
-     */
-    @TableId
-    private Long id;
+@EqualsAndHashCode(callSuper = false)
+public class SysAuditLog extends BaseCreatorEntity {
+
 
     /**
      * 操作动作
@@ -31,7 +24,7 @@ public class SysAuditLog {
     private String action;
 
     /**
-     * 目标ID
+     * 目标 ID
      */
     private Long targetId;
 
@@ -45,13 +38,5 @@ public class SysAuditLog {
      */
     private String value;
 
-    /**
-     * 创建时间
-     */
-    private OffsetDateTime createdAt;
 
-    /**
-     * 创建人ID
-     */
-    private Long createdBy;
 }

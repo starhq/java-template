@@ -1,54 +1,60 @@
 package com.github.starhq.template.service;
 
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.github.starhq.template.dto.PageRequest;
-import com.github.starhq.template.dto.RoleCreateDTO;
-import com.github.starhq.template.dto.RoleUpdateDTO;
-import com.github.starhq.template.vo.RoleVO;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.service.IService;
+import com.github.starhq.template.common.exception.BusinessException;
+import com.github.starhq.template.entity.SysRole;
+import com.github.starhq.template.model.dto.page.PageRequest;
+import com.github.starhq.template.model.dto.role.RoleDTO;
+import com.github.starhq.template.model.vo.role.RoleCheckVO;
+import com.github.starhq.template.model.vo.role.RolePageVO;
+import com.github.starhq.template.model.vo.role.RoleSimpleVO;
 
-/**
- * 角色服务接口
- *
- * @author starhq
- */
-public interface RoleService {
-    /**
-     * 创建角色
-     *
-     * @param dto 角色创建DTO
-     * @return 角色VO
-     */
-    RoleVO createRole(RoleCreateDTO dto);
+import java.io.Serializable;
+import java.util.List;
+
+
+public interface RoleService extends IService<SysRole> {
 
     /**
-     * 更新角色
+     * Retrieves a paginated list of roles based on the provided pagination info.
      *
-     * @param id  角色ID
-     * @param dto 角色更新DTO
-     * @return 角色VO
+     * @param pageInfo the pagination and sorting information
+     * @return a paginated response of roles
      */
-    RoleVO updateRole(Long id, RoleUpdateDTO dto);
+    IPage<RolePageVO> page(PageRequest pageInfo);
 
     /**
-     * 根据ID查询角色
+     * Retrieves a role by its ID.
      *
-     * @param id 角色ID
-     * @return 角色VO
+     * @param id the ID of the role
+     * @return the role's details
      */
-    RoleVO getRoleById(Long id);
+    RoleSimpleVO getRoleById(Serializable id);
 
     /**
-     * 分页查询角色
+     * Retrieves a list of roles with checked status for a specific user.
      *
-     * @param pageRequest 分页请求
-     * @return 分页结果
+     * @param userId the ID of the user
+     * @return a list of checked role responses
      */
-    Page<RoleVO> listRoles(PageRequest pageRequest);
+    List<RoleCheckVO> selectCheckedRoles(Serializable userId);
 
     /**
-     * 删除角色
+     * Updates an existing role and its associated resources, menus, and buttons.
      *
-     * @param id 角色ID
+     * @param roleDto the DTO containing updated role information
+     * @return true if the update was successful
+     * @throws BusinessException if the update fails
      */
-    void deleteRole(Long id);
+    boolean updateRole(Serializable id, RoleDTO roleDto);
+
+    /**
+     * Creates a new role and assigns resources, menus, and buttons.
+     *
+     * @param roleDto the DTO containing new role information
+     * @return true if the creation was successful
+     * @throws BusinessException if the creation fails
+     */
+    boolean createRole(RoleDTO roleDto);
 }

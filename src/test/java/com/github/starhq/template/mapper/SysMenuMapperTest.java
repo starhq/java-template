@@ -1,17 +1,18 @@
 package com.github.starhq.template.mapper;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.github.starhq.template.BaseMapperTest;
+import com.github.starhq.template.common.enums.OpenStyle;
+import com.github.starhq.template.entity.SysMenu;
+import com.github.starhq.template.model.vo.menu.tree.MenuCheckVO;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.OffsetDateTime;
 import java.util.List;
 
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import com.github.starhq.template.BaseMapperTest;
-import com.github.starhq.template.entity.SysMenu;
-import com.github.starhq.template.enums.OpenStyle;
-import com.github.starhq.template.vo.MenuVO;
+import static org.assertj.core.api.Assertions.assertThat;
 
 class SysMenuMapperTest extends BaseMapperTest {
 
@@ -55,27 +56,32 @@ class SysMenuMapperTest extends BaseMapperTest {
     }
 
     @Test
-    void selectMenuList_shouldReturnResult() {
-        List<MenuVO> result = menuMapper.selectMenus();
+    void selectAssignedParentMenus_shouldReturnResult() {
+        QueryWrapper<SysMenu> wrapper = new QueryWrapper<>();
+        wrapper.eq("user_id", 1L);
 
-        assertThat(result).isNotNull();
-        assertThat(result.size()).isGreaterThan(0);
+        var menus = menuMapper.selectAssignedMenus(wrapper);
+
+        assertThat(menus).isNotNull();
+        assertThat(menus.size()).isGreaterThan(0);
     }
 
     @Test
-    void selectMenusByUserId_shouldReturnResult() {
-        List<MenuVO> result = menuMapper.selectMenusByRoleId(1L);
+    void selectMenuPageByRoleId_shouldReturnCheckedResult() {
+        // Given
+        // Page<MenuCheckVO> page = new Page<>(1, 10);
+        Page<MenuCheckVO> page = new Page<>();
+        page.setSearchCount(false);
 
-        assertThat(result).isNotNull();
-        assertThat(result.size()).isGreaterThan(0);
-    }
 
-    @Test
-    void selectAssignedRolesByUserIds_shouldReturnResult() {
-        List<MenuVO> result = menuMapper.selectAssignedMenusByRoleIds(List.of(1L));
+        // When
+        QueryWrapper<MenuCheckVO> wrapper = new QueryWrapper<>();
+        wrapper.isNull("parent_id");
+        wrapper.orderBy(true, false, "sort_order");
 
-        assertThat(result).isNotNull();
-        assertThat(result.size()).isGreaterThan(0);
+        List<MenuCheckVO> result = menuMapper.selectMenusByRoleId(1L);
+
+        assertThat(result).isNotEmpty();
     }
 
     @Test
@@ -88,6 +94,14 @@ class SysMenuMapperTest extends BaseMapperTest {
         assertThat(result).isNotNull();
         assertThat(result.getId()).isEqualTo(menu.getId());
         assertThat(result.getName()).isEqualTo("Settings Menu");
+    }
+
+    @Test
+    void selectUserIdsByMenuId_shouldReturnUserIds() {
+        Long menuId = 1L;
+
+        List<Long> userIds = menuMapper.selectUserIdsByMenuId(menuId);
+        assertThat(userIds).isNotNull().isNotEmpty();
     }
 
     @Test

@@ -2,50 +2,41 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.github.starhq.template.mapper.SysResourceMapper">
 
-    <select id="selectResourcePage" resultType="com.github.starhq.template.vo.ResourceVO">
-        SELECT 
-            r.id,
-            r.name,
-            r.url,
-            r.method,
-            r.description,
-            r.created_at,
-            creator.username AS creator,
-            r.updated_at,
-            COALESCE(updater.username, 'Unknown') AS updater
+    <select id="selectResourcesByRoleId" resultType="com.github.starhq.template.model.vo.resource.ResourceCheckVO">
+        SELECT r.id,
+           r.name,
+        <!-- 动态判断：如果有roleId，就判断关联表；如果没有，直接返回false -->
+        <choose>
+           <when test="roleId != null">
+               CASE WHEN rr.role_id IS NOT NULL THEN true ELSE false END AS checked
+           </when>
+           <otherwise>
+               false AS checked
+           </otherwise>
+       </choose>
         FROM sys_resource r
-        LEFT JOIN sys_user creator ON r.created_by = creator.id
-        LEFT JOIN sys_user updater ON r.updated_by = updater.id
-        ${ew.customSqlSegment}
-    </select>
-
-    <select id="selectResourcesByRoleId" resultType="com.github.starhq.template.vo.ResourceVO">
-        SELECT 
-            r.id,
-            r.name,
-            r.url,
-            r.method,
-            r.description,
-            rr.resource_id IS NOT NULL AS checked
-        FROM sys_resource r
-        LEFT JOIN sys_role_resource rr 
-            ON rr.resource_id = r.id 
-            AND rr.role_id = #{roleId}
-    </select>
-
-    <select id="selectAssignedResourceByRoleIds" resultType="com.github.starhq.template.vo.ResourceVO">
-        SELECT 
-            r.url,
-            r.method 
-        FROM sys_role_resource rr
-        JOIN sys_resource r ON rr.resource_id = r.id
-        <where>
-            <if test="roleIds!= null and roleIds.size() > 0">
-                AND rr.role_id IN
-                <foreach collection="roleIds" item="roleId" open="(" separator="," close=")">
-                    #{roleId}
-                </foreach>
+        <!-- 动态判断：如果有roleId才去LEFT JOIN，否则直接查主表，性能更好 -->
+        <if test="roleId != null">
+                LEFT JOIN sys_role_resource rr
+                          ON rr.resource_id = r.id
+                              AND rr.role_id = #{roleId}
             </if>
-        </where>
+            ORDER BY r.id
+    </select>
+
+    <select id="selectAssignedResourceByUserId" resultType="resource">
+        SELECT r.url,
+               r.methods
+        FROM sys_resource r
+                 JOIN sys_role_resource rr ON rr.resource_id = r.id
+                 JOIN sys_user_role ur on rr.role_id = ur.role_id
+        WhERE ur.user_id = #{userId}
+    </select>
+
+    <select id="selectUserIdsByResourceId" resultType="java.lang.Long">
+        SELECT sur.user_id
+        from sys_user_role sur
+                 JOIN sys_role_resource srr on sur.role_id = srr.role_id
+        WHERE srr.resource_id = #{resourceId}
     </select>
 </mapper>

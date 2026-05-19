@@ -3,7 +3,7 @@ package com.github.starhq.template.entity;
 import org.apache.ibatis.type.Alias;
 
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.github.starhq.template.enums.OpenStyle;
+import com.github.starhq.template.common.enums.OpenStyle;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -14,13 +14,13 @@ import lombok.EqualsAndHashCode;
  * @author starhq
  */
 @Data
-@EqualsAndHashCode(callSuper = false)
 @Alias("menu")
 @TableName("sys_menu")
+@EqualsAndHashCode(callSuper = false)
 public class SysMenu extends BaseEntity {
 
     /**
-     * 父菜单ID
+     * 父菜单 ID
      */
     private Long parentId;
 
@@ -30,7 +30,7 @@ public class SysMenu extends BaseEntity {
     private String name;
 
     /**
-     * 菜单URL
+     * 菜单 URL
      */
     private String url;
 

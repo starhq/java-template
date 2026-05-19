@@ -13,13 +13,13 @@ import lombok.EqualsAndHashCode;
  * @author starhq
  */
 @Data
-@EqualsAndHashCode(callSuper = false)
 @Alias("dictData")
 @TableName("sys_dict_data")
+@EqualsAndHashCode(callSuper = false)
 public class SysDictData extends BaseEntity {
 
     /**
-     * 字典类型ID
+     * 字典类型 ID
      */
     private Long typeId;
 

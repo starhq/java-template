@@ -1,4 +1,13 @@
 spring:
+  config:
+    import: "optional:file:./.env[.properties]"
+  messages:
+    basename:
+      - i18n/messages
+    encoding: UTF-8
+    use-code-as-default-message: true
+    cache-duration: 3600s
+
   application:
     name: java-template
 
@@ -26,8 +35,13 @@ spring:
     json:
       write:
         write-numbers-as-strings: false
+    use-jackson2-defaults: false
 
   mvc:
+    apiversion:
+      default: v1
+      use:
+        path-segment: 0
     format:
       date-time: yyyy-MM-dd HH:mm:ss
 
@@ -35,7 +49,7 @@ spring:
     log-startup-info: false
 
 mybatis-plus:
-  type-handlers-package: com.github.starhq.template.config.handler
+  type-handlers-package: com.github.starhq.template.config.mybatis.handler
   mapper-locations: classpath*:/mapper/**/*.xml
   #实体扫描，多个package用逗号或者分号分隔
   typeAliasesPackage: com.github.starhq.template.entity
@@ -53,7 +67,9 @@ mybatis-plus:
     jdbc-type-for-null: "null"
 
 server:
-  port: 8000
+  servlet:
+    context-path: /api
+  port: 8001
   forward-headers-strategy: native
   tomcat:
     uri-encoding: UTF-8

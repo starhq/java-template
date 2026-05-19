@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.github.starhq.template.mapper.SysTokenMapper">
 
-    <select id="selectTokenPage" resultType="com.github.starhq.template.vo.TokenVO">
+    <select id="selectTokenPage" resultType="com.github.starhq.template.model.vo.token.TokenPageVO">
         SELECT 
             st.id,
             st.expired_at,
@@ -12,11 +12,22 @@
             u.username
         FROM sys_token st
         JOIN sys_user u ON st.user_id = u.id 
-        <where>
-            <if test="username != null and username != ''">
-                AND u.username LIKE #{username} || '%'
-            </if>
-        </where>
         ${ew.customSqlSegment}
     </select>
+
+    <insert id="upsertToken">
+        INSERT INTO sys_token (
+            id, user_id, access_token, refresh_token, expired_at, revoked, login_ip, device_fingerprint, created_at
+        ) VALUES (
+            #{id}, #{userId}, #{accessToken}, #{refreshToken}, #{expiredAt}, #{revoked}, #{loginIp}, #{deviceFingerprint}, #{createdAt}
+        )
+        ON CONFLICT (user_id) DO UPDATE SET
+            access_token = EXCLUDED.access_token,
+            refresh_token = EXCLUDED.refresh_token,
+            expired_at = EXCLUDED.expired_at,
+            revoked = false,
+            login_ip = EXCLUDED.login_ip,
+            device_fingerprint = EXCLUDED.device_fingerprint,
+            created_at = NOW()
+    </insert>
 </mapper>

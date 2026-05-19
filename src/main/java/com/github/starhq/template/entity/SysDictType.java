@@ -13,9 +13,9 @@ import lombok.EqualsAndHashCode;
  * @author starhq
  */
 @Data
-@EqualsAndHashCode(callSuper = false)
 @Alias("dictType")
 @TableName("sys_dict_type")
+@EqualsAndHashCode(callSuper = false)
 public class SysDictType extends BaseEntity {
 
     /**

@@ -17,12 +17,12 @@ import lombok.NoArgsConstructor;
 @TableName("sys_user_role")
 public class SysUserRole {
     /**
-     * 用户ID
+     * 用户 ID
      */
     private Long userId;
 
     /**
-     * 角色ID
+     * 角色 ID
      */
     private Long roleId;
 }

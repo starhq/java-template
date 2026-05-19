@@ -1,19 +1,18 @@
 package com.github.starhq.template.mapper;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
-import java.time.OffsetDateTime;
-
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.github.starhq.template.BaseMapperTest;
+import com.github.starhq.template.common.enums.TargetType;
 import com.github.starhq.template.entity.SysAuditLog;
-import com.github.starhq.template.enums.TargetType;
-import com.github.starhq.template.vo.AuditLogVO;
+import com.github.starhq.template.model.vo.auditlog.AuditLogPageVO;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import java.time.OffsetDateTime;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 class SysAuditLogMapperTest extends BaseMapperTest {
 
@@ -49,7 +48,7 @@ class SysAuditLogMapperTest extends BaseMapperTest {
 
     @Test
     void findById_shouldReturnAuditLog() {
-        SysAuditLog auditLog = prepare(103L, "delete_user", 3L, TargetType.USER);
+        SysAuditLog auditLog = prepare(103L, "delete_user", 3L, TargetType.BUTTON);
         auditLogMapper.insert(auditLog);
 
         SysAuditLog result = auditLogMapper.selectById(auditLog.getId());
@@ -64,16 +63,19 @@ class SysAuditLogMapperTest extends BaseMapperTest {
         SysAuditLog auditLog = prepare(104L, "login_attempt", 4L, TargetType.USER);
         auditLogMapper.insert(auditLog);
 
-        Page<AuditLogVO> page = new Page<>(1, 10);
-        QueryWrapper<AuditLogVO> wrapper = new QueryWrapper<>();
+        Page<AuditLogPageVO> page = new Page<>(1, 10);
+
+        QueryWrapper<AuditLogPageVO> wrapper = new QueryWrapper<>();
+        wrapper.eq("target_type", TargetType.USER);
+        wrapper.likeRight("creator.username", "admin");
         wrapper.orderBy(true, false, "id");
 
-        IPage<AuditLogVO> result = auditLogMapper.selectAuditLogPage(TargetType.USER, "", page, wrapper);
+        IPage<AuditLogPageVO> result = auditLogMapper.selectAuditLogPage(page, wrapper);
 
         assertThat(result).isNotNull();
         assertThat(result.getTotal()).isGreaterThan(0);
         assertThat(result.getRecords()).hasSize(1);
-        assertThat(result.getRecords().get(0).getAction()).isEqualTo("login_attempt");
+        assertThat(result.getRecords().getFirst().getAction()).isEqualTo("login_attempt");
     }
 
     @Test

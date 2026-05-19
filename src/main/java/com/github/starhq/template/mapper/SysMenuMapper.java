@@ -1,26 +1,27 @@
 package com.github.starhq.template.mapper;
 
-import java.util.List;
-
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.core.toolkit.Constants;
+import com.github.starhq.template.entity.SysMenu;
+import com.github.starhq.template.model.vo.menu.tree.MenuCheckVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.github.starhq.template.entity.SysMenu;
-import com.github.starhq.template.vo.MenuVO;
+import java.io.Serializable;
+import java.util.List;
 
 /**
- * 系统菜单Mapper
+ * 系统菜单 Mapper
  *
  * @author starhq
  */
 @Mapper
 public interface SysMenuMapper extends BaseMapper<SysMenu> {
 
-    List<MenuVO> selectMenus();
+    List<SysMenu> selectAssignedMenus(@Param(Constants.WRAPPER) QueryWrapper<SysMenu> wrapper);
 
-    List<MenuVO> selectMenusByRoleId(@Param("roleId") Long roleId);
+    List<MenuCheckVO> selectMenusByRoleId(@Param("roleId") Serializable roleId);
 
-    List<MenuVO> selectAssignedMenusByRoleIds(@Param("roleIds") List<Long> roleId);
-
+    List<Long> selectUserIdsByMenuId(@Param("menuId") Serializable menuId);
 }

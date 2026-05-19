@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.github.starhq.template.mapper.SysRoleButtonMapper">
+    <insert id="upsertRoleButton">
+         INSERT INTO sys_role_button (role_id, button_id)
+        VALUES
+            <foreach collection="list" item="item" separator=",">
+                (#{item.roleId}, #{item.buttonId})
+            </foreach>
+        ON CONFLICT (role_id, button_id) DO NOTHING
+    </insert>
+</mapper>

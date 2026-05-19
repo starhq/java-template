@@ -6,6 +6,10 @@ import com.baomidou.mybatisplus.annotation.TableName;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.jspecify.annotations.Nullable;
+import org.springframework.security.core.GrantedAuthority;
+
+import java.io.Serial;
 
 /**
  * 系统角色实体
@@ -13,11 +17,13 @@ import lombok.EqualsAndHashCode;
  * @author starhq
  */
 @Data
-@EqualsAndHashCode(callSuper = false)
 @Alias("role")
 @TableName("sys_role")
-public class SysRole extends BaseEntity {
+@EqualsAndHashCode(callSuper = false)
+public class SysRole extends BaseEntity implements GrantedAuthority {
 
+    @Serial
+    private static final long serialVersionUID = -4242770371889322444L;
     /**
      * 角色代码
      */
@@ -38,4 +44,8 @@ public class SysRole extends BaseEntity {
      */
     private Boolean isDefault;
 
+    @Override
+    public @Nullable String getAuthority() {
+        return this.code;
+    }
 }

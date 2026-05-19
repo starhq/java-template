@@ -2,61 +2,47 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.github.starhq.template.mapper.SysMenuMapper">
 
-    <select id="selectMenus" resultType="com.github.starhq.template.vo.MenuVO">
-        SELECT 
-            m.id,
-            COALESCE(m.parent_id, 0) as parent_id,
-            m.name,
-            m.url,
-            m.icon,
-            m.sort_order,
-            m.created_at,
-            creator.username AS creator,
-            m.updated_at,
-            m.open_style,
-            COALESCE(updater.username, 'Unknown') AS updater
-        FROM sys_menu m
-        LEFT JOIN sys_user creator ON m.created_by = creator.id
-        LEFT JOIN sys_user updater ON m.updated_by = updater.id
-        ORDER BY m.sort_order
+    <select id="selectAssignedMenus" resultType="menu">
+        SELECT sm.id,
+               sm.parent_id,
+               sm.name,
+               sm.url,
+               sm.icon,
+               sm.sort_order,
+               sm.open_style
+        FROM sys_menu sm
+                 JOIN sys_role_menu srm ON srm.menu_id = sm.id
+                 JOIN sys_user_role sur ON srm.role_id = sur.role_id
+            ${ew.customSqlSegment}
     </select>
 
-    <select id="selectMenusByRoleId" resultType="com.github.starhq.template.vo.MenuVO">
-        SELECT 
-            sm.id,
-            COALESCE(sm.parent_id, 0) as parent_id,
-            sm.name,
-            sm.url,
-            sm.icon,
-            sm.sort_order,
-            sm.open_style,
-            srm.role_id IS NOT NULL AS checked
-        FROM sys_menu sm
-        LEFT JOIN sys_role_menu srm 
-            ON srm.menu_id = sm.id 
-            AND srm.role_id = #{roleId}
-        ORDER BY sm.sort_order
+     <select id="selectMenusByRoleId" resultType="com.github.starhq.template.model.vo.menu.tree.MenuCheckVO">
+         SELECT sm.id,
+           sm.name,
+           sm.parent_id,
+         <!-- 动态判断：如果有roleId，就判断关联表；如果没有，直接返回false -->
+         <choose>
+           <when test="roleId != null">
+               CASE WHEN srm.role_id IS NOT NULL THEN true ELSE false END AS checked
+           </when>
+           <otherwise>
+               false AS checked
+           </otherwise>
+         </choose>
+         FROM sys_menu sm
+         <!-- 动态判断：如果有roleId才去LEFT JOIN，否则直接查主表，性能更好 -->
+         <if test="roleId != null">
+                LEFT JOIN sys_role_menu srm
+                          ON srm.menu_id = sm.id
+                              AND srm.role_id = #{roleId}
+         </if>
+         ORDER BY sm.sort_order DESC
     </select>
 
-    <select id="selectAssignedMenusByRoleIds" resultType="com.github.starhq.template.vo.MenuVO">
-        SELECT 
-            sm.id,
-            COALESCE(sm.parent_id, 0) as parent_id,
-            sm.name,
-            sm.url,
-            sm.icon,
-            sm.sort_order,
-            sm.open_style
-        FROM sys_menu sm
-        JOIN sys_role_menu srm ON srm.menu_id = sm.id
-        <where>
-            <if test="roleIds!= null and roleIds.size() > 0">
-                AND srm.role_id IN
-                <foreach collection="roleIds" item="roleId" open="(" separator="," close=")">
-                    #{roleId}
-                </foreach>
-            </if>
-        </where>
-        ORDER BY sm.sort_order
+    <select id="selectUserIdsByMenuId" resultType="java.lang.Long">
+        SELECT sur.user_id
+        from sys_user_role sur
+                 JOIN sys_role_menu srm on sur.role_id = srm.role_id
+        WHERE srm.menu_id = #{menuId}
     </select>
 </mapper>

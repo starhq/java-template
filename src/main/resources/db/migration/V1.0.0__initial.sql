@@ -10,11 +10,9 @@ CREATE TABLE sys_user
     password   VARCHAR(70)                           NOT NULL, -- bcrypt hash
     status     user_status DEFAULT 'active'          NOT NULL,
     created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    created_by BIGINT,
+    created_by BIGINT, -- REF sys_user(id), 逻辑外键
     updated_at TIMESTAMPTZ,
-    updated_by BIGINT,
-    CONSTRAINT fk_user_created_by FOREIGN KEY (created_by) REFERENCES sys_user (id), -- DEFERRABLE INITIALLY DEFERRED,
-    CONSTRAINT fk_user_updated_by FOREIGN KEY (updated_by) REFERENCES sys_user (id)
+    updated_by BIGINT -- REF sys_user(id), 逻辑外键
 );
 
 COMMENT ON TABLE sys_user IS 'Stores system users and their authentication details';
@@ -29,11 +27,9 @@ CREATE TABLE sys_role
     description VARCHAR(255)  DEFAULT ''              NOT NULL,
     is_default  BOOLEAN DEFAULT FALSE,   -- 是否为默认角色额
     created_at  TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    created_by  BIGINT                                NOT NULL,
+    created_by  BIGINT                                NOT NULL, -- REF sys_user(id), 逻辑外键
     updated_at  TIMESTAMPTZ,
-    updated_by  BIGINT,
-    CONSTRAINT fk_role_created_by FOREIGN KEY (created_by) REFERENCES sys_user (id),
-    CONSTRAINT fk_role_updated_by FOREIGN KEY (updated_by) REFERENCES sys_user (id)
+    updated_by  BIGINT -- REF sys_user(id), 逻辑外键
 );
 
 COMMENT ON TABLE sys_role IS 'Stores roles in the system';
@@ -42,11 +38,9 @@ CREATE INDEX idx_sys_role_is_default ON sys_role(is_default) WHERE is_default = 
 -- User-Role Mapping Table (Many-to-Many)
 CREATE TABLE sys_user_role
 (
-    user_id    BIGINT                                NOT NULL,
-    role_id    BIGINT                                NOT NULL,
-    PRIMARY KEY (user_id, role_id),
-    CONSTRAINT fk_user_role_user_id FOREIGN KEY (user_id) REFERENCES sys_user (id),
-    CONSTRAINT fk_user_role_role_id FOREIGN KEY (role_id) REFERENCES sys_role (id)
+    user_id    BIGINT                                NOT NULL, -- REF sys_user(id), 逻辑外键
+    role_id    BIGINT                                NOT NULL, -- REF sys_role(id), 逻辑外键
+    PRIMARY KEY (user_id, role_id)
 );
 
 COMMENT ON TABLE sys_user_role IS 'Links users to roles in a many-to-many relationship';
@@ -66,10 +60,7 @@ CREATE TABLE sys_menu
     created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL,
     created_by BIGINT                                NOT NULL,
     updated_at TIMESTAMPTZ,
-    updated_by BIGINT,
-    CONSTRAINT fk_menu_parent FOREIGN KEY (parent_id) REFERENCES sys_menu (id), -- DEFERRABLE INITIALLY DEFERRED,
-    CONSTRAINT fk_menu_created_by FOREIGN KEY (created_by) REFERENCES sys_user (id),
-    CONSTRAINT fk_menu_updated_by FOREIGN KEY (updated_by) REFERENCES sys_user (id)
+    updated_by BIGINT
 );
 
 COMMENT ON TABLE sys_menu IS 'Stores navigation menu items';
@@ -83,18 +74,16 @@ CREATE TABLE sys_resource
     id          BIGINT PRIMARY KEY,
     name        VARCHAR(30)                           NOT NULL,
     url         VARCHAR(100)                          NOT NULL,
-    method      SMALLINT DEFAULT 0                    NOT NULL,
+    methods     SMALLINT DEFAULT 0                    NOT NULL,
     description VARCHAR(255) DEFAULT ''               NOT NULL,
     created_at  TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL,
     created_by  BIGINT                                NOT NULL,
     updated_at  TIMESTAMPTZ,
-    updated_by  BIGINT,
-    CONSTRAINT fk_resource_created_by FOREIGN KEY (created_by) REFERENCES sys_user (id),
-    CONSTRAINT fk_resource_updated_by FOREIGN KEY (updated_by) REFERENCES sys_user (id)
+    updated_by  BIGINT
 );
 
 COMMENT ON TABLE sys_resource IS 'Stores protected resources that require permissions';
-CREATE UNIQUE INDEX uk_resource_url_method on sys_resource(url, method);
+CREATE UNIQUE INDEX uk_resource_url_method on sys_resource(url, methods);
 
 -- Buttons Table
 CREATE TABLE sys_button
@@ -107,10 +96,7 @@ CREATE TABLE sys_button
     created_at  TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL,
     created_by  BIGINT                                NOT NULL,
     updated_at  TIMESTAMPTZ,
-    updated_by  BIGINT,
-    CONSTRAINT fk_button_menu_id FOREIGN KEY (menu_id) REFERENCES sys_menu (id),
-    CONSTRAINT fk_button_created_by FOREIGN KEY (created_by) REFERENCES sys_user (id),
-    CONSTRAINT fk_button_updated_by FOREIGN KEY (updated_by) REFERENCES sys_user (id)
+    updated_by  BIGINT
 );
 
 COMMENT ON TABLE sys_button IS 'Stores buttons that require permissions for user interaction';
@@ -121,9 +107,7 @@ CREATE TABLE sys_role_menu
 (
     role_id    BIGINT                                NOT NULL,
     menu_id    BIGINT                                NOT NULL,
-    PRIMARY KEY (role_id, menu_id),
-    CONSTRAINT fk_role_menu_role_id FOREIGN KEY (role_id) REFERENCES sys_role (id),
-    CONSTRAINT fk_role_menu_menu_id FOREIGN KEY (menu_id) REFERENCES sys_menu (id)
+    PRIMARY KEY (role_id, menu_id)
 );
 
 COMMENT ON TABLE sys_role_menu IS 'Links roles to sys_menu for access control';
@@ -135,9 +119,7 @@ CREATE TABLE sys_role_resource
 (
     role_id     BIGINT                                NOT NULL,
     resource_id BIGINT                                NOT NULL,
-    PRIMARY KEY (role_id, resource_id),
-    CONSTRAINT fk_role_resource_role_id FOREIGN KEY (role_id) REFERENCES sys_role (id),
-    CONSTRAINT fk_role_resource_resource_id FOREIGN KEY (resource_id) REFERENCES sys_resource (id)
+    PRIMARY KEY (role_id, resource_id)
 );
 
 COMMENT ON TABLE sys_role_resource IS 'Links roles to sys_resource for access control';
@@ -149,9 +131,7 @@ CREATE TABLE sys_role_button
 (
     role_id    BIGINT                                NOT NULL,
     button_id  BIGINT                                NOT NULL,
-    PRIMARY KEY (role_id, button_id),
-    CONSTRAINT fk_role_button_role_id FOREIGN KEY (role_id) REFERENCES sys_role (id),
-    CONSTRAINT fk_role_button_button_id FOREIGN KEY (button_id) REFERENCES sys_button (id)
+    PRIMARY KEY (role_id, button_id)
 );
 
 COMMENT ON TABLE sys_role_button IS 'Links roles to buttons for access control';
@@ -167,8 +147,7 @@ CREATE TABLE sys_audit_log
     target_type target_type                           NOT NULL,
     value       TEXT,
     created_at  TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    created_by  BIGINT                                NOT NULL,
-    CONSTRAINT fk_audit_log_created_by FOREIGN KEY (created_by) REFERENCES sys_user (id)
+    created_by  BIGINT                                NOT NULL
 );
 
 COMMENT ON TABLE sys_audit_log IS 'Stores system actions and security audit logs';
@@ -191,15 +170,14 @@ CREATE INDEX idx_audit_log_target_type_created_by ON sys_audit_log(target_type, 
 CREATE TABLE sys_token
 (
     id                 BIGINT PRIMARY KEY,
-    user_id            BIGINT                                NOT NULL,
+    user_id            BIGINT UNIQUE                         NOT NULL,
     access_token       TEXT                                  NOT NULL,
     refresh_token      TEXT                                  NOT NULL,
     expired_at         TIMESTAMPTZ                           NOT NULL,
     created_at         TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL,
     revoked            BOOLEAN DEFAULT FALSE                 NOT NULL,
     login_ip           VARCHAR(45)                           NOT NULL,
-    device_fingerprint VARCHAR(64)                           NOT NULL,
-    CONSTRAINT fk_token_user_id FOREIGN KEY (user_id) REFERENCES sys_user (id)
+    device_fingerprint VARCHAR(64)                           NOT NULL
 );
 
 COMMENT ON TABLE sys_token IS 'Stores system access tokens';
@@ -214,9 +192,7 @@ create table sys_dict_type
     created_at  TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL,
     created_by  BIGINT                                NOT NULL,
     updated_at  TIMESTAMPTZ,
-    updated_by  BIGINT,
-    CONSTRAINT fk_dict_type_created_by FOREIGN KEY (created_by) REFERENCES sys_user (id),
-    CONSTRAINT fk_dict_type_updated_by FOREIGN KEY (updated_by) REFERENCES sys_user (id)
+    updated_by  BIGINT
 );
 
 COMMENT ON TABLE sys_dict_type IS 'Stores system dictionary types';
@@ -231,15 +207,39 @@ create table sys_dict_data
     created_at  TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL,
     created_by  BIGINT                                NOT NULL,
     updated_at  TIMESTAMPTZ,
-    updated_by  BIGINT,
-    CONSTRAINT fk_dict_type_type_id FOREIGN KEY (type_id) REFERENCES sys_dict_type (id),
-    CONSTRAINT fk_dict_type_created_by FOREIGN KEY (created_by) REFERENCES sys_user (id),
-    CONSTRAINT fk_dict_type_updated_by FOREIGN KEY (updated_by) REFERENCES sys_user (id)
+    updated_by  BIGINT
 );
 
 CREATE UNIQUE INDEX uk_dict_type_value on sys_dict_data(type_id, value);
 COMMENT ON TABLE sys_dict_data IS 'Stores system dictionary data';
 CREATE INDEX idx_dict_data_type_id ON sys_dict_data(type_id);
+
+CREATE TABLE sys_api_log (
+    id BIGINT PRIMARY KEY,               -- 对应 Long id (自增主键)
+    
+    trace_id VARCHAR(255),                  -- 对应 String traceId
+    uri VARCHAR(255),                       -- 对应 String uri
+    method VARCHAR(50),                     -- 对应 String method (稍微缩小长度，HTTP方法很短)
+    query_string TEXT,                      -- 对应 String queryString (查询参数可能很长，建议用TEXT)
+    client_ip VARCHAR(50),                  -- 对应 String clientIp
+    
+    headers TEXT,                           -- 对应 String headers (JSON格式，使用TEXT)
+    params TEXT,                            -- 对应 String params (JSON格式，使用TEXT)
+    request_body TEXT,                      -- 对应 String requestBody (请求体，使用TEXT)
+    
+    http_status INTEGER,                    -- 对应 Integer httpStatus
+    response_body TEXT,                     -- 对应 String responseBody (响应体，使用TEXT)
+    
+    exception_message VARCHAR(2000),        -- 对应 String exceptionMessage (指定长度2000)
+    exception_stack TEXT,                   -- 对应 String exceptionStack (堆栈信息通常很长，使用TEXT)
+    
+    duration BIGINT,                        -- 对应 Long duration
+    create_time TIMESTAMP                   -- 对应 LocalDateTime createTime
+);
+
+-- 创建索引 (对应 @Index 注解)
+-- 用于通过 TraceID 快速定位单次请求链路
+CREATE INDEX idx_trace_id ON sys_api_log(trace_id);
 
 INSERT INTO sys_user (id, username, password, status, created_at, created_by, updated_at, updated_by) VALUES (1, 'admin', '$2a$10$SirpyIjgbMRijCOYtcP0UOdnU6aT.Ar9IxLerWQSCD3JpVzfBzFNa', 'active', CURRENT_TIMESTAMP, null, null, null);
 INSERT INTO sys_user (id, username, password, status, created_at, created_by, updated_at, updated_by) VALUES (2, 'starhq', '$2a$10$SirpyIjgbMRijCOYtcP0UOdnU6aT.Ar9IxLerWQSCD3JpVzfBzFNa', 'active', CURRENT_TIMESTAMP, null, null, null);
@@ -251,16 +251,16 @@ INSERT INTO sys_user_role (user_id, role_id) VALUES (1, 1);
 INSERT INTO sys_user_role (user_id, role_id) VALUES (2, 2);
 
 INSERT INTO sys_menu (id, parent_id, name, url, icon, sort_order, open_style, created_at, created_by, updated_at, updated_by) VALUES (1, null, '权限管理', NULL, 'icon-safetycertificate', 99, 0, CURRENT_TIMESTAMP, 1, CURRENT_TIMESTAMP, 1);
-INSERT INTO sys_menu (id, parent_id, name, url, icon, sort_order, open_style, created_at, created_by, updated_at, updated_by) VALUES (2, 1, '用户管理', 'sys/user', 'icon-user', 0, 0, CURRENT_TIMESTAMP, 1, CURRENT_TIMESTAMP, 1);
-INSERT INTO sys_menu (id, parent_id, name, url, icon, sort_order, open_style, created_at, created_by, updated_at, updated_by) VALUES (3, 1, '角色管理', 'sys/role', 'icon-team', 1, 0, CURRENT_TIMESTAMP, 1, CURRENT_TIMESTAMP, 1);
-INSERT INTO sys_menu (id, parent_id, name, url, icon, sort_order, open_style, created_at, created_by, updated_at, updated_by) VALUES (4, 1, '菜单管理', 'sys/menu', 'icon-unorderedlist', 2, 0, CURRENT_TIMESTAMP, 1, CURRENT_TIMESTAMP, 1);
-INSERT INTO sys_menu (id, parent_id, name, url, icon, sort_order, open_style, created_at, created_by, updated_at, updated_by) VALUES (5, 1, '资源管理','sys/resource', 'icon-api', 3, 0, CURRENT_TIMESTAMP, 1, CURRENT_TIMESTAMP, 1);
-INSERT INTO sys_menu (id, parent_id, name, url, icon, sort_order, open_style, created_at, created_by, updated_at, updated_by) VALUES (6, 1, '按钮管理','sys/button', 'icon-menu', 4, 0, CURRENT_TIMESTAMP, 1, CURRENT_TIMESTAMP, 1);
+INSERT INTO sys_menu (id, parent_id, name, url, icon, sort_order, open_style, created_at, created_by, updated_at, updated_by) VALUES (2, 1, '用户管理', '/**/sys/user', 'icon-user', 0, 0, CURRENT_TIMESTAMP, 1, CURRENT_TIMESTAMP, 1);
+INSERT INTO sys_menu (id, parent_id, name, url, icon, sort_order, open_style, created_at, created_by, updated_at, updated_by) VALUES (3, 1, '角色管理', '/**/sys/role', 'icon-team', 1, 0, CURRENT_TIMESTAMP, 1, CURRENT_TIMESTAMP, 1);
+INSERT INTO sys_menu (id, parent_id, name, url, icon, sort_order, open_style, created_at, created_by, updated_at, updated_by) VALUES (4, 1, '菜单管理', '/**/sys/menu', 'icon-unorderedlist', 2, 0, CURRENT_TIMESTAMP, 1, CURRENT_TIMESTAMP, 1);
+INSERT INTO sys_menu (id, parent_id, name, url, icon, sort_order, open_style, created_at, created_by, updated_at, updated_by) VALUES (5, 1, '资源管理','/**/sys/resource', 'icon-api', 3, 0, CURRENT_TIMESTAMP, 1, CURRENT_TIMESTAMP, 1);
+INSERT INTO sys_menu (id, parent_id, name, url, icon, sort_order, open_style, created_at, created_by, updated_at, updated_by) VALUES (6, 1, '按钮管理','/**/sys/button', 'icon-menu', 4, 0, CURRENT_TIMESTAMP, 1, CURRENT_TIMESTAMP, 1);
 INSERT INTO sys_menu (id, parent_id, name, url, icon, sort_order, open_style, created_at, created_by, updated_at, updated_by) VALUES (7, null, '系统设置',NULL, 'icon-setting', 100, 0, CURRENT_TIMESTAMP, 1, CURRENT_TIMESTAMP, 1);
-INSERT INTO sys_menu (id, parent_id, name, url, icon, sort_order, open_style, created_at, created_by, updated_at, updated_by) VALUES (8, 7, '字典管理','setting/dict-type', 'icon-golden-fill', 0, 0, CURRENT_TIMESTAMP, 1, CURRENT_TIMESTAMP, 1);
-INSERT INTO sys_menu (id, parent_id, name, url, icon, sort_order, open_style, created_at, created_by, updated_at, updated_by) VALUES (9, 7, '活跃用户','setting/token', 'icon-user', 1, 0, CURRENT_TIMESTAMP, 1, CURRENT_TIMESTAMP, 1);
-INSERT INTO sys_menu (id, parent_id, name, url, icon, sort_order, open_style, created_at, created_by, updated_at, updated_by) VALUES (10, 7, '审计日志','setting/audit-log', 'icon-solution', 2, 0, CURRENT_TIMESTAMP, 1, CURRENT_TIMESTAMP, 1);
-INSERT INTO sys_menu (id, parent_id, name, url, icon, sort_order, open_style, created_at, created_by, updated_at, updated_by) VALUES (11, 7, '默认角色','setting/default-role', 'icon-team', 3, 0, CURRENT_TIMESTAMP, 1, CURRENT_TIMESTAMP, 1);
+INSERT INTO sys_menu (id, parent_id, name, url, icon, sort_order, open_style, created_at, created_by, updated_at, updated_by) VALUES (8, 7, '字典管理','/**/setting/dict-type', 'icon-golden-fill', 0, 0, CURRENT_TIMESTAMP, 1, CURRENT_TIMESTAMP, 1);
+INSERT INTO sys_menu (id, parent_id, name, url, icon, sort_order, open_style, created_at, created_by, updated_at, updated_by) VALUES (9, 7, '活跃用户','/**/setting/token', 'icon-user', 1, 0, CURRENT_TIMESTAMP, 1, CURRENT_TIMESTAMP, 1);
+INSERT INTO sys_menu (id, parent_id, name, url, icon, sort_order, open_style, created_at, created_by, updated_at, updated_by) VALUES (10, 7, '审计日志','/**/setting/audit-log', 'icon-solution', 2, 0, CURRENT_TIMESTAMP, 1, CURRENT_TIMESTAMP, 1);
+INSERT INTO sys_menu (id, parent_id, name, url, icon, sort_order, open_style, created_at, created_by, updated_at, updated_by) VALUES (11, 7, '默认角色','/**/setting/default-role', 'icon-team', 3, 0, CURRENT_TIMESTAMP, 1, CURRENT_TIMESTAMP, 1);
 
 INSERT INTO sys_role_menu (role_id, menu_id) VALUES (1, 1);
 INSERT INTO sys_role_menu (role_id, menu_id) VALUES (1, 2);
@@ -295,7 +295,7 @@ INSERT INTO sys_button (id, menu_id, name, code, description, created_at, create
 INSERT INTO sys_button (id, menu_id, name, code, description, created_at, created_by, updated_at, updated_by) VALUES (18, 8, '字典新增','sys:dict-type:add', '', CURRENT_TIMESTAMP, 1, CURRENT_TIMESTAMP, 1);
 INSERT INTO sys_button (id, menu_id, name, code, description, created_at, created_by, updated_at, updated_by) VALUES (19, 8, '字典修改','sys:dict-type:edit', '', CURRENT_TIMESTAMP, 1, CURRENT_TIMESTAMP, 1);
 INSERT INTO sys_button (id, menu_id, name, code, description, created_at, created_by, updated_at, updated_by) VALUES (20, 8, '字典删除','sys:dict-type:delete', '', CURRENT_TIMESTAMP, 1, CURRENT_TIMESTAMP, 1);
-INSERT INTO sys_button (id, menu_id, name, code, description, created_at, created_by, updated_at, updated_by) VALUES (21, 8, '字典配置','sys_dict-type:dict-data', '', CURRENT_TIMESTAMP, 1, CURRENT_TIMESTAMP, 1);
+INSERT INTO sys_button (id, menu_id, name, code, description, created_at, created_by, updated_at, updated_by) VALUES (21, 8, '字典配置','sys:dict-type:dict-data', '', CURRENT_TIMESTAMP, 1, CURRENT_TIMESTAMP, 1);
 INSERT INTO sys_button (id, menu_id, name, code, description, created_at, created_by, updated_at, updated_by) VALUES (22, 8, '字典数据新增','sys:dict-data:add', '', CURRENT_TIMESTAMP, 1, CURRENT_TIMESTAMP, 1);
 INSERT INTO sys_button (id, menu_id, name, code, description, created_at, created_by, updated_at, updated_by) VALUES (23, 8, '字典数据修改','sys:dict-data:edit', '', CURRENT_TIMESTAMP, 1, CURRENT_TIMESTAMP, 1);
 INSERT INTO sys_button (id, menu_id, name, code, description, created_at, created_by, updated_at, updated_by) VALUES (24, 8, '字典数据删除','sys:dict-data:delete', '', CURRENT_TIMESTAMP, 1, CURRENT_TIMESTAMP, 1);
@@ -334,16 +334,16 @@ INSERT INTO sys_role_button (role_id, button_id) VALUES (1, 27);
 
 -- INSERT INTO sys_default_role (id, role_id, created_at, created_by, updated_at, updated_by) VALUES (1, 2, CURRENT_TIMESTAMP, 1, CURRENT_TIMESTAMP, 1);
 
-INSERT INTO sys_resource (id, name, url, method, description, created_at, created_by, updated_at, updated_by) VALUES (1, '用户api', '/users/**', 31, '用户模块管理', CURRENT_TIMESTAMP, 1, CURRENT_TIMESTAMP, 1);
-INSERT INTO sys_resource (id, name, url, method, description, created_at, created_by, updated_at, updated_by) VALUES (2, '角色api', '/roles/**', 31, '角色模块管理', CURRENT_TIMESTAMP, 1, CURRENT_TIMESTAMP, 1);
-INSERT INTO sys_resource (id, name, url, method, description, created_at, created_by, updated_at, updated_by) VALUES (3, '菜单api', '/menus/**', 31, '菜单模块管理', CURRENT_TIMESTAMP, 1, CURRENT_TIMESTAMP, 1);
-INSERT INTO sys_resource (id, name, url, method, description, created_at, created_by, updated_at, updated_by) VALUES (4, '资源api', '/resources/**', 31, '资源模块管理', CURRENT_TIMESTAMP, 1, CURRENT_TIMESTAMP, 1);
-INSERT INTO sys_resource (id, name, url, method, description, created_at, created_by, updated_at, updated_by) VALUES (5, '按钮api', '/buttons/**', 31, '按钮模块管理', CURRENT_TIMESTAMP, 1, CURRENT_TIMESTAMP, 1);
-INSERT INTO sys_resource (id, name, url, method, description, created_at, created_by, updated_at, updated_by) VALUES (6, '字典模块api', '/dict-types/**', 31, '字典模块管理', CURRENT_TIMESTAMP, 1, CURRENT_TIMESTAMP, 1);
-INSERT INTO sys_resource (id, name, url, method, description, created_at, created_by, updated_at, updated_by) VALUES (7, '字典数据api', '/dict-datas/**', 31, '字典数据管理', CURRENT_TIMESTAMP, 1, CURRENT_TIMESTAMP, 1);
-INSERT INTO sys_resource (id, name, url, method, description, created_at, created_by, updated_at, updated_by) VALUES (9, '审核日志api', '/audit-logs/**', 31, '审核日志查询', CURRENT_TIMESTAMP, 1, CURRENT_TIMESTAMP, 1);
-INSERT INTO sys_resource (id, name, url, method, description, created_at, created_by, updated_at, updated_by) VALUES (10, '默认角色api', '/default-roles/**', 31, '默认角色管理', CURRENT_TIMESTAMP, 1, CURRENT_TIMESTAMP, 1);
-INSERT INTO sys_resource (id, name, url, method, description, created_at, created_by, updated_at, updated_by) VALUES (11, '令牌api', '/tokens/**', 31, '令牌管理', CURRENT_TIMESTAMP, 1, CURRENT_TIMESTAMP, 1);
+INSERT INTO sys_resource (id, name, url, methods, description, created_at, created_by, updated_at, updated_by) VALUES (1, '用户api', '/users/**', 31, '用户模块管理', CURRENT_TIMESTAMP, 1, CURRENT_TIMESTAMP, 1);
+INSERT INTO sys_resource (id, name, url, methods, description, created_at, created_by, updated_at, updated_by) VALUES (2, '角色api', '/roles/**', 31, '角色模块管理', CURRENT_TIMESTAMP, 1, CURRENT_TIMESTAMP, 1);
+INSERT INTO sys_resource (id, name, url, methods, description, created_at, created_by, updated_at, updated_by) VALUES (3, '菜单api', '/menus/**', 31, '菜单模块管理', CURRENT_TIMESTAMP, 1, CURRENT_TIMESTAMP, 1);
+INSERT INTO sys_resource (id, name, url, methods, description, created_at, created_by, updated_at, updated_by) VALUES (4, '资源api', '/resources/**', 31, '资源模块管理', CURRENT_TIMESTAMP, 1, CURRENT_TIMESTAMP, 1);
+INSERT INTO sys_resource (id, name, url, methods, description, created_at, created_by, updated_at, updated_by) VALUES (5, '按钮api', '/buttons/**', 31, '按钮模块管理', CURRENT_TIMESTAMP, 1, CURRENT_TIMESTAMP, 1);
+INSERT INTO sys_resource (id, name, url, methods, description, created_at, created_by, updated_at, updated_by) VALUES (6, '字典模块api', '/dict-types/**', 31, '字典模块管理', CURRENT_TIMESTAMP, 1, CURRENT_TIMESTAMP, 1);
+INSERT INTO sys_resource (id, name, url, methods, description, created_at, created_by, updated_at, updated_by) VALUES (7, '字典数据api', '/dict-datas/**', 31, '字典数据管理', CURRENT_TIMESTAMP, 1, CURRENT_TIMESTAMP, 1);
+INSERT INTO sys_resource (id, name, url, methods, description, created_at, created_by, updated_at, updated_by) VALUES (9, '审核日志api', '/audit-logs/**', 31, '审核日志查询', CURRENT_TIMESTAMP, 1, CURRENT_TIMESTAMP, 1);
+INSERT INTO sys_resource (id, name, url, methods, description, created_at, created_by, updated_at, updated_by) VALUES (10, '默认角色api', '/default-roles/**', 31, '默认角色管理', CURRENT_TIMESTAMP, 1, CURRENT_TIMESTAMP, 1);
+INSERT INTO sys_resource (id, name, url, methods, description, created_at, created_by, updated_at, updated_by) VALUES (11, '令牌api', '/tokens/**', 31, '令牌管理', CURRENT_TIMESTAMP, 1, CURRENT_TIMESTAMP, 1);
 
 
 INSERT INTO sys_role_resource (role_id, resource_id) VALUES (1, 1);

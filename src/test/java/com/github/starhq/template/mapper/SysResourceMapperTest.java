@@ -5,16 +5,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.time.OffsetDateTime;
 import java.util.List;
 
+import com.github.starhq.template.model.vo.resource.ResourceCheckVO;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.github.starhq.template.BaseMapperTest;
+import com.github.starhq.template.common.enums.HttpMethod;
 import com.github.starhq.template.entity.SysResource;
-import com.github.starhq.template.enums.HttpMethod;
-import com.github.starhq.template.vo.ResourceVO;
 
 class SysResourceMapperTest extends BaseMapperTest {
 
@@ -53,35 +50,29 @@ class SysResourceMapperTest extends BaseMapperTest {
     }
 
     @Test
-    void selectResourcePage_shouldReturnPagedResult() {
-        SysResource resource = prepare(102L, "Page Resource");
-        resourceMapper.insert(resource);
-
-        Page<ResourceVO> page = new Page<>(1, 10);
-        QueryWrapper<ResourceVO> wrapper = new QueryWrapper<>();
-        wrapper.orderBy(true, false, "id");
-
-        IPage<ResourceVO> result = resourceMapper.selectResourcePage(page, wrapper);
-
-        assertThat(result).isNotNull();
-        assertThat(result.getTotal()).isGreaterThan(0);
-        assertThat(result.getRecords()).hasSize(10);
-        assertThat(result.getRecords().get(0).getName()).isEqualTo("Page Resource");
-    }
-
-    @Test
     void selectResourcesByRoleId_shouldReturnResource() {
-        List<ResourceVO> result = resourceMapper.selectResourcesByRoleId(1L);
+        List<ResourceCheckVO> result = resourceMapper.selectResourcesByRoleId(1L);
 
         assertThat(result).isNotNull();
+        assertThat(result.getFirst().getChecked()).isTrue();
         assertThat(result.size()).isGreaterThan(0);
     }
 
     @Test
-    void selectResourcesByRoleIds_shouldReturnResource() {
-        List<ResourceVO> result = resourceMapper.selectAssignedResourceByRoleIds(List.of(1L));
+    void selectAssignedResourceByUserId_shouldReturnResource() {
+        List<SysResource> result = resourceMapper.selectAssignedResourceByUserId(1L);
 
         assertThat(result).isNotNull();
+        assertThat(result.getFirst().getMethods()).isEqualTo(31);
+        assertThat(result.size()).isGreaterThan(0);
+    }
+
+    @Test
+    void selectUserIdsByResourceId_shouldReturnUserIds() {
+        List<Long> result = resourceMapper.selectUserIdsByResourceId(1L);
+
+        assertThat(result).isNotNull();
+        assertThat(result.getFirst()).isEqualTo(1);
         assertThat(result.size()).isGreaterThan(0);
     }
 
@@ -102,7 +93,7 @@ class SysResourceMapperTest extends BaseMapperTest {
         SysResource resource = new SysResource();
         resource.setId(id);
         resource.setUrl("/**");
-        resource.setMethod(HttpMethod.GET);
+        resource.setMethods(HttpMethod.combine(List.of(HttpMethod.GET, HttpMethod.POST)));
         resource.setName(name);
         resource.setDescription("Description for " + name);
         resource.setCreatedBy(1L);

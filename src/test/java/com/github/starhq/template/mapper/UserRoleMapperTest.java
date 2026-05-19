@@ -1,16 +1,16 @@
 package com.github.starhq.template.mapper;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
-import java.util.List;
-
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.github.starhq.template.BaseMapperTest;
+import com.github.starhq.template.entity.SysUserRole;
 import org.apache.ibatis.executor.BatchResult;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.github.starhq.template.BaseMapperTest;
-import com.github.starhq.template.entity.SysUserRole;
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 class UserRoleMapperTest extends BaseMapperTest {
 
@@ -50,4 +50,9 @@ class UserRoleMapperTest extends BaseMapperTest {
         assertThat(selectList).isEmpty();
     }
 
+    @Test
+    void upsertUserRole_shouldSuccess() {
+        List<SysUserRole> userRoles = List.of(new SysUserRole(1L, 2L));
+        assertDoesNotThrow(() -> userRoleMapper.upsertUserRole(userRoles));
+    }
 }

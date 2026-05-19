@@ -12,7 +12,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.github.starhq.template.BaseMapperTest;
 import com.github.starhq.template.entity.SysDictData;
-import com.github.starhq.template.vo.DictDataVO;
+import com.github.starhq.template.model.vo.DictDataVO;
 
 class SysDictDataMapperTest extends BaseMapperTest {
 
@@ -21,7 +21,7 @@ class SysDictDataMapperTest extends BaseMapperTest {
 
     @Test
     void insertDictData_shouldInsertSuccessfully() {
-        SysDictData dictData = prepare(101L, 1L, "Active", "active_1");
+        SysDictData dictData = prepare(101L, "Active", "active_1");
 
         int result = dictDataMapper.insert(dictData);
 
@@ -36,7 +36,7 @@ class SysDictDataMapperTest extends BaseMapperTest {
 
     @Test
     void updateDictData_shouldUpdateSuccessfully() {
-        SysDictData dictData = prepare(102L, 1L, "Inactive", "inactive_1");
+        SysDictData dictData = prepare(102L, "Inactive", "inactive_1");
         dictDataMapper.insert(dictData);
 
         dictData.setLabel("Updated Inactive");
@@ -55,7 +55,7 @@ class SysDictDataMapperTest extends BaseMapperTest {
 
     @Test
     void findById_shouldReturnDictData() {
-        SysDictData dictData = prepare(103L, 1L, "Male", "male");
+        SysDictData dictData = prepare(103L, "Male", "male");
         dictDataMapper.insert(dictData);
 
         SysDictData result = dictDataMapper.selectById(dictData.getId());
@@ -67,24 +67,25 @@ class SysDictDataMapperTest extends BaseMapperTest {
 
     @Test
     void selectDictDataPage_shouldReturnPagedResult() {
-        SysDictData dictData = prepare(104L, 1L, "Male", "male");
+        SysDictData dictData = prepare(104L, "Male", "male");
         dictDataMapper.insert(dictData);
 
         Page<DictDataVO> page = new Page<>(1, 10);
         QueryWrapper<DictDataVO> wrapper = new QueryWrapper<>();
+        wrapper.eq("dd.type_id", 1L);
         wrapper.orderBy(true, false, "id");
 
-        IPage<DictDataVO> result = dictDataMapper.selectDictDataPage(1L, page, wrapper);
+        IPage<DictDataVO> result = dictDataMapper.selectDictDataPage(page, wrapper);
 
         assertThat(result).isNotNull();
         assertThat(result.getTotal()).isGreaterThan(0);
         assertThat(result.getRecords()).hasSize(4);
-        assertThat(result.getRecords().get(0).getLabel()).isEqualTo("Male");
+        assertThat(result.getRecords().getFirst().getLabel()).isEqualTo("Male");
     }
 
     @Test
     void deleteDictData_shouldDeleteSuccessfully() {
-        SysDictData dictData = prepare(105L, 1L, "Temp", "temp");
+        SysDictData dictData = prepare(105L, "Temp", "temp");
         dictDataMapper.insert(dictData);
 
         int result = dictDataMapper.deleteById(dictData.getId());
@@ -95,10 +96,10 @@ class SysDictDataMapperTest extends BaseMapperTest {
         assertThat(dbDictData).isNull();
     }
 
-    private SysDictData prepare(Long id, Long typeId, String label, String value) {
+    private SysDictData prepare(Long id, String label, String value) {
         SysDictData dictData = new SysDictData();
         dictData.setId(id);
-        dictData.setTypeId(typeId);
+        dictData.setTypeId(1L);
         dictData.setLabel(label);
         dictData.setValue(value);
         dictData.setDescription("Description for " + label);

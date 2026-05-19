@@ -3,7 +3,6 @@ package com.github.starhq.template.entity;
 import org.apache.ibatis.type.Alias;
 
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.github.starhq.template.enums.HttpMethod;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -14,9 +13,9 @@ import lombok.EqualsAndHashCode;
  * @author starhq
  */
 @Data
-@EqualsAndHashCode(callSuper = false)
 @Alias("resource")
 @TableName("sys_resource")
+@EqualsAndHashCode(callSuper = false)
 public class SysResource extends BaseEntity {
 
     /**
@@ -25,14 +24,14 @@ public class SysResource extends BaseEntity {
     private String name;
 
     /**
-     * 资源URL
+     * 资源 URL
      */
     private String url;
 
     /**
      * HTTP方法（位掩码）
      */
-    private HttpMethod method;
+    private Integer methods;
 
     /**
      * 描述

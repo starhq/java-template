@@ -64,7 +64,8 @@ endif
 .PHONY: test
 test:
 	@echo "🧪 运行测试..."
-	$(GRADLE) test
+	$(GRADLE) clean test
+	open ./build/reports/jacoco/test/html/index.html
 
 # 构建可执行 JAR
 .PHONY: build
