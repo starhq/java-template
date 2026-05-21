@@ -13,8 +13,14 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 /**
- * REST controller for managing authentication tokens.
- * Provides endpoints for revoking tokens and querying token lists.
+ * RESTful API controller for managing authentication token lifecycle.
+ * Provides standardized endpoints for revoking user tokens and querying
+ * token audit logs, supporting security operations and session management
+ * in JWT/OAuth2-based authentication systems.
+ *
+ * @author starhq
+ * @version 1.0
+ * @date 2026-05-20
  */
 @RestController
 @RequestMapping(value = "/{version}/tokens", version = "v1")
@@ -24,13 +30,13 @@ public class TokenController {
     private final TokenService tokenService;
 
     /**
-     * Revokes a specific token by its ID.
+     * Revokes all active tokens associated with a specific user.
+     * Typically used for forced logout, password reset, or account suspension
+     * scenarios to invalidate existing sessions.
      *
-     * @param userId The ID of the token to revoke.
-     * @return A ResponseEntity with HTTP status 200 (OK) on successful revocation.
-     * Assumes that if the service method completes without throwing an
-     * exception,
-     * the revocation was successful.
+     * @param userId the unique identifier of the user whose tokens should be revoked
+     * @return a {@link ResponseEntity} with HTTP status 200 (OK) upon successful revocation
+     * @throws com.github.starhq.template.common.exception.BusinessException if the user ID is invalid or revocation fails
      */
     @PutMapping("/{userId}/revoked")
     public ResponseEntity<Void> revoked(@PathVariable("userId") Long userId) {
@@ -39,22 +45,16 @@ public class TokenController {
     }
 
     /**
-     * Queries a paginated list of tokens.
-     * Pagination, sorting, and keyword filtering parameters are expected as query
-     * parameters.
+     * Retrieves a paginated list of token audit records with optional keyword filtering.
+     * Supports filtering by user info, token status, or time range for security auditing.
      *
-     * @param request The request object containing pagination (page, size, sort,
-     *                isAsc)
-     *                and keyword filtering parameters.
-     * @return A ResponseEntity with HTTP status 200 (OK) and a RestResponse
-     * containing the total count and the list of paginated tokens.
+     * @param request the {@link KeyWordPageRequest} containing pagination, sorting, and keyword filter parameters
+     * @return a {@link ResponseEntity} containing a {@link Result} wrapper with total count and paginated {@link TokenPageVO} records
      */
     @GetMapping
     public ResponseEntity<Result<List<TokenPageVO>>> queryTokens(@Valid KeyWordPageRequest request) {
         IPage<TokenPageVO> paginatedTokens = tokenService.page(request);
-
         Result<List<TokenPageVO>> response = Result.success(paginatedTokens.getRecords(), paginatedTokens.getTotal());
         return ResponseEntity.ok(response);
     }
-
 }

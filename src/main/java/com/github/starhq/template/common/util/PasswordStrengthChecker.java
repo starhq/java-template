@@ -3,13 +3,45 @@ package com.github.starhq.template.common.util;
 import java.util.Set;
 import java.util.regex.Pattern;
 
+/**
+ * Utility class for evaluating the strength and security of user passwords.
+ *
+ * <p>This checker uses a heuristic scoring algorithm that operates on a simple formula:
+ * <pre>
+ *     Final Score = (Length Score + Diversity Score + Combination Bonus) - Penalties
+ * </pre>
+ * The final score is bounded to a minimum of 0 and theoretically maxes out at 11
+ * (due to the combination of available lengths and character types).
+ *
+ * @author starhq
+ */
 public class PasswordStrengthChecker {
 
+    /**
+     * Enumeration representing the qualitative strength level of a password.
+     *
+     * <p>Maps a numerical score to a human-readable category using closed intervals.
+     */
     public enum StrengthLevel {
+        /**
+         * Very weak, easily guessable.
+         */
         EASY(0, 3),
+        /**
+         * Moderate protection, suitable for low-risk internal tools.
+         */
         MEDIUM(4, 6),
+        /**
+         * Strong, resistant to standard brute-force attacks.
+         */
         STRONG(7, 9),
+        /**
+         * Very strong, requires significant computational power to crack.
+         */
         VERY_STRONG(10, 12),
+        /**
+         * Theoretically unbreakable by modern standards. (Note: Unreachable by current scoring logic).
+         */
         EXTREMELY_STRONG(13, Integer.MAX_VALUE);
 
         private final int minScore;
@@ -20,6 +52,12 @@ public class PasswordStrengthChecker {
             this.maxScore = maxScore;
         }
 
+        /**
+         * Determines the strength level based on a numerical score.
+         *
+         * @param score the calculated password score
+         * @return the corresponding {@link StrengthLevel}, defaulting to {@link #EASY} if out of bounds
+         */
         public static StrengthLevel fromScore(int score) {
             for (StrengthLevel level : values()) {
                 if (score >= level.minScore && score <= level.maxScore) {
@@ -30,6 +68,12 @@ public class PasswordStrengthChecker {
         }
     }
 
+    /**
+     * Categorizes characters into distinct types to evaluate password diversity.
+     *
+     * <p>Uses a custom {@link CharPredicate} to encapsulate matching logic, avoiding
+     * deeply nested if-else statements and making the types easily extensible.
+     */
     private enum CharacterType {
         DIGIT(Character::isDigit),
         LOWERCASE(Character::isLowerCase),
@@ -46,12 +90,18 @@ public class PasswordStrengthChecker {
             return predicate.test(c);
         }
 
+        /**
+         * Functional interface for character evaluation.
+         */
         @FunctionalInterface
         interface CharPredicate {
             boolean test(char c);
         }
     }
 
+    /**
+     * A baseline blacklist of commonly used, highly vulnerable passwords.
+     */
     private static final Set<String> COMMON_PASSWORDS = Set.of(
             "123456", "password", "123456789", "12345678", "12345", "111111",
             "1234567", "sunshine", "qwerty", "iloveyou", "princess", "admin",
@@ -60,13 +110,19 @@ public class PasswordStrengthChecker {
             "qwerty123", "147258369", "987654321", "1qaz2wsx", "asdfghjkl",
             "1q2w3e4r", "1234abcd", "3.1415926");
 
+    /**
+     * Regex pattern to detect consecutive repeated characters.
+     * <p>Explanation: {@code (.)} captures any character into group 1. {@code \1{2,}} checks
+     * if that exact same character follows immediately 2 or more times (total 3+ consecutive).
+     * Example: Matches "aaa" or "111", but not "aba".
+     */
     private static final Pattern REPEATED_PATTERN = Pattern.compile("(.)\\1{2,}");
 
     /**
-     * Calculate password strength score.
+     * Calculates a numerical strength score for the given password.
      *
-     * @param password the password to check
-     * @return strength score (0-15+)
+     * @param password the password string to evaluate
+     * @return the calculated score, bounded to a minimum of 0 (0-15+)
      */
     public static int calculateScore(String password) {
         if (password == null || password.isBlank()) {
@@ -76,7 +132,7 @@ public class PasswordStrengthChecker {
         password = password.trim();
         int length = password.length();
 
-        // Early exit for very weak passwords
+        // Fast fail for obvious garbage inputs without running complex metrics
         if (length <= 3 || isAllSameCharacter(password)) {
             return 0;
         }
@@ -84,93 +140,109 @@ public class PasswordStrengthChecker {
         int score = 0;
         PasswordMetrics metrics = new PasswordMetrics(password);
 
-        // Length-based scoring
+        // Add points for good practices
         score += getLengthScore(length);
-
-        // Character diversity scoring
         score += getCharacterDiversityScore(metrics);
-
-        // Combination bonuses
         score += getCombinationBonus(length, metrics);
 
-        // Penalties
+        // Subtract points for bad practices
         score -= getPenalties(password, length, metrics);
 
+        // Ensure we never return a negative score
         return Math.max(score, 0);
     }
 
     /**
-     * Get password strength level.
+     * Convenience method to get the qualitative strength level directly.
      *
-     * @param password the password to check
-     * @return the strength level
+     * @param password the password string to evaluate
+     * @return the evaluated {@link StrengthLevel}
      */
     public static StrengthLevel getStrengthLevel(String password) {
         int score = calculateScore(password);
         return StrengthLevel.fromScore(score);
     }
 
+    /**
+     * Assigns points based on password length thresholds.
+     *
+     * @param length the trimmed length of the password
+     * @return length-based score (0-3)
+     */
     private static int getLengthScore(int length) {
-        if (length >= 12)
-            return 3;
-        if (length >= 8)
-            return 2;
-        if (length >= 6)
-            return 1;
+        if (length >= 12) return 3;
+        if (length >= 8) return 2;
+        if (length >= 6) return 1;
         return 0;
     }
 
+    /**
+     * Assigns points based on how many different character types are used.
+     *
+     * @param metrics the pre-calculated character metrics
+     * @return diversity score (0-4)
+     */
     private static int getCharacterDiversityScore(PasswordMetrics metrics) {
         int score = 0;
-        if (metrics.hasDigits)
-            score++;
-        if (metrics.hasLowercase)
-            score++;
-        if (metrics.hasUppercase)
-            score++;
-        if (metrics.hasSpecial)
-            score++;
+        if (metrics.hasDigits) score++;
+        if (metrics.hasLowercase) score++;
+        if (metrics.hasUppercase) score++;
+        if (metrics.hasSpecial) score++;
         return score;
     }
 
+    /**
+     * Assigns bonus points for combining sufficient length with high character diversity.
+     * <p>This rewards complex passwords much more than just long simple ones.
+     *
+     * @param length  the password length
+     * @param metrics the pre-calculated character metrics
+     * @return combination bonus score (0-4)
+     */
     private static int getCombinationBonus(int length, PasswordMetrics metrics) {
         int bonus = 0;
         int typeCount = metrics.getTypeCount();
 
-        if (length > 4 && typeCount >= 2)
-            bonus++;
-        if (length > 6 && typeCount >= 3)
-            bonus++;
-        if (length > 8 && typeCount >= 4)
-            bonus += 2;
+        if (length > 4 && typeCount >= 2) bonus++;
+        if (length > 6 && typeCount >= 3) bonus++;
+        // Long passwords using all 4 character types get a massive +2 bonus
+        if (length > 8 && typeCount >= 4) bonus += 2;
 
         return bonus;
     }
 
+    /**
+     * Calculates deduction points for predictable or weak patterns.
+     *
+     * @param password the raw password string
+     * @param length   the password length
+     * @param metrics  the pre-calculated character metrics
+     * @return total penalty points to subtract
+     */
     private static int getPenalties(String password, int length, PasswordMetrics metrics) {
         int penalty = 0;
 
-        // Single character type penalty
+        // Pure lowercase/digits-only passwords are highly discouraged
         if (metrics.getTypeCount() == 1) {
             penalty += 2;
         }
 
-        // Short password penalty
+        // Penalty scales linearly for short passwords (e.g., length 4 gets -2, length 5 gets -1)
         if (length < 6) {
             penalty += (6 - length);
         }
 
-        // Repeated pattern penalty
+        // Patterns like "aaa" or "abcabcabc"
         if (hasRepeatedPattern(password)) {
             penalty += 2;
         }
 
-        // Common password penalty
+        // Matches against known breached password lists
         if (isCommonPassword(password)) {
             penalty += 3;
         }
 
-        // Sequential characters penalty
+        // Keyboard walks like "123", "abc", "qwe"
         if (hasSequentialChars(password)) {
             penalty++;
         }
@@ -178,13 +250,32 @@ public class PasswordStrengthChecker {
         return penalty;
     }
 
+    /**
+     * Checks if the password consists of the exact same character repeated.
+     * <p>Uses Java Streams to count distinct characters. Highly efficient and readable.
+     *
+     * @param password the password string
+     * @return true if all characters are identical (e.g., "aaaa")
+     */
     private static boolean isAllSameCharacter(String password) {
         return password.chars().distinct().count() == 1;
     }
 
+    /**
+     * Detects two types of lazy password construction:
+     * <ol>
+     *   <li><b>Segment Repetition:</b> The password is exactly 3 identical segments (e.g., "abcabcabc").
+     *       Note: Requires length to be cleanly divisible by 3.</li>
+     *   <li><b>Character Repetition:</b> 3 or more of the exact same character in a row (e.g., "111").
+     *       Delegates to the {@link #REPEATED_PATTERN} regex.</li>
+     * </ol>
+     *
+     * @param password the password string
+     * @return true if a repeated pattern is detected
+     */
     private static boolean hasRepeatedPattern(String password) {
-        // Check for repeated sequences (e.g., "abcabcabc")
         int len = password.length();
+        // Check for repeated sequences (e.g., "abcabcabc")
         if (len >= 6 && len % 3 == 0) {
             int partLen = len / 3;
             String part1 = password.substring(0, partLen);
@@ -199,12 +290,33 @@ public class PasswordStrengthChecker {
         return REPEATED_PATTERN.matcher(password).find();
     }
 
+    /**
+     * Checks if the password matches or contains a known weak password.
+     *
+     * <p><b>Bidirectional Check:</b> This method intentionally checks both ways:
+     * {@code password.contains(common)} AND {@code common.contains(password)}.
+     * This catches variations like "password123" (contains "password") as well as
+     * truncated leaks like "123456" which might be a substring of a common password.
+     *
+     * @param password the password to check
+     * @return true if it is deemed too common
+     */
     private static boolean isCommonPassword(String password) {
         String lowerPassword = password.toLowerCase();
         return COMMON_PASSWORDS.stream()
                 .anyMatch(common -> lowerPassword.contains(common) || common.contains(lowerPassword));
     }
 
+    /**
+     * Detects sequential character patterns (e.g., "abc", "123", "xyz").
+     *
+     * <p>Checks if the Unicode value of characters increments by exactly 1.
+     * Requires at least two separate sequential blocks (e.g., "123abc") to trigger a penalty,
+     * preventing false positives on very short passwords.
+     *
+     * @param password the password string
+     * @return true if sequential patterns are detected
+     */
     private static boolean hasSequentialChars(String password) {
         int sequentialCount = 0;
         for (int i = 0; i < password.length() - 2; i++) {
@@ -220,7 +332,11 @@ public class PasswordStrengthChecker {
     }
 
     /**
-     * Internal class to hold password metrics.
+     * Internal immutable snapshot of a password's character composition.
+     *
+     * <p>Analyzes the string once during construction to determine which character types
+     * are present. This prevents multiple redundant iterations over the password string
+     * during the scoring phase.
      */
     private static class PasswordMetrics {
         final boolean hasDigits;
@@ -232,6 +348,7 @@ public class PasswordStrengthChecker {
             boolean digits = false, lowercase = false, uppercase = false, special = false;
 
             for (char c : password.toCharArray()) {
+                // Only evaluate a character if its type hasn't been found yet
                 if (!digits && CharacterType.DIGIT.matches(c)) {
                     digits = true;
                 } else if (!lowercase && CharacterType.LOWERCASE.matches(c)) {
@@ -242,7 +359,7 @@ public class PasswordStrengthChecker {
                     special = true;
                 }
 
-                // Early exit if all types found
+                // Performance optimization: stop scanning if all 4 types are already found
                 if (digits && lowercase && uppercase && special) {
                     break;
                 }
@@ -254,16 +371,17 @@ public class PasswordStrengthChecker {
             this.hasSpecial = special;
         }
 
+        /**
+         * Returns the total number of distinct character types found in the password.
+         *
+         * @return diversity count (0-4)
+         */
         int getTypeCount() {
             int count = 0;
-            if (hasDigits)
-                count++;
-            if (hasLowercase)
-                count++;
-            if (hasUppercase)
-                count++;
-            if (hasSpecial)
-                count++;
+            if (hasDigits) count++;
+            if (hasLowercase) count++;
+            if (hasUppercase) count++;
+            if (hasSpecial) count++;
             return count;
         }
     }

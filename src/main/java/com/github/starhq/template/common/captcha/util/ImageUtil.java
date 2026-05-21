@@ -10,11 +10,9 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 /**
+ * Image utility class for captcha generation.
+ *
  * @author wangjian
- * @version v1.0.0
- * Copyright (C), 2020-2026, starimba@outlook.com
- * @description:
- * @date 2026/5/7 12:24
  */
 @UtilityClass
 public class ImageUtil {
@@ -54,7 +52,7 @@ public class ImageUtil {
 
     public static Graphics2D createGraphics(BufferedImage image, Color color) {
         final Graphics2D g = image.createGraphics();
-        // 填充背景
+        // Fill background
         g.setColor(color);
         g.fillRect(0, 0, image.getWidth(), image.getHeight());
 

@@ -12,37 +12,68 @@ import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
 
 /**
- * 用于校验密码强度的注解。
- * 确保被注解的密码字符串满足指定的安全强度等级。
- * 默认要求密码强度至少为 STRONG (强)。
+ * Marks a field or parameter as requiring a minimum level of password strength.
+ *
+ * <p>When applied to a String field, the Jakarta Validation framework will invoke the
+ * {@link PasswordStrengthValidator} to evaluate the password against the heuristic algorithm
+ * in {@link PasswordStrengthChecker}.
+ *
+ * <p><b>Usage Example:</b>
+ * <pre>{@code
+ * public class UserCreateDTO {
+ *     @StrongPassword(minLevel = PasswordStrengthChecker.StrengthLevel.VERY_STRONG)
+ *     private String password;
+ * }
+ * }</pre>
+ *
+ * @see PasswordStrengthValidator
+ * @see PasswordStrengthChecker.StrengthLevel
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ ElementType.FIELD, ElementType.PARAMETER, ElementType.ANNOTATION_TYPE }) // 增加 ANNOTATION_TYPE 支持元注解
+@Target({ElementType.FIELD, ElementType.PARAMETER, ElementType.ANNOTATION_TYPE})
 @Constraint(validatedBy = PasswordStrengthValidator.class)
 public @interface StrongPassword {
 
     /**
-     * 校验失败时的错误消息键。
-     * 默认读取 i18n 资源文件中的 validation.password.weak。
+     * The error message template to be used when the password fails the strength check.
+     *
+     * <p>This key is resolved by the {@code MessageSource} (e.g., in {@code ValidationMessages.properties}).
+     * If the key is not found, the raw string itself is returned to the client.
+     *
+     * @return the i18n error message key
      */
     String message() default "{error.password.weak}";
 
     /**
-     * 最低要求的密码强度等级。
-     * 默认要求：STRONG (强)。
-     * 
-     * @return 密码强度的最低等级
+     * Specifies the minimum acceptable strength level for the password.
+     *
+     * <p>Defaults to {@link PasswordStrengthChecker.StrengthLevel#STRONG} to enforce
+     * a high baseline of security out-of-the-box.
+     *
+     * @return the required minimum {@link PasswordStrengthChecker.StrengthLevel}
      */
     PasswordStrengthChecker.StrengthLevel minLevel() default PasswordStrengthChecker.StrengthLevel.STRONG;
 
     /**
-     * 校验分组。
+     * Allows specifying validation groups to which this constraint belongs.
+     *
+     * <p>This is used to apply different validation rules in different scenarios
+     * (e.g., applying stricter password rules during creation, but skipping the check during updates
+     * if the password field is null).
+     *
+     * @return the array of validation group classes
      */
     Class<?>[] groups() default {};
 
     /**
-     * 校验负载信息。
+     * Payloads can be attached to a constraint declaration to be carried along by the validation framework.
+     *
+     * <p>This is typically ignored in standard application logic but can be utilized by heavy-weight
+     * validation frameworks or client-side metadata generators to associate custom metadata
+     * (like severity levels) with the constraint.
+     *
+     * @return the array of payload classes
      */
     Class<? extends Payload>[] payload() default {};
 }

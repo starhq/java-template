@@ -17,9 +17,13 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 /**
- * REST controller for managing dictionary types.
- * Provides endpoints for creating, updating, deleting, and querying dictionary
- * type definitions.
+ * RESTful API controller for managing dictionary types.
+ * Provides standardized endpoints for creating, updating, deleting,
+ * and querying dictionary type definitions.
+ *
+ * @author starhq
+ * @version 1.0
+ * @date 2026-05-20
  */
 @RestController
 @RequestMapping(value = "/{version}/dict-types", version = "v1")
@@ -31,10 +35,8 @@ public class DictTypeController {
     /**
      * Creates a new dictionary type entry.
      *
-     * @param request The request body containing the details for the new dictionary
-     *                type.
-     * @return A ResponseEntity with HTTP status 201 (Created) on successful
-     * creation.
+     * @param request the DTO containing the details for the new dictionary type
+     * @return a {@link ResponseEntity} with HTTP status 201 (Created) upon successful creation
      */
     @PostMapping
     public ResponseEntity<Void> create(@Valid @RequestBody DictTypeDTO request) {
@@ -43,30 +45,26 @@ public class DictTypeController {
     }
 
     /**
-     * Updates an existing dictionary type entry.
-     * The ID of the dictionary type to update is taken from the path variable.
+     * Updates an existing dictionary type entry by its unique identifier.
      *
-     * @param id      The ID of the dictionary type to update.
-     * @param request The request body containing the updated details for the
-     *                dictionary type.
-     * @return A ResponseEntity with HTTP status 200 (OK) on successful update.
+     * @param id      the unique identifier of the dictionary type to update
+     * @param request the DTO containing the updated details for the dictionary type
+     * @return a {@link ResponseEntity} with HTTP status 200 (OK) upon successful update
      */
     @PutMapping("/{id}")
-    public ResponseEntity<Void> update(@PathVariable("id") Long id,
-                                       @Valid @RequestBody DictTypeDTO request) {
+    public ResponseEntity<Void> update(@PathVariable("id") Long id, @Valid @RequestBody DictTypeDTO request) {
         dictTypeService.updateDictType(id, request);
         return ResponseEntity.ok().build();
     }
 
     /**
-     * Deletes a dictionary type entry by its ID.
-     * Note: This operation will fail if there are dictionary data entries
-     * associated with this type.
+     * Deletes a dictionary type entry by its unique identifier.
+     * This operation is restricted if there are active dictionary data entries
+     * associated with the specified type.
      *
-     * @param id The ID of the dictionary type to delete.
-     * @return A ResponseEntity with HTTP status 204 (No Content) on successful
-     * deletion.
-     * If the type has associated data, a BusinessException will be thrown.
+     * @param id the unique identifier of the dictionary type to delete
+     * @return a {@link ResponseEntity} with HTTP status 204 (No Content) upon successful deletion
+     * @throws com.github.starhq.template.common.exception.BusinessException if the dictionary type has associated data entries
      */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable("id") Long id) {
@@ -75,48 +73,41 @@ public class DictTypeController {
     }
 
     /**
-     * Queries a paginated list of dictionary type entries.
-     * Parameters for pagination and filtering are expected as query parameters.
+     * Retrieves a paginated list of dictionary type entries with optional filtering.
+     * Pagination and sorting parameters are provided via query parameters.
      *
-     * @param request The request object containing pagination (page, size, sort,
-     *                isAsc) parameters.
-     * @return A ResponseEntity with HTTP status 200 (OK) and a RestResponse
-     * containing the total count and the list of paginated dictionary
-     * types.
+     * @param request the pagination and filtering request object
+     * @return a {@link ResponseEntity} containing a {@link Result} wrapper with the total count and paginated records
      */
     @GetMapping
     public ResponseEntity<Result<List<DictTypePageVO>>> queryDictTypes(@Valid PageRequest request) {
         IPage<DictTypePageVO> paginatedDictTypes = dictTypeService.page(request);
-
         Result<List<DictTypePageVO>> result = Result.success(paginatedDictTypes.getRecords(), paginatedDictTypes.getTotal());
         return ResponseEntity.ok(result);
     }
 
     /**
-     * Retrieves a single dictionary type entry by its ID.
+     * Retrieves a single dictionary type entry by its unique identifier.
      *
-     * @param id The ID of the dictionary type to retrieve.
-     * @return A ResponseEntity with HTTP status 200 (OK) and a RestResponse
-     * containing the requested dictionary type.
+     * @param id the unique identifier of the dictionary type to retrieve
+     * @return a {@link ResponseEntity} containing a {@link Result} wrapper with the requested dictionary type data
      */
     @GetMapping("/{id}")
     public ResponseEntity<Result<DictTypeSimpleVO>> queryDictType(@PathVariable("id") Long id) {
         DictTypeSimpleVO dictType = dictTypeService.getDictDataById(id);
-
         Result<DictTypeSimpleVO> result = Result.success(dictType);
         return ResponseEntity.ok(result);
     }
 
     /**
-     * Retrieves a list of all dictionary types and their associated data.
+     * Retrieves all dictionary types along with their associated dictionary data entries.
+     * Suitable for initializing dropdown menus or caching dictionary structures.
      *
-     * @return A ResponseEntity with HTTP status 200 (OK) and a RestResponse
-     * containing the list of dictionary types and their data.
+     * @return a {@link ResponseEntity} containing a {@link Result} wrapper with a list of dictionary types and their nested data
      */
     @GetMapping("/all")
     public ResponseEntity<Result<List<DictTypeWithDataVO>>> queryDictTypeAndData() {
         List<DictTypeWithDataVO> dictTypeAndDataResponses = dictTypeService.selectDictTypeAndDataResponses();
-
         Result<List<DictTypeWithDataVO>> result = Result.success(dictTypeAndDataResponses);
         return ResponseEntity.ok(result);
     }

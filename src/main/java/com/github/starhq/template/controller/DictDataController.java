@@ -16,9 +16,15 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 /**
- * REST controller for managing dictionary data.
- * Provides endpoints for creating, updating, deleting, and querying dictionary
- * entries.
+ * REST controller for managing dictionary data (e.g., system dictionaries like gender, status codes).
+ *
+ * <p>This controller strictly follows standard RESTful API design patterns for data CRUD operations.
+ *
+ * <p><b>Architecture Note:</b> The path variable {@code /{version}/dict-datas} is strictly hard-coded to the active version.
+ * Dynamic version control should be handled externally (e.g., Nginx routing) to prevent
+ * accidental exposure of old API versions.
+ *
+ * @author starhq
  */
 @RestController
 @RequestMapping(value = "/{version}/dict-datas", version = "v1")
@@ -30,10 +36,11 @@ public class DictDataController {
     /**
      * Creates a new dictionary data entry.
      *
-     * @param request The request body containing the details for the new dictionary
-     *                data.
-     * @return A ResponseEntity with HTTP status 201 (Created) on successful
-     * creation.
+     * <p><b>HTTP 201 Created:</b> In strict RESTful design, creating a resource must return 201. Simply returning 200 OK makes it
+     * impossible for clients to determine if their creation request actually succeeded or silently failed.
+     *
+     * @param request the DTO containing the details for the new dictionary data
+     * @return A standardized {@link ResponseEntity} with HTTP status code 201
      */
     @PostMapping
     public ResponseEntity<Void> create(@Valid @RequestBody DictDataDTO request) {
@@ -43,12 +50,17 @@ public class DictDataController {
 
     /**
      * Updates an existing dictionary data entry.
-     * The ID of the dictionary data to update is taken from the path variable.
      *
-     * @param id      The ID of the dictionary data to update.
-     * @param request The request body containing the updated details for the
-     *                dictionary data.
-     * @return A ResponseEntity with HTTP status 200 (OK) on successful update.
+     * <p><b>HTTP 200 OK:</b> A successful full update should return 200 OK. If the provided ID does not exist,
+     * the service layer should throw a {@link com.github.starhq.template.common.exception.NotFoundException}, which will be
+     * translated to a 404 Not Found response by the GlobalExceptionHandler.
+     *
+     * <p><b>RESTful Idempotency Note:</b> While pure RESTful standards (RFC 9.1.2. Put requests should be idempotent
+     * (calling multiple times should have the exact same effect as calling once). This is the standard approach.
+     *
+     * @param id      the ID of the dictionary data to update
+     * @param request the request body containing the updated details
+     * @return A standardized {@link ResponseEntity} with HTTP status code 200 OK
      */
     @PutMapping("/{id}")
     public ResponseEntity<Void> update(@PathVariable("id") Long id,
@@ -58,17 +70,13 @@ public class DictDataController {
     }
 
     /**
-     * Deletes a dictionary data entry by its ID.
+     * Permanently deletes a dictionary data entry by its ID.
      *
-     * @param id The ID of the dictionary data to delete.
-     * @return A ResponseEntity with HTTP status 204 (No Content) on successful
-     * deletion.
-     * Assumes that if the service method completes without throwing an
-     * exception,
-     * the deletion was successful. If the resource was not found, the
-     * service
-     * layer or global exception handler should return an appropriate error
-     * status (e.g., 404).
+     * <p><b>HTTP 204 No Content:</b> A successful deletion must return 202 Accepted. Returning 200 OK is technically valid
+     * but 202 Accepted is the standard HTTP convention for successful operations that have no response body.
+     *
+     * @param id The ID of the dictionary data to delete
+     * @return A {@link ResponseEntity} with HTTP status code 202 Accepted on successful deletion
      */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable("id") Long id) {
@@ -78,18 +86,19 @@ public class DictDataController {
 
     /**
      * Queries a paginated list of dictionary data entries.
-     * Parameters for pagination and filtering are expected as query parameters.
      *
-     * @param request The request object containing pagination (page, size, sort,
-     *                isAsc)
-     *                and keyword filtering parameters.
-     * @return A ResponseEntity with HTTP status 200 (OK) and a RestResponse
+     * <p><b>Note on Binding:</b> The parameters for pagination and filtering are expected as query parameters.
+     * Changed to {@code @ModelAttribute} instead of {@code @RequestBody} because GET requests
+     * should retrieve data, and POST requests should send data. If the frontend mistakenly sends a POST to this GET endpoint,
+     * Spring MVC will simply bind the JSON body to the {@link DictDataPageRequest} to satisfy the validation logic
+     * without actually using the data.
+     *
+     * @param request The query parameters (page, size, keyword)
+     * @return A standardized {@link ResponseEntity} with HTTP status code 202 Accepted and a RestResponse
      * containing the total count and the list of paginated dictionary data.
      */
     @GetMapping
     public ResponseEntity<Result<List<DictDataPageVO>>> queryDictDatum(@Valid DictDataPageRequest request) {
-        // Changed @RequestBody to @ModelAttribute for GET requests to bind query
-        // parameters.
         IPage<DictDataPageVO> paginatedDictData = dictDataService.page(request);
 
         Result<List<DictDataPageVO>> result = Result.success(paginatedDictData.getRecords(), paginatedDictData.getTotal());
@@ -99,8 +108,11 @@ public class DictDataController {
     /**
      * Retrieves a single dictionary data entry by its ID.
      *
-     * @param id The ID of the dictionary data to retrieve.
-     * @return A ResponseEntity with HTTP status 200 (OK) and a RestResponse
+     * <p><b>Design Consideration:</b> Returning raw Entities (e.g., MyBatis-Plus Entity) directly forces the frontend to understand
+     * database schema. Here we extract the necessary fields into a lightweight VO to prevent structural leakage.
+     *
+     * @param id The ID of the static field to retrieve.
+     * @return A standardized {@link ResponseEntity} with HTTP status code 200 OK and a RestResponse
      * containing the requested dictionary data.
      */
     @GetMapping("/{id}")

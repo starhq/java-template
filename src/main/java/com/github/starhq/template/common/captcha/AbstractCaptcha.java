@@ -9,8 +9,8 @@ import java.io.*;
 import java.util.List;
 
 /**
- * 抽象验证码<br>
- * 抽象验证码实现了验证码字符串的生成、验证，验证码图片的写出<br>
+ * Abstract captcha implementation.
+ * Provides captcha string generation, validation, and image rendering.
  *
  * @author looly
  */
@@ -18,37 +18,29 @@ public abstract class AbstractCaptcha implements ICaptcha {
 
     @Serial
     private static final long serialVersionUID = 809516698438855771L;
-    /**
-     * 图片的宽度。
-     */
+    /** Image width */
     protected final int width;
-    /**
-     * 图片的高度。
-     */
+    /** Image height */
     protected final int height;
-    /**
-     * 验证码字符个数
-     */
+    /** Number of captcha characters */
     protected final int codeCount;
-    /**
-     * 验证码干扰元素个数
-     */
+    /** Number of interference elements */
     protected final int interfereCount;
     /**
-     * 字体
+     * Font list for captcha rendering.
      * -- SETTER --
-     * 自定义字体
+     * Set custom fonts
      *
      */
     protected List<Font> fonts;
 
     /**
-     * 构造
+     * Constructor.
      *
-     * @param width          图片宽
-     * @param height         图片高
-     * @param codeCount      字符个数
-     * @param interfereCount 验证码干扰元素个数
+     * @param width          image width
+     * @param height         image height
+     * @param codeCount      number of characters
+     * @param interfereCount number of interference elements
      */
     public AbstractCaptcha(
             int width,

@@ -22,26 +22,32 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 /**
- * 用户控制器
+ * RESTful API controller for managing user accounts and profile operations.
+ * Provides standardized endpoints for creating, updating, deleting, and querying
+ * user information, along with role assignments and permission-based resources
+ * (buttons, menus) for personalized UI rendering in RBAC systems.
  *
  * @author starhq
+ * @version 1.0
+ * @date 2026-05-20
  */
 @RestController
 @RequestMapping(value = "/{version}/users", version = "v1")
 @RequiredArgsConstructor
 public class UserController {
-    private final UserService userService; // Service for user-related operations
-    private final ButtonService buttonService; // Service for button-related operations
-    private final MenuService menuService; // Service for menu-related operations
-    private final RoleService roleService; // Service for role-related operations
 
+    private final UserService userService;
+    private final ButtonService buttonService;
+    private final MenuService menuService;
+    private final RoleService roleService;
 
     /**
-     * Creates a new user in the system.
+     * Creates a new user entry with the provided details.
+     * Typically used for user registration or admin-initiated account creation.
      *
-     * @param dto The request body containing the details for the new user.
-     * @return A ResponseEntity with HTTP status 201 (Created) on successful
-     * creation.
+     * @param dto the {@link UserDTO} containing the user creation parameters
+     * @return a {@link ResponseEntity} with HTTP status 201 (Created) upon successful creation
+     * @throws com.github.starhq.template.common.exception.BusinessException if the username/email already exists or validation fails
      */
     @PostMapping
     public ResponseEntity<Void> createUser(@Valid @RequestBody UserDTO dto) {
@@ -50,12 +56,13 @@ public class UserController {
     }
 
     /**
-     * Updates an existing user's information.
-     * The ID of the user to update is taken from the path variable.
+     * Updates an existing user entry by its unique identifier.
+     * Sensitive fields (e.g., password) should be handled via dedicated endpoints.
      *
-     * @param id      The ID of the user to update.
-     * @param request The request body containing the updated details for the user.
-     * @return A ResponseEntity with HTTP status 200 (OK) on successful update.
+     * @param id      the unique identifier of the user to update
+     * @param request the {@link UserDTO} containing the updated user parameters
+     * @return a {@link ResponseEntity} with HTTP status 200 (OK) upon successful update
+     * @throws com.github.starhq.template.common.exception.BusinessException if the user ID is invalid or update conflicts occur
      */
     @PutMapping("/{id}")
     public ResponseEntity<Void> update(@PathVariable("id") Long id,
@@ -65,34 +72,26 @@ public class UserController {
     }
 
     /**
-     * Deletes a user by their ID.
+     * Deletes a user entry by its unique identifier.
+     * This operation is restricted if the user is referenced by active sessions,
+     * audit logs, or business data. Soft deletion is recommended for auditability.
      *
-     * @param id The ID of the user to delete.
-     * @return A ResponseEntity with HTTP status 204 (No Content) on successful
-     * deletion.
-     * Assumes that if the service method completes without throwing an
-     * exception,
-     * the deletion was successful. If the resource was not found, the
-     * service
-     * layer or global exception handler should return an appropriate error
-     * status (e.g., 404).
+     * @param id the unique identifier of the user to delete
+     * @return a {@link ResponseEntity} with HTTP status 204 (No Content) upon successful deletion
+     * @throws com.github.starhq.template.common.exception.BusinessException if the user cannot be deleted due to dependencies
      */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable("id") Long id) {
         userService.removeById(id);
-        return ResponseEntity.noContent().build(); // 204 No Content is appropriate for successful deletion
+        return ResponseEntity.noContent().build();
     }
 
     /**
-     * Queries a paginated list of users.
-     * Pagination, sorting, and keyword filtering parameters are expected as query
-     * parameters.
+     * Retrieves a paginated list of user entries with optional keyword filtering.
+     * Supports filtering by username, email, status, or time range for admin console display.
      *
-     * @param request The request object containing pagination (page, size, sort,
-     *                isAsc)
-     *                and keyword filtering parameters.
-     * @return A ResponseEntity with HTTP status 200 (OK) and a RestResponse
-     * containing the total count and the list of paginated users.
+     * @param request the {@link KeyWordPageRequest} containing pagination, sorting, and keyword filter parameters
+     * @return a {@link ResponseEntity} containing a {@link Result} wrapper with total count and paginated {@link UserPageVO} records
      */
     @GetMapping
     public ResponseEntity<Result<List<UserPageVO>>> queryUsers(@Valid KeyWordPageRequest request) {
@@ -102,11 +101,11 @@ public class UserController {
     }
 
     /**
-     * Retrieves a single user by their ID.
+     * Retrieves a single user entry by its unique identifier.
+     * Suitable for user detail views or editing forms in admin consoles.
      *
-     * @param id The ID of the user to retrieve.
-     * @return A ResponseEntity with HTTP status 200 (OK) and a RestResponse
-     * containing the requested user.
+     * @param id the unique identifier of the user to retrieve
+     * @return a {@link ResponseEntity} containing a {@link Result} wrapper with the {@link UserSimpleVO} details
      */
     @GetMapping("/{id}")
     public ResponseEntity<Result<UserSimpleVO>> queryUser(@PathVariable("id") Long id) {
@@ -116,11 +115,11 @@ public class UserController {
     }
 
     /**
-     * Retrieves the roles associated with a specific user by their ID.
+     * Retrieves the list of roles assigned to a specific user.
+     * Suitable for rendering role selection checkboxes in user management UIs.
      *
-     * @param userId The ID of the user for whom roles are to be retrieved.
-     * @return A ResponseEntity with HTTP status 200 (OK) and a RestResponse
-     * containing a list of roles associated with the user.
+     * @param userId the unique identifier of the user
+     * @return a {@link ResponseEntity} containing a {@link Result} wrapper with a list of {@link RoleCheckVO}
      */
     @GetMapping("/roles")
     public ResponseEntity<Result<List<RoleCheckVO>>> queryUserRoles(@RequestParam("userId") Long userId) {
@@ -130,12 +129,11 @@ public class UserController {
     }
 
     /**
-     * Retrieves the profile of the currently authenticated user.
-     * This endpoint typically returns details about the user, such as their name,
-     * email, and other relevant information.
+     * Retrieves the profile information of the currently authenticated user.
+     * The user ID is extracted from the security context (e.g., JWT token or session).
+     * Suitable for displaying user avatar, name, or personal settings in frontend apps.
      *
-     * @return A ResponseEntity with HTTP status 200 (OK) and a RestResponse
-     * containing the user's profile information.
+     * @return a {@link ResponseEntity} containing a {@link Result} wrapper with the {@link UserSimpleVO} profile details
      */
     @GetMapping("/profile")
     public ResponseEntity<Result<UserSimpleVO>> queryUserProfile() {
@@ -146,37 +144,31 @@ public class UserController {
     }
 
     /**
-     * Queries the buttons associated with the currently authenticated user.
-     * This endpoint typically returns buttons relevant to the user's
-     * roles/permissions.
+     * Retrieves the list of button permissions accessible to the currently authenticated user.
+     * The result is typically used for dynamic UI rendering (e.g., showing/hiding action buttons)
+     * based on the user's role-based permissions.
      *
-     * @return A ResponseEntity with HTTP status 200 (OK) and a RestResponse
-     * containing a list of buttons accessible by the current user.
+     * @return a {@link ResponseEntity} containing a {@link Result} wrapper with a list of button permission codes
      */
     @GetMapping("/buttons")
     public ResponseEntity<Result<List<String>>> queryUserButton() {
         Long id = SecurityContextUtils.getRequiredUserId();
-        List<String> buttons = buttonService.select(id); // Assuming this method selects buttons for the current user
-
+        List<String> buttons = buttonService.select(id);
         Result<List<String>> response = Result.success(buttons);
         return ResponseEntity.ok(response);
     }
 
     /**
-     * Queries the navigation menus associated with the currently authenticated
-     * user.
-     * This endpoint typically returns menus relevant to the user's
-     * roles/permissions.
+     * Retrieves the navigation menu tree accessible to the currently authenticated user.
+     * The result is typically used for rendering sidebar navigation structures
+     * based on the user's role-based menu permissions.
      *
-     * @return A ResponseEntity with HTTP status 200 (OK) and a RestResponse
-     * containing a list of navigation menus accessible by the current user.
+     * @return a {@link ResponseEntity} containing a {@link Result} wrapper with a list of {@link LeftNavVO} in tree order
      */
     @GetMapping("/menus")
     public ResponseEntity<Result<List<LeftNavVO>>> queryUserMenus() {
         Long id = SecurityContextUtils.getRequiredUserId();
-        List<LeftNavVO> menus = menuService.selectSidebar(id); // Assuming this method selects navigation menus for the
-        // current user
-
+        List<LeftNavVO> menus = menuService.selectSidebar(id);
         Result<List<LeftNavVO>> response = Result.success(menus);
         return ResponseEntity.ok(response);
     }

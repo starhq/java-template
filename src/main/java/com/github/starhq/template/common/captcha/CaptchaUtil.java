@@ -1,19 +1,17 @@
 package com.github.starhq.template.common.captcha;
 
 /**
+ * Factory utility for creating different types of captchas.
+ *
  * @author wangjian
- * @version v1.0.0
- * Copyright (C), 2020-2026, starimba@outlook.com
- * @description:
- * @date 2026/5/8 11:40
  */
 public class CaptchaUtil {
 
     /**
-     * 创建线干扰的验证码，默认5位验证码，150条干扰线
+     * Creates a line-interference captcha with default 5 characters and 150 interference lines.
      *
-     * @param width  图片宽
-     * @param height 图片高
+     * @param width  image width
+     * @param height image height
      * @return {@link LineCaptcha}
      */
     public static LineCaptcha createLineCaptcha(int width, int height) {
@@ -21,12 +19,12 @@ public class CaptchaUtil {
     }
 
     /**
-     * 创建线干扰的验证码
+     * Creates a line-interference captcha.
      *
-     * @param width     图片宽
-     * @param height    图片高
-     * @param codeCount 字符个数
-     * @param lineCount 干扰线条数
+     * @param width     image width
+     * @param height    image height
+     * @param codeCount number of characters
+     * @param lineCount number of interference lines
      * @return {@link LineCaptcha}
      */
     public static LineCaptcha createLineCaptcha(int width, int height, int codeCount, int lineCount) {
@@ -34,10 +32,10 @@ public class CaptchaUtil {
     }
 
     /**
-     * 创建圆圈干扰的验证码，默认5位验证码，15个干扰圈
+     * Creates a circle-interference captcha with default 5 characters and 15 interference circles.
      *
-     * @param width  图片宽
-     * @param height 图片高
+     * @param width  image width
+     * @param height image height
      * @return {@link CircleCaptcha}
      * @since 3.2.3
      */
@@ -46,12 +44,12 @@ public class CaptchaUtil {
     }
 
     /**
-     * 创建圆圈干扰的验证码
+     * Creates a circle-interference captcha.
      *
-     * @param width       图片宽
-     * @param height      图片高
-     * @param codeCount   字符个数
-     * @param circleCount 干扰圆圈条数
+     * @param width       image width
+     * @param height      image height
+     * @param codeCount   number of characters
+     * @param circleCount number of interference circles
      * @return {@link CircleCaptcha}
      * @since 3.2.3
      */
@@ -60,10 +58,10 @@ public class CaptchaUtil {
     }
 
     /**
-     * 创建扭曲干扰的验证码，默认5位验证码
+     * Creates a shear-interference captcha with default 5 characters.
      *
-     * @param width  图片宽
-     * @param height 图片高
+     * @param width  image width
+     * @param height image height
      * @return {@link ShearCaptcha}
      * @since 3.2.3
      */
@@ -72,12 +70,12 @@ public class CaptchaUtil {
     }
 
     /**
-     * 创建扭曲干扰的验证码，默认5位验证码
+     * Creates a shear-interference captcha.
      *
-     * @param width     图片宽
-     * @param height    图片高
-     * @param codeCount 字符个数
-     * @param thickness 干扰线宽度
+     * @param width     image width
+     * @param height    image height
+     * @param codeCount number of characters
+     * @param thickness interference line thickness
      * @return {@link ShearCaptcha}
      * @since 3.3.0
      */

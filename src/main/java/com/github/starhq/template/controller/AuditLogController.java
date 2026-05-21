@@ -16,7 +16,7 @@ import java.util.List;
 
 /**
  * Controller for handling audit log operations.
- * Provides endpoints for querying audit logs.
+ * Provides endpoints for querying historical audit trails.
  */
 @RestController
 @RequestMapping(value = "/{version}/audit-logs", version = "v1")
@@ -26,11 +26,18 @@ public class AuditLogController {
     private final AuditLogService auditLogService; // Service for handling audit log operations
 
     /**
-     * Queries audit logs with pagination and filtering based on the provided
-     * request.
+     * Queries paginated audit logs based on filtering criteria.
      *
-     * @param request the request containing pagination and filtering information
-     * @return a ResponseEntity containing the paginated audit logs
+     * <p>This endpoint is typically called by frontend admin dashboards to display the system's operation history.
+     * It uses MyBatis-Plus {@link IPage} for efficient database pagination.
+     *
+     * <p><b>Data Transformation Note:</b>
+     * This method explicitly extracts {@code records} from {@link IPage} and passes them to {@link Result#success(Object)}.
+     * We do not return the raw {@code IPage} object to avoid exposing internal pagination metadata
+     * (like total pages, current page index) directly to the frontend JSON structure.
+     *
+     * @param request the query parameters (page size, current page, search criteria)
+     * @return a standardized {@link ResponseEntity} containing the data list and total count
      */
     @GetMapping
     public ResponseEntity<Result<List<AuditLogPageVO>>> queryAuditLogs(

@@ -1,30 +1,5 @@
 package com.github.starhq.template.config.security;
 
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.core.env.Environment;
-import org.springframework.core.env.Profiles;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.AuthenticationEntryPoint;
-import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.access.AccessDeniedHandler;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.authentication.logout.LogoutHandler;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-
 import com.github.starhq.template.common.captcha.CircleCaptcha;
 import com.github.starhq.template.common.captcha.ICaptcha;
 import com.github.starhq.template.common.captcha.LineCaptcha;
@@ -49,122 +24,135 @@ import com.github.starhq.template.helper.CacheHelper;
 import com.github.starhq.template.helper.LoggerJsonSensitiveHelper;
 import com.github.starhq.template.service.ResourceService;
 import com.github.starhq.template.service.TokenService;
-
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
+import org.springframework.core.env.Profiles;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.AuthenticationEntryPoint;
+import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.AccessDeniedHandler;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.logout.LogoutHandler;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import tools.jackson.databind.json.JsonMapper;
 
 /**
- * Main Spring Security configuration for the application.
- * Configures authentication, authorization, session management, and custom
- * filters.
+ * Main Spring Security configuration class.
+ *
+ * <p>This class acts as the central brain of the security architecture. It chains together custom filters,
+ * configures stateless session management, defines endpoint permissions, and wires up cryptographic beans.
+ *
+ * <p><b>Architecture Paradigm:</b> This application implements a <b>Stateless JWT Architecture</b>. By disabling sessions
+ * ({@code .sessionManagement(...)}), the server does not keep any in-memory state between requests.
+ * Every request must carry a valid JWT. This is essential for horizontal scalability in microservices
+ * and eliminates the need for session replication in clustered environments.
  */
 @Configuration
-@EnableWebSecurity // Enables Spring Security's web security features
+@EnableWebSecurity
 public class SecurityConfig {
 
     /**
-     * Defines the security filter chain. This is the core of Spring Security
-     * configuration.
+     * Builds the main HTTP Security filter chain.
      *
-     * @param http The HttpSecurity object to configure web security.
-     * @return The configured SecurityFilterChain.
-     * @throws Exception If an error occurs during configuration.
+     * <p>This method assembles the exact sequence in which HTTP requests pass through our custom filters.
+     * Order is critical:
+     * {@code RequestResponseLoggingFilter -> JwtAuthenticationFilter -> UsernamePasswordAuthenticationFilter -> ResourceFilter -> Controller}.
+     *
+     * @param http                         The HTTP security builder.
+     * @param corsConfigurationSource      Injected CORS config to prevent cross-origin issues.
+     * @param whiteListProperties          Injected list of paths that skip authentication.
+     * @param authenticationProvider       Injected provider delegating to our {@link UserDetailsService}.
+     * @param entryPoint                   Injected handler for 401 Unauthorized responses.
+     * @param accessDeniedHandler          Injected handler for 403 Forbidden responses.
+     * @param logoutHandler                Injected handler to clear sessions and DB tokens.
+     * @param jwtAuthenticationFilter      Injected filter for JWT validation.
+     * @param requestResponseLoggingFilter Injected filter for audit logging.
+     * @param resourceFilter               Injected filter for dynamic DB-driven authorization.
+     * @return The fully constructed {@link SecurityFilterChain}.
+     * @throws Exception if configuration fails.
      */
     @Bean
-    SecurityFilterChain securityFilterChain(HttpSecurity http, CorsConfigurationSource corsConfigurationSource,
-                                            WhiteListProperties whiteListProperties, // Injected from context
-                                            AuthenticationProvider authenticationProvider, // Injected from @Bean below
-                                            AuthenticationEntryPoint entryPoint, // Injected from context
-                                            AccessDeniedHandler accessDeniedHandler, // Injected from context
-                                            LogoutHandler logoutHandler, // Injected from context
-                                            JwtAuthenticationFilter jwtAuthenticationFilter, // Injected from context
-                                            RequestResponseLoggingFilter requestResponseLoggingFilter, // Injected from context
-                                            ResourceFilter resourceFilter // Injected from context
-    ) throws Exception {
+    SecurityFilterChain securityFilterChain(HttpSecurity http, CorsConfigurationSource corsConfigurationSource, WhiteListProperties whiteListProperties, AuthenticationProvider authenticationProvider, AuthenticationEntryPoint entryPoint, AccessDeniedHandler accessDeniedHandler, LogoutHandler logoutHandler, JwtAuthenticationFilter jwtAuthenticationFilter, RequestResponseLoggingFilter requestResponseLoggingFilter, ResourceFilter resourceFilter) throws Exception {
         http
-                // Disable CORS (if handled externally or not needed for this API).
-                // For production, consider a proper CORS configuration using
-                // CorsConfigurationSource.
+                // Register CORS configuration (must be registered early, ideally via Nginx instead for pure backend setups)
                 .cors(cors -> cors.configurationSource(corsConfigurationSource))
-                // Disable CSRF (Cross-Site Request Forgery) for stateless APIs.
-                // This is common for REST APIs that rely on tokens (like JWTs) rather than
-                // sessions.
+                // Disable CSRF protection.
+                // Since we use JWT tokens (stateless), there is no session cookie to steal. Enabling CSRF would
+                // force the frontend to send CSRF tokens, which breaks stateless API clients like Postman or mobile apps.
                 .csrf(AbstractHttpConfigurer::disable)
-                // Disable anonymous authentication. All requests will either be explicitly
-                // authenticated
-                // by a filter, or explicitly permitted by authorizeHttpRequests.
+                // Disable "anonymousUser" autologin.
+                // Ensures SecurityContext remains empty if no filter populates it.
                 .anonymous(AbstractHttpConfigurer::disable)
-                // Configure stateless session management.
-                // JWTs are stateless, so no session should be created or managed by Spring
-                // Security.
+                // Configure strict session management.
+                // STATELESS means Spring will never use JSESSIONID cookies. This is mandatory for pure REST APIs.
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                // Configure authorization rules for HTTP requests.
+                // Define authorization rules
                 .authorizeHttpRequests(auth -> auth
-                        // Permit access to the Spring Boot default error page.
+                        // Spring Boot default error endpoint (usually forwards to /error)
                         .requestMatchers("/error").permitAll()
+                        // Actuator health checks
                         .requestMatchers("/actuator/health").permitAll()
+                        // Actuator all endpoints (requires ACTUATOR_ADMIN role to view raw metrics data)
                         .requestMatchers("/actuator").hasRole("ACTUATOR_ADMIN")
-                        // Permit access to paths defined in WhiteListProperties.
-                        // These paths bypass Spring Security's authentication checks.
+                        // Apply whitelist bypass
                         .requestMatchers(whiteListProperties.getWhiteList().toArray(new String[0])).permitAll()
-                        // All other requests require authentication.
+                        // Catch-all: everything else requires authentication
                         .anyRequest().authenticated())
-                // Set the custom authentication provider that handles user login logic.
+                // Plug our custom authentication provider into Spring Security's authentication mechanism
                 .authenticationProvider(authenticationProvider)
-                // Add the RequestResponseLoggingFilter to the Spring Security filter chain.
-                // This filter logs incoming and outgoing requests and responses.
-                // This is useful for debugging and monitoring.
-                // It's placed before UsernamePasswordAuthenticationFilter to log before
-                // authentication.
+                // Interceptor Chain Registration (Strict Order Matters!)
+                // 1. Log Request/Response (must be first to capture raw data before security modifies it)
                 .addFilterBefore(requestResponseLoggingFilter, UsernamePasswordAuthenticationFilter.class)
-                // Add the JWT authentication filter to the Spring Security filter chain.
-                // It's placed before UsernamePasswordAuthenticationFilter to process JWTs
-                // first.
+                // 2. Validate JWT and populate SecurityContext (must be before Spring Security's auth check)
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-                // Add the Resource filter after the JWT filter.
-                // This ensures that authentication context is available for resource-level
-                // authorization checks.
+                // 3. Dynamic DB Authorization (must be after JWT so it can read SecurityContext)
                 .addFilterAfter(resourceFilter, JwtAuthenticationFilter.class)
-                // Configure exception handling for authentication and access denied scenarios.
-                // Custom entry points and handlers provide specific JSON responses.
+                // Configure custom exception handlers to return JSON instead of 302 redirects
                 .exceptionHandling(e -> e.authenticationEntryPoint(entryPoint).accessDeniedHandler(accessDeniedHandler))
-                // Configure logout handling.
-                // The specified logout URL triggers the CustomLogoutHandler.
+                // Configure logout behavior
                 .logout(l -> l.logoutUrl("/api/v1/auth/logout").addLogoutHandler(logoutHandler)
+                        // The default Spring Security logout handler clears the SecurityContext. We duplicate it here
+                        // to ensure absolute cleanup in case custom handlers fail before execution.
                         .logoutSuccessHandler((req, resp, auth) -> SecurityContextHolder.clearContext()));
 
         return http.build();
     }
 
-    // --- Authentication and Authorization Beans ---
+    // ==========================================
+    // 1. Authentication Mechanism
+    // ==========================================
 
     /**
-     * Configures the AuthenticationProvider which is responsible for fetching user
-     * details
-     * and performing password verification.
-     * Uses DaoAuthenticationProvider with the custom UserDetailsService and
-     * PasswordEncoder.
+     * Configures the provider responsible for verifying user credentials against the database.
      *
-     * @param passwordEncoder    The PasswordEncoder bean for password verification.
-     * @param userDetailsService The UserDetailsService bean for loading user
-     *                           details.
-     * @return A configured AuthenticationProvider.
+     * <p>We use {@link DaoAuthenticationProvider} because our architecture queries the database
+     * via {@link UserDetailsService} to load the user object, rather than relying on an in-memory map.
      */
     @Bean
-    AuthenticationProvider authenticationProvider(PasswordEncoder passwordEncoder,
-                                                  UserDetailsService userDetailsService) {
+    AuthenticationProvider authenticationProvider(PasswordEncoder passwordEncoder, UserDetailsService userDetailsService) {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider(userDetailsService);
         authProvider.setPasswordEncoder(passwordEncoder);
         return authProvider;
     }
 
     /**
-     * Exposes the AuthenticationManager bean.
-     * The AuthenticationManager coordinates with AuthenticationProviders to
-     * authenticate users.
-     *
-     * @param config The AuthenticationConfiguration to get the manager from.
-     * @return The configured AuthenticationManager.
-     * @throws Exception If an error occurs retrieving the manager.
+     * Exposes the global {@link AuthenticationManager} bean.
+     * This manager coordinates the configured {@link AuthenticationProvider} to perform actual
+     * authentication logic.
      */
     @Bean
     AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
@@ -172,28 +160,24 @@ public class SecurityConfig {
     }
 
     /**
-     * Provides a BCryptPasswordEncoder bean for password hashing.
-     * The strength of the encoder is dynamically set based on available CPU cores.
+     * Provides the password hashing bean.
      *
-     * @return A BCryptPasswordEncoder instance.
+     * <p><b>Dynamic Strength Logic:</b> Dynamically adjusts the BCrypt strength (rounds) based on server CPU cores.
+     * High-core servers (e.g., 16 cores) can handle strength 12 securely without noticeable latency,
+     * while low-core servers (e.g., 2 cores) default to strength 10 to prevent login API timeouts.
      */
     @Bean
     PasswordEncoder passwordEncoder() {
-        // Adjust BCrypt strength based on CPU cores for performance vs. security
-        // balance.
-        // A strength of 10-12 is generally recommended.
         int strength = Runtime.getRuntime().availableProcessors() > 8 ? 12 : 10;
         return new BCryptPasswordEncoder(strength);
     }
 
-    // --- JWT Related Beans ---
+    // ==========================================
+    // 2.JWT & Filter Beans
+    // ==========================================
 
     /**
-     * Provides the JwtService bean for handling JWT token creation and parsing.
-     *
-     * @param jwtProperties The JwtProperties bean containing JWT configuration
-     *                      (e.g., secret key, expiration times).
-     * @return A JwtService instance.
+     * Factory method for the JWT service.
      */
     @Bean
     JwtService jwtService(JwtProperties jwtProperties) {
@@ -201,34 +185,18 @@ public class SecurityConfig {
     }
 
     /**
-     * Provides the JwtAuthenticationFilter bean.
-     * This filter intercepts requests to validate JWT tokens and set up the
-     * SecurityContext.
-     *
-     * @param jwtService         The JwtService for token operations.
-     * @param userDetailsService The UserDetailsService for loading user details
-     *                           from the token's subject.
-     * @param tokenService       The TokenService for database-side token
-     *                           validation (e.g., revocation, session expiry).
-     * @return A JwtAuthenticationFilter instance.
+     * Factory method for the JWT authentication filter.
      */
     @Bean
-    JwtAuthenticationFilter jwtAuthenticationFilter(JwtService jwtService, UserDetailsService userDetailsService,
-                                                    TokenService tokenService, WhiteListPathMatcher whiteListPathMatcher, JsonMapper jsonMapper, MessageUtils messageUtils) {
-        return new JwtAuthenticationFilter(jwtService, userDetailsService, tokenService, whiteListPathMatcher,
-                jsonMapper, messageUtils);
+    JwtAuthenticationFilter jwtAuthenticationFilter(JwtService jwtService, UserDetailsService userDetailsService, TokenService tokenService, WhiteListPathMatcher whiteListPathMatcher, JsonMapper jsonMapper, MessageUtils messageUtils) {
+        return new JwtAuthenticationFilter(jwtService, userDetailsService, tokenService, whiteListPathMatcher, jsonMapper, messageUtils);
     }
 
     /**
-     * Provides the RequestResponseLoggingFilter bean.
-     * This filter logs incoming and outgoing HTTP requests and responses.
-     *
-     * @param environment The Environment for application profiles.
-     * @return A RequestResponseLoggingFilter instance.
+     * Factory method for the request/response logging filter.
      */
     @Bean
-    RequestResponseLoggingFilter requestResponseLoggingFilter(LoggerJsonSensitiveHelper sensitiveHelper,
-                                                              Environment environment, EventService eventService) {
+    RequestResponseLoggingFilter requestResponseLoggingFilter(LoggerJsonSensitiveHelper sensitiveHelper, Environment environment, EventService eventService) {
         boolean isProd = environment.acceptsProfiles(Profiles.of(ProfileConstants.PROD));
         return new RequestResponseLoggingFilter(sensitiveHelper, eventService, isProd);
     }
@@ -239,30 +207,19 @@ public class SecurityConfig {
     }
 
     /**
-     * Provides the ResourceFilter bean.
-     * This filter performs fine-grained resource-level authorization based on
-     * stored resource definitions
-     * and user permissions, typically after initial authentication.
-     *
-     * @param resourceService The ResourceService to fetch resource definitions.
-     * @return A ResourceFilter instance.
+     * Factory method for the dynamic resource authorization filter.
      */
     @Bean
-    ResourceFilter resourceFilter(ResourceService resourceService, WhiteListPathMatcher whiteListPathMatcher,
-                                  CacheHelper cacheHelper, JsonMapper jsonMapper) {
+    ResourceFilter resourceFilter(ResourceService resourceService, WhiteListPathMatcher whiteListPathMatcher, CacheHelper cacheHelper, JsonMapper jsonMapper) {
         return new ResourceFilter(resourceService, whiteListPathMatcher, cacheHelper, jsonMapper);
     }
 
-    // --- Custom Handler Beans ---
+    // ==========================================
+    // 3. Custom Security Handlers(401 & 403)
+    // ==========================================
 
     /**
-     * Provides the CustomLogoutHandler bean.
-     * This handler is responsible for invalidating tokens in the database and
-     * clearing
-     * the security context during the logout process.
-     *
-     * @param tokenService The TokenService for managing database tokens.
-     * @return A CustomLogoutHandler instance.
+     * Factory method for the logout handler.
      */
     @Bean
     LogoutHandler logoutService(TokenService tokenService) {
@@ -270,16 +227,7 @@ public class SecurityConfig {
     }
 
     /**
-     * Provides the CustomAccessDeniedHandler bean.
-     * This handler is invoked by Spring Security when an authenticated user tries
-     * to access
-     * a resource they are not authorized for (resulting in a 403 Forbidden
-     * response).
-     * It formats a custom JSON error response.
-     *
-     * @param messageUtils The MessageUtils for internationalized error messages.
-     * @param jsonMapper   The Environment for application profiles.
-     * @return A CustomAccessDeniedHandler instance.
+     * Factory method for the 403 Forbidden handler.
      */
     @Bean
     AccessDeniedHandler accessDeniedService(MessageUtils messageUtils, JsonMapper jsonMapper) {
@@ -287,22 +235,22 @@ public class SecurityConfig {
     }
 
     /**
-     * Provides the CustomAuthenticationEntryPoint bean.
-     * This entry point is invoked by Spring Security when an unauthenticated user
-     * attempts
-     * to access a protected resource (resulting in a 401 Unauthorized response).
-     * It formats a custom JSON error response.
-     *
-     * @param messageUtils The MessageUtils for internationalized error messages.
-     * @param jsonMapper   The Environment for application profiles.
-     * @return A CustomAuthenticationEntryPoint instance.
+     * Factory method for the 401 Unauthorized entry point.
      */
     @Bean
     AuthenticationEntryPoint customAuthenticationEntryPoint(MessageUtils messageUtils, JsonMapper jsonMapper) {
         return new CustomAuthenticationEntryPoint(messageUtils, jsonMapper);
     }
 
-    // ✅ 3. 动态构建 CorsConfigurationSource
+    // ==========================================
+    // 4. Infrastructure Beans(CORS &Captcha)
+    // ==========================================
+
+    /**
+     * Dynamically constructs the CORS configuration based on properties.
+     * Separating this into a bean makes it easier to manage multiple origin patterns
+     * without cluttering the main security chain.
+     */
     @Bean
     CorsConfigurationSource corsConfigurationSource(CorsProperties corsProperties) {
         CorsConfiguration configuration = new CorsConfiguration();
@@ -313,22 +261,27 @@ public class SecurityConfig {
         configuration.setAllowCredentials(corsProperties.isAllowCredentials());
         configuration.setMaxAge(corsProperties.getMaxAge());
 
+        // Map the configuration to all endpoints
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
     }
 
+    /**
+     * Dynamic factory for the Captcha generator based on configuration properties.
+     *
+     * @param properties injected configuration dictating the visual style of the captcha
+     * @return an implementation of {@link ICaptcha}
+     * @throws BusinessException if an unsupported captcha type is configured
+     */
     @Bean
     ICaptcha captcha(CaptchaProperties properties) {
         String type = properties.getType();
 
         return switch (type) {
-            case "line" -> new LineCaptcha(properties.getWidth(), properties.getHeight(), properties.getCodeCount(),
-                    properties.getInterfereCount());
-            case "circle" -> new CircleCaptcha(properties.getWidth(), properties.getHeight(), properties.getCodeCount(),
-                    properties.getInterfereCount());
-            case "shear" -> new ShearCaptcha(properties.getWidth(), properties.getHeight(), properties.getCodeCount(),
-                    properties.getInterfereCount());
+            case "line" -> new LineCaptcha(properties.getWidth(), properties.getHeight(), properties.getCodeCount(), properties.getInterfereCount());
+            case "circle" -> new CircleCaptcha(properties.getWidth(), properties.getHeight(), properties.getCodeCount(), properties.getInterfereCount());
+            case "shear" -> new ShearCaptcha(properties.getWidth(), properties.getHeight(), properties.getCodeCount(), properties.getInterfereCount());
             default -> throw new BusinessException(ErrorCode.INTERNAL_ERROR);
         };
 

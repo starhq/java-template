@@ -1,47 +1,119 @@
 package com.github.starhq.template.common.constant;
 
+/**
+ * Constants for Audit Log actions.
+ *
+ * <p>Defines standardized action descriptions for system operations.
+ * These constants are primarily used in conjunction with the {@code @AuditLoggable} annotation
+ * to ensure consistency in audit log records.
+ *
+ * @see com.github.starhq.template.aop.annotation.AuditLoggable#action()
+ */
 public interface AuditLogConstant {
 
-    String USER_UPDATE = "update user";
+    /**
+     * Action constant for updating a user.
+     */
+    String USER_UPDATE = "UPDATE_USER";
 
-    String USER_REMOVE = "remove user";
+    /**
+     * Action constant for removing a user.
+     */
+    String USER_REMOVE = "REMOVE_USER";
 
-    String USER_INSERT = "insert user";
+    /**
+     * Action constant for inserting/creating a user.
+     */
+    String USER_INSERT = "INSERT_USER";
 
-    String ROLE_UPDATE = "update role";
+    /**
+     * Action constant for updating a role.
+     */
+    String ROLE_UPDATE = "UPDATE_ROLE";
 
-    String ROLE_REMOVE = "remove role";
+    /**
+     * Action constant for removing a role.
+     */
+    String ROLE_REMOVE = "REMOVE_ROLE";
 
-    String ROLE_INSERT = "insert role";
+    /**
+     * Action constant for inserting/creating a role.
+     */
+    String ROLE_INSERT = "INSERT_ROLE";
 
-    String RESOURCE_UPDATE = "update resource";
+    /**
+     * Action constant for updating a resource.
+     */
+    String RESOURCE_UPDATE = "UPDATE_RESOURCE";
 
-    String RESOURCE_REMOVE = "remove resource";
+    /**
+     * Action constant for removing a resource.
+     */
+    String RESOURCE_REMOVE = "REMOVE_RESOURCE";
 
-    String RESOURCE_INSERT = "insert resource";
+    /**
+     * Action constant for inserting/creating a resource.
+     */
+    String RESOURCE_INSERT = "INSERT_RESOURCE";
 
-    String BUTTON_UPDATE = "update button";
+    /**
+     * Action constant for updating a button.
+     */
+    String BUTTON_UPDATE = "UPDATE_BUTTON";
 
-    String BUTTON_REMOVE = "remove button";
+    /**
+     * Action constant for removing a button.
+     */
+    String BUTTON_REMOVE = "REMOVE_BUTTON";
 
-    String BUTTON_INSERT = "insert button";
+    /**
+     * Action constant for inserting/creating a button.
+     */
+    String BUTTON_INSERT = "INSERT_BUTTON";
 
-    String MENU_UPDATE = "update menu";
+    /**
+     * Action constant for updating a menu.
+     */
+    String MENU_UPDATE = "UPDATE_MENU";
 
-    String MENU_REMOVE = "remove menu";
+    /**
+     * Action constant for removing a menu.
+     */
+    String MENU_REMOVE = "REMOVE_MENU";
 
-    String MENU_INSERT = "insert menu";
+    /**
+     * Action constant for inserting/creating a menu.
+     */
+    String MENU_INSERT = "INSERT_MENU";
 
-    String DICT_TYPE_UPDATE = "update dict type";
+    /**
+     * Action constant for updating a dictionary type.
+     */
+    String DICT_TYPE_UPDATE = "UPDATE_DICT_TYPE";
 
-    String DICT_TYPE_REMOVE = "remove dict type";
+    /**
+     * Action constant for removing a dictionary type.
+     */
+    String DICT_TYPE_REMOVE = "REMOVE_DICT_TYPE";
 
-    String DICT_TYPE_INSERT = "insert dict type";
+    /**
+     * Action constant for inserting/creating a dictionary type.
+     */
+    String DICT_TYPE_INSERT = "INSERT_DICT_TYPE";
 
-    String DICT_DATA_UPDATE = "update dict data";
+    /**
+     * Action constant for updating a dictionary data entry.
+     */
+    String DICT_DATA_UPDATE = "UPDATE_DICT_DATA";
 
-    String DICT_DATA_REMOVE = "remove dict data";
+    /**
+     * Action constant for removing a dictionary data entry.
+     */
+    String DICT_DATA_REMOVE = "REMOVE_DICT_DATA";
 
-    String DICT_DATA_INSERT = "insert dict data";
+    /**
+     * Action constant for inserting/creating a dictionary data entry.
+     */
+    String DICT_DATA_INSERT = "INSERT_DICT_DATA";
 
 }

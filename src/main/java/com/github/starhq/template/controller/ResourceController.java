@@ -16,78 +16,90 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 /**
- * Controller for managing resource operations.
- * Provides endpoints for creating, updating, deleting, and querying resources.
+ * RESTful API controller for managing resource permissions.
+ * Provides standardized endpoints for creating, updating, deleting,
+ * and querying system resources (e.g., API endpoints, buttons, menus)
+ * used in role-based access control (RBAC) scenarios.
+ *
+ * @author starhq
+ * @version 1.0
+ * @date 2026-05-20
  */
 @RestController
 @RequestMapping(value = "/{version}/resources", version = "v1")
 @RequiredArgsConstructor
 public class ResourceController {
 
-    private final ResourceService resourceService; // Service for handling resource operations
+    private final ResourceService resourceService;
 
     /**
-     * Creates a new resource.
+     * Creates a new resource entry with the provided details.
+     * Typically used for registering new API endpoints or UI elements
+     * into the permission system.
      *
-     * @param request the request containing resource creation details
-     * @return a ResponseEntity indicating the result of the creation
+     * @param request the {@link ResourceDTO} containing the resource creation parameters
+     * @return a {@link ResponseEntity} with HTTP status 201 (Created) upon successful creation
      */
     @PostMapping
     public ResponseEntity<Void> create(@Valid @RequestBody ResourceDTO request) {
-        resourceService.createResource(request); // Call service to create resource
-        return ResponseEntity.status(HttpStatus.CREATED).build(); // Return 201 Created status
+        resourceService.createResource(request);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     /**
-     * Updates an existing resource by its ID.
+     * Updates an existing resource entry by its unique identifier.
      *
-     * @param id      the ID of the resource to update
-     * @param request the request containing updated resource details
-     * @return a ResponseEntity indicating the result of the update
+     * @param id      the unique identifier of the resource to update
+     * @param request the {@link ResourceDTO} containing the updated resource parameters
+     * @return a {@link ResponseEntity} with HTTP status 200 (OK) upon successful update
      */
     @PutMapping("/{id}")
     public ResponseEntity<Void> update(@PathVariable("id") Long id,
                                        @Valid @RequestBody ResourceDTO request) {
-        resourceService.updateResource(id, request); // Call service to update resource
-        return ResponseEntity.ok().build(); // Return 200 OK status
+        resourceService.updateResource(id, request);
+        return ResponseEntity.ok().build();
     }
 
     /**
-     * Deletes a resource by its ID.
+     * Deletes a resource entry by its unique identifier.
+     * This operation is restricted if the resource is referenced by
+     * active roles, permissions, or menu configurations.
      *
-     * @param id the ID of the resource to delete
-     * @return a ResponseEntity indicating the result of the deletion
+     * @param id the unique identifier of the resource to delete
+     * @return a {@link ResponseEntity} with HTTP status 204 (No Content) upon successful deletion
+     * @throws com.github.starhq.template.common.exception.BusinessException if the resource cannot be deleted due to dependencies
      */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable("id") Long id) {
-        resourceService.removeById(id); // Call service to remove resource
-        return ResponseEntity.noContent().build(); // Return 204 No Content status
+        resourceService.removeById(id);
+        return ResponseEntity.noContent().build();
     }
 
     /**
-     * Retrieves resources with pagination.
+     * Retrieves a paginated list of resource entries with optional filtering.
+     * Supports sorting and field-based queries for admin console display.
      *
-     * @param pageRequest the pagination request parameters
-     * @return a ResponseEntity containing the paginated resources
+     * @param pageRequest the {@link PageRequest} containing pagination, sorting, and filtering parameters
+     * @return a {@link ResponseEntity} containing a {@link Result} wrapper with total count and paginated {@link ResourcePageVO} records
      */
     @GetMapping
     public ResponseEntity<Result<List<ResourcePageVO>>> queryResources(@Valid PageRequest pageRequest) {
-        IPage<ResourcePageVO> paginatedResources = resourceService.page(pageRequest); // Fetch paginated resources
-        Result<List<ResourcePageVO>> result = Result.success(paginatedResources.getRecords(), paginatedResources.getTotal());// Create response
-        return ResponseEntity.ok(result); // Return response with 200 OK status
+        IPage<ResourcePageVO> paginatedResources = resourceService.page(pageRequest);
+        Result<List<ResourcePageVO>> result = Result.success(paginatedResources.getRecords(), paginatedResources.getTotal());
+        return ResponseEntity.ok(result);
     }
 
     /**
-     * Retrieves a resource by its ID.
+     * Retrieves a single resource entry by its unique identifier.
+     * Suitable for editing forms or permission detail views.
      *
-     * @param id the ID of the resource to retrieve
-     * @return a ResponseEntity containing the resource details
+     * @param id the unique identifier of the resource to retrieve
+     * @return a {@link ResponseEntity} containing a {@link Result} wrapper with the {@link ResourceSimpleVO} details
      */
     @GetMapping("/{id}")
     public ResponseEntity<Result<ResourceSimpleVO>> queryResourceById(@PathVariable("id") Long id) {
-        ResourceSimpleVO resource = resourceService.getResourceById(id); // Fetch the resource by ID
-        Result<ResourceSimpleVO> result = Result.success(resource); // Create response
-        return ResponseEntity.ok(result); // Return response with 200 OK status
+        ResourceSimpleVO resource = resourceService.getResourceById(id);
+        Result<ResourceSimpleVO> result = Result.success(resource);
+        return ResponseEntity.ok(result);
     }
-
 }

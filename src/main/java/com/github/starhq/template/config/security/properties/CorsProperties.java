@@ -7,11 +7,9 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 /**
+ * CORS configuration properties.
+ *
  * @author wangjian
- * @version v1.0.0
- * Copyright (C), 2020-2026, starimba@outlook.com
- * @description: cors config properties
- * @date 2026/4/11 21:49
  */
 @Data
 @Component
@@ -19,33 +17,33 @@ import java.util.List;
 public class CorsProperties {
 
     /**
-     * 默认允许本地常见前端端口跨域 (Vue/React 默认端口)
-     * 注意：使用 patterns 而不是 origins，是为了配合下面的 allowCredentials=true
+     * Default allowed origin patterns for CORS (common frontend ports: Vue/React).
+     * Note: Using patterns instead of origins to配合 allowCredentials=true below.
      */
     private List<String> allowedOriginPatterns = List.of(
             "http://localhost:8080",
             "http://localhost:3000",
-            "http://localhost:5173"  // Vite 默认端口
+            "http://localhost:5173"  // Vite default port
     );
 
     /**
-     * 默认允许基本的 RESTful 请求方法
+     * Default allowed HTTP methods.
      */
     private List<String> allowedMethods = List.of("GET", "POST", "PUT", "DELETE", "OPTIONS");
 
     /**
-     * 默认允许所有请求头
+     * Default allowed headers.
      */
     private List<String> allowedHeaders = List.of("*");
 
     /**
-     * 默认允许携带凭证 (Cookie、Authorization header 等)
-     * 如果设为 false，前端 axios 的 withCredentials: true 将失效
+     * Default allow credentials (Cookie, Authorization header, etc.).
+     * If false, frontend axios withCredentials: true will not work.
      */
     private boolean allowCredentials = true;
 
     /**
-     * 默认预检请求缓存 1 小时 (3600秒)
+     * Default preflight request cache time (1 hour / 3600 seconds).
      */
     private long maxAge = 3600L;
 }

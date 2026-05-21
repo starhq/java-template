@@ -22,25 +22,31 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 /**
- * 角色控制器
+ * RESTful API controller for managing role-based access control (RBAC).
+ * Provides standardized endpoints for creating, updating, deleting,
+ * and querying roles, along with their associated permissions
+ * (buttons, resources, and menus) for authorization scenarios.
  *
  * @author starhq
+ * @version 1.0
+ * @date 2026-05-20
  */
 @RestController
 @RequestMapping(value = "/{version}/roles", version = "v1")
 @RequiredArgsConstructor
 public class RoleController {
+
     private final RoleService roleService;
     private final ButtonService buttonService;
     private final ResourceService resourceService;
     private final MenuService menuService;
 
     /**
-     * Creates a new role in the system.
+     * Creates a new role entry with the provided details.
+     * Typically used for defining new permission groups in the RBAC system.
      *
-     * @param dto The request body containing the details for the new role.
-     * @return A ResponseEntity with HTTP status 201 (Created) on successful
-     * creation.
+     * @param dto the {@link RoleDTO} containing the role creation parameters
+     * @return a {@link ResponseEntity} with HTTP status 201 (Created) upon successful creation
      */
     @PostMapping
     public ResponseEntity<Void> createRole(@Valid @RequestBody RoleDTO dto) {
@@ -49,12 +55,11 @@ public class RoleController {
     }
 
     /**
-     * Updates an existing role.
-     * The ID of the role to update is taken from the path variable.
+     * Updates an existing role entry by its unique identifier.
      *
-     * @param id  The ID of the role to update.
-     * @param dto The request body containing the updated details for the role.
-     * @return A ResponseEntity with HTTP status 200 (OK) on successful update.
+     * @param id  the unique identifier of the role to update
+     * @param dto the {@link RoleDTO} containing the updated role parameters
+     * @return a {@link ResponseEntity} with HTTP status 200 (OK) upon successful update
      */
     @PutMapping("/{id}")
     public ResponseEntity<Void> updateRole(@PathVariable Long id, @Valid @RequestBody RoleDTO dto) {
@@ -63,17 +68,13 @@ public class RoleController {
     }
 
     /**
-     * Deletes a role by its ID.
+     * Deletes a role entry by its unique identifier.
+     * This operation is restricted if the role is assigned to active users
+     * or referenced by permission policies.
      *
-     * @param id The ID of the role to delete.
-     * @return A ResponseEntity with HTTP status 204 (No Content) on successful
-     * deletion.
-     * Assumes that if the service method completes without throwing an
-     * exception,
-     * the deletion was successful. If the resource was not found, the
-     * service
-     * layer or global exception handler should return an appropriate error
-     * status (e.g., 404).
+     * @param id the unique identifier of the role to delete
+     * @return a {@link ResponseEntity} with HTTP status 204 (No Content) upon successful deletion
+     * @throws com.github.starhq.template.common.exception.BusinessException if the role cannot be deleted due to dependencies
      */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteRole(@PathVariable Long id) {
@@ -82,10 +83,11 @@ public class RoleController {
     }
 
     /**
-     * 根据ID查询角色
+     * Retrieves a single role entry by its unique identifier.
+     * Suitable for editing forms or role detail views in admin consoles.
      *
-     * @param id 角色ID
-     * @return 角色VO
+     * @param id the unique identifier of the role to retrieve
+     * @return a {@link ResponseEntity} containing a {@link Result} wrapper with the {@link RoleSimpleVO} details
      */
     @GetMapping("/{id}")
     public ResponseEntity<Result<RoleSimpleVO>> queryRole(@PathVariable("id") Long id) {
@@ -95,39 +97,38 @@ public class RoleController {
     }
 
     /**
-     * 分页查询角色
+     * Retrieves a paginated list of role entries with optional filtering.
+     * Supports sorting and field-based queries for admin console display.
      *
-     * @param pageRequest 分页请求
-     * @return 分页结果
+     * @param pageRequest the {@link PageRequest} containing pagination, sorting, and filtering parameters
+     * @return a {@link ResponseEntity} containing a {@link Result} wrapper with total count and paginated {@link RolePageVO} records
      */
     @GetMapping
     public ResponseEntity<Result<List<RolePageVO>>> queryRoles(@Valid PageRequest pageRequest) {
-        IPage<RolePageVO> paginatedResources = roleService.page(pageRequest); // Fetch paginated resources
-        Result<List<RolePageVO>> result = Result.success(paginatedResources.getRecords(), paginatedResources.getTotal());// Create response
-        return ResponseEntity.ok(result); // Return response with 200 OK status
+        IPage<RolePageVO> paginatedRoles = roleService.page(pageRequest);
+        Result<List<RolePageVO>> result = Result.success(paginatedRoles.getRecords(), paginatedRoles.getTotal());
+        return ResponseEntity.ok(result);
     }
 
     /**
-     * Queries the buttons associated with a specific role.
+     * Retrieves the list of buttons checked/assigned to a specific role.
+     * Suitable for rendering permission checkboxes in role configuration UIs.
      *
-     * @param roleId The ID of the role.
-     * @return A ResponseEntity with HTTP status 200 (OK) and a RestResponse
-     * containing a list of checked buttons for the specified role.
+     * @param roleId the unique identifier of the role
+     * @return a {@link ResponseEntity} containing a {@link Result} wrapper with a list of {@link ButtonCheckVO}
      */
     @GetMapping("/buttons")
     public ResponseEntity<Result<List<ButtonCheckVO>>> queryRoleButtons(@RequestParam("roleId") Long roleId) {
         List<ButtonCheckVO> buttons = buttonService.selectCheckedButtons(roleId);
-
-        return ResponseEntity.ok(Result.success(buttons)
-        );
+        return ResponseEntity.ok(Result.success(buttons));
     }
 
     /**
-     * Queries the resources associated with a specific role.
+     * Retrieves the list of resources checked/assigned to a specific role.
+     * Suitable for configuring API endpoint permissions in role management.
      *
-     * @param roleId The ID of the role.
-     * @return A ResponseEntity with HTTP status 200 (OK) and a RestResponse
-     * containing a list of checked resources for the specified role.
+     * @param roleId the unique identifier of the role
+     * @return a {@link ResponseEntity} containing a {@link Result} wrapper with a list of {@link ResourceCheckVO}
      */
     @GetMapping("/resources")
     public ResponseEntity<Result<List<ResourceCheckVO>>> queryRoleResources(@RequestParam("roleId") Long roleId) {
@@ -136,11 +137,11 @@ public class RoleController {
     }
 
     /**
-     * Queries the menus associated with a specific role.
+     * Retrieves the list of menus checked/assigned to a specific role.
+     * Suitable for configuring sidebar navigation visibility based on role permissions.
      *
-     * @param roleId The ID of the role.
-     * @return A ResponseEntity with HTTP status 200 (OK) and a RestResponse
-     * containing a list of checked menus for the specified role.
+     * @param roleId the unique identifier of the role
+     * @return a {@link ResponseEntity} containing a {@link Result} wrapper with a list of {@link MenuCheckVO}
      */
     @GetMapping("/menus")
     public ResponseEntity<Result<List<MenuCheckVO>>> queryRoleMenus(@RequestParam("roleId") Long roleId) {

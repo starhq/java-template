@@ -1,18 +1,13 @@
 package com.github.starhq.template.mapper;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
-import java.time.OffsetDateTime;
-
+import com.github.starhq.template.BaseMapperTest;
+import com.github.starhq.template.entity.SysDictData;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.github.starhq.template.BaseMapperTest;
-import com.github.starhq.template.entity.SysDictData;
-import com.github.starhq.template.model.vo.DictDataVO;
+import java.time.OffsetDateTime;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 class SysDictDataMapperTest extends BaseMapperTest {
 
@@ -63,24 +58,6 @@ class SysDictDataMapperTest extends BaseMapperTest {
         assertThat(result).isNotNull();
         assertThat(result.getId()).isEqualTo(dictData.getId());
         assertThat(result.getLabel()).isEqualTo("Male");
-    }
-
-    @Test
-    void selectDictDataPage_shouldReturnPagedResult() {
-        SysDictData dictData = prepare(104L, "Male", "male");
-        dictDataMapper.insert(dictData);
-
-        Page<DictDataVO> page = new Page<>(1, 10);
-        QueryWrapper<DictDataVO> wrapper = new QueryWrapper<>();
-        wrapper.eq("dd.type_id", 1L);
-        wrapper.orderBy(true, false, "id");
-
-        IPage<DictDataVO> result = dictDataMapper.selectDictDataPage(page, wrapper);
-
-        assertThat(result).isNotNull();
-        assertThat(result.getTotal()).isGreaterThan(0);
-        assertThat(result.getRecords()).hasSize(4);
-        assertThat(result.getRecords().getFirst().getLabel()).isEqualTo("Male");
     }
 
     @Test

@@ -1,44 +1,58 @@
 package com.github.starhq.template.config.security.properties;
 
-import java.time.Duration;
-
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.annotation.Validated;
 
-import jakarta.validation.constraints.NotBlank;
-import lombok.Data;
+import java.time.Duration;
 
 /**
- * | 场景 | Access Token (访问令牌) | Refresh Token (刷新令牌) | 说明 |
- * | :--- | :--- | :--- | :--- |
- * | **推荐标准** | **30 分钟 ~ 2 小时** | **7 天 ~ 14 天** | 兼顾安全与体验。 |
- * | **高安全** | 5 ~ 15 分钟 | 1 天 | 银行、金融类应用。用户活跃期间无感刷新。 |
- * | **低安全/内部** | 4 ~ 8 小时 | 30 天 | 内部管理系统，用户不想频繁登录。 |
- * | **移动端 App** | 1 ~ 2 小时 | 30 天 ~ 90 天 | 移动端输入密码麻烦，允许长久的登录状态。 |
+ * Configuration properties for JSON Web Token (JWT) generation and validation.
+ *
+ * <p>Binds to the {@code star.jwt} namespace in application YAML files. Controls the cryptographic
+ * signature requirements and the lifespan of both Access and Refresh tokens.
+ *
+ * <p><b>Token Expiration Strategy Recommendations:</b>
+ * <table border="1">
+ * <tr><th>Scenario</th><th>Access Token</th><th>Refresh Token</th><th>Description</th></tr>
+ * <tr><td><strong>Recommended Standard</strong></td><td><strong>30m - 2h</strong></td><td><strong>7 - 14 days</strong></td><td>Balances security and user experience seamlessly.</td></tr>
+ * <tr><td><strong>High Security</strong></td><td><strong>5 - 15m</strong></td><td><strong>1 day</strong></td><td>Banking/financial apps. Frequent silent refresh ensures active sessions are validated.</td></tr>
+ * <tr><td><strong>Low Security/Internal</strong></td><td><strong>4 - 8h</strong></td><td><strong>30 days</strong></td><td>Internal microservices. Users prefer not to log in repeatedly.</td></tr>
+ * <tr><td><strong>Mobile App</strong></td><td><strong>1 - 2h</strong></td><td><strong>30 - 90 days</strong></td><td>Mobile typing is cumbersome. Allow long login sessions to reduce friction.</td></tr>
+ * </table>
+ *
+ * @author starhq
  */
 @Data
 @Component
-@Validated // 开启校验
+@Validated // Triggers validation of JSR-380 annotations (@NotBlank, @Size) upon startup
 @ConfigurationProperties(prefix = "star.jwt")
 public class JwtProperties {
 
     /**
-     * Base64 encoded secret key.
-     * Must be at least 256 bits (32 characters) for HS256.
+     * Base64-encoded secret key used to digitally sign and verify the JWT.
+     * <p><b>Security Requirement:</b> HMAC-SHA256 requires a key of exactly 256 bits (32 bytes).
+     * If the string is shorter, the key generation will fail or be cryptographically weak.
      */
     @NotBlank(message = "JWT signing key must not be blank")
     @Size(min = 32, message = "JWT key must be at least 32 characters")
     private String key;
 
     /**
-     * Access token expiration time.
+     * The lifespan of the Access Token.
+     * <p>This token is short-lived and used to authorize API requests. A shorter lifespan limits the
+     * window of opportunity if the token is stolen by an attacker (e.g., via XSS).
      */
     private Duration access = Duration.ofMinutes(30);
 
     /**
-     * Refresh token expiration time.
+     * The lifespan of the Refresh Token.
+     * <p>This token is long-lived and securely stored (e.g., in a database). It is only ever presented
+     * to the dedicated refresh endpoint, never exposed to the browser network in API calls, mitigating
+     * the risk of interception.
      */
     private Duration refresh = Duration.ofDays(7);
 }
