@@ -1,7 +1,6 @@
 package com.github.starhq.template.config.security.properties;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
@@ -34,11 +33,10 @@ public class JwtProperties {
 
     /**
      * Base64-encoded secret key used to digitally sign and verify the JWT.
-     * <p><b>Security Requirement:</b> HMAC-SHA256 requires a key of exactly 256 bits (32 bytes).
+     * <p><b>Security Requirement:</b> HMAC-SHA512 requires a key of exactly 512 bits (64 bytes).
      * If the string is shorter, the key generation will fail or be cryptographically weak.
      */
     @NotBlank(message = "JWT signing key must not be blank")
-    @Size(min = 32, message = "JWT key must be at least 32 characters")
     private String key;
 
     /**

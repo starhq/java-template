@@ -5,6 +5,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
+import io.jsonwebtoken.io.EncodingException;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -43,8 +44,23 @@ public class JwtService {
      */
     public JwtService(JwtProperties jwtProperties) {
         this.jwtProperties = jwtProperties;
+
         // Decode the Base64 string into a native Java cryptography Key object
-        this.signingKey = Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtProperties.getKey()));
+        try {
+            byte[] keyBytes = Decoders.BASE64.decode(jwtProperties.getKey());
+
+            // ✅ 关键校验：64 字节 = 512 bits = HS512
+            if (keyBytes.length != 64) {
+                throw new IllegalArgumentException(
+                        String.format("JWT key must be 64 bytes (512 bits) for HS512, got %d bytes. " +
+                                "Regenerate with: openssl rand -base64 64", keyBytes.length));
+            }
+
+            this.signingKey = Keys.hmacShaKeyFor(keyBytes);
+
+        } catch (EncodingException e) {
+            throw new IllegalArgumentException("JWT key is not valid Base64: " + e.getMessage(), e);
+        }
     }
 
     /**
@@ -89,7 +105,7 @@ public class JwtService {
                 .subject(subject)          // Set the standard "sub" claim
                 .issuedAt(now)              // Set "iat" (Issued At) claim
                 .expiration(expiryDate)     // Set "exp" (Expiration) claim
-                .signWith(signingKey, Jwts.SIG.HS256) // Sign using HMAC with SHA-256
+                .signWith(signingKey, Jwts.SIG.HS512) // Sign using HMAC with SHA-512
                 .compact();
     }
 
@@ -97,7 +113,7 @@ public class JwtService {
      * Parses a JWT string and verifies its cryptographic signature.
      *
      * <p><b>Important:</b> This method does not catch exceptions. It strictly throws specific JJWT exceptions
-     * (e.g., {@link io.jsonwebtoken.ExpiredJwtException}, {@link io.jsonwebtoken.SignatureException})
+     * (e.g., {@link io.jsonwebtoken.ExpiredJwtException}, {@link io.jsonwebtoken.security.SignatureException})
      * if the token is malformed, expired, or tampered with. The calling filter is responsible for catching
      * these and mapping them to the correct {@link com.github.starhq.template.common.enums.ErrorCode}.
      *

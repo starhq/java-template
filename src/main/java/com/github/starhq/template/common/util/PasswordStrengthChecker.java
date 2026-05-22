@@ -303,8 +303,18 @@ public class PasswordStrengthChecker {
      */
     private static boolean isCommonPassword(String password) {
         String lowerPassword = password.toLowerCase();
-        return COMMON_PASSWORDS.stream()
-                .anyMatch(common -> lowerPassword.contains(common) || common.contains(lowerPassword));
+
+        return COMMON_PASSWORDS.stream().anyMatch(common -> {
+            if (lowerPassword.equals(common)) {
+                return true;
+            }
+
+            if (lowerPassword.matches("\\A\\Q" + common + "\\E[\\W\\d]*\\z")) {
+                return true;
+            }
+
+            return lowerPassword.matches("\\A[\\W\\d]*\\Q" + common + "\\E\\z");
+        });
     }
 
     /**

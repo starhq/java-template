@@ -22,8 +22,8 @@ public class CommonTest {
 
     @Test
     void test() throws IOException, InterruptedException {
-        Map<String, HttpMethod> maps = Map.of("methods", HttpMethod.GET);
-        JsonMapper jsonMapper = new JsonMapper();
-        System.out.println(jsonMapper.writeValueAsString(maps));
+        String key = "3R+Xiy55zNKk9jncK1nKlHYElLlylh1lRETufC8aYaMmo+ZDk9o0edXlWHoXneA/JX/D58VpuWoxUEVKZZfhxA==";
+        byte[] keys = key.getBytes();
+        System.out.println(keys.length);
     }
 }

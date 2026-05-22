@@ -81,10 +81,10 @@ public class CacheHelper {
      *     <li>Use cache name constants to avoid typos: {@code CacheConstants.USER_SIMPLE}</li>
      * </ul>
      *
-     * @param <K> the type of the cache key, typically {@link Long} or {@link String}
-     * @param <V> the type of the cache value, must be serializable for distributed caches
-     * @param key the cache key to store; must not be {@code null} for reliable retrieval
-     * @param value the value to cache; may be {@code null} (stores a null placeholder in some implementations)
+     * @param <K>       the type of the cache key, typically {@link Long} or {@link String}
+     * @param <V>       the type of the cache value, must be serializable for distributed caches
+     * @param key       the cache key to store; must not be {@code null} for reliable retrieval
+     * @param value     the value to cache; may be {@code null} (stores a null placeholder in some implementations)
      * @param cacheName the logical name of the target cache region; must match a configured cache
      * @see Cache#put(Object, Object)
      * @see com.github.starhq.template.common.constant.CacheConstant
@@ -129,10 +129,10 @@ public class CacheHelper {
      *     <li>For complex objects, ensure proper serialization configuration (Jackson, etc.)</li>
      * </ul>
      *
-     * @param <K> the type of the cache key
-     * @param <V> the expected return type
-     * @param key the cache key to retrieve
-     * @param clazz the target type for conversion; must match the stored value type
+     * @param <K>       the type of the cache key
+     * @param <V>       the expected return type
+     * @param key       the cache key to retrieve
+     * @param clazz     the target type for conversion; must match the stored value type
      * @param cacheName the logical name of the source cache region
      * @return the cached value converted to {@code <V>}, or {@code null} if cache/key not found
      * @see Cache#get(Object, Class)
@@ -178,8 +178,8 @@ public class CacheHelper {
      *     <li>Unknown cache names are silently skipped without throwing exceptions</li>
      * </ul>
      *
-     * @param <K> the type of cache keys to evict
-     * @param ids the collection of keys to invalidate; if empty, triggers full cache clear
+     * @param <K>        the type of cache keys to evict
+     * @param ids        the collection of keys to invalidate; if empty, triggers full cache clear
      * @param cacheNames the collection of logical cache region names to target; must not be {@code null}
      * @see Cache#evict(Object)
      * @see Cache#clear()
@@ -280,9 +280,9 @@ public class CacheHelper {
      *     <li>Using distributed locks for critical cache misses (advanced)</li>
      * </ul>
      *
-     * @param ids the set of IDs to resolve; duplicates are automatically handled
+     * @param ids       the set of IDs to resolve; duplicates are automatically handled
      * @param cacheName the logical name of the cache region for ID-to-value mapping
-     * @param dbLoader function to fetch missing values from database; receives cache-miss IDs and returns ID-to-value map
+     * @param dbLoader  function to fetch missing values from database; receives cache-miss IDs and returns ID-to-value map
      * @return a map containing resolved values for all requested IDs (cached + fresh)
      * @throws BusinessException if {@code dbLoader} throws an unchecked exception
      * @see Cache#get(Object, Class)
@@ -309,7 +309,16 @@ public class CacheHelper {
 
         // 2. Fetch missing values from database and populate cache
         if (!missIds.isEmpty()) {
-            Map<Long, String> dbData = dbLoader.apply(missIds);
+            Map<Long, String> dbData;
+
+            try {
+                dbData = dbLoader.apply(missIds);
+            } catch (Exception e) {
+                dbData = new HashMap<>(missIds.size());
+                for (Long missId : missIds) {
+                    dbData.put(missId, "unknown");
+                }
+            }
             result.putAll(dbData);
 
             // Write-back to cache (null-safe)

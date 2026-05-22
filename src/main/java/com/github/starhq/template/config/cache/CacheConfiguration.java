@@ -28,17 +28,6 @@ public class CacheConfiguration {
     CacheManager cacheManager() {
         CaffeineCacheManager manager = new CaffeineCacheManager();
 
-        // ⚠️ CRITICAL WARNING: This sets a GLOBAL FALLBACK specification for caches that are NOT
-        // explicitly registered below (e.g., if someone mistypes a cache name like @Cacheable("userz")).
-        //
-        // DANGER: This string currently conflicts with the precise configurations built in CacheFactory.
-        // Specifically, using `weakKeys` here but `softValues` in CacheFactory can lead to undefined
-        // caching behaviors. If the intention is ONLY to use the explicitly registered caches below,
-        // it is highly recommended to either:
-        // 1. Remove this line entirely (unregistered caches will fail fast, which is safer).
-        // 2. Or ensure this string perfectly matches your default baseline strategy.
-        manager.setCacheSpecification("maximumSize=1000,expireAfterWrite=30m,softValues,recordStats");
-
         // Register strictly defined caches based on the centralized enum.
         // When @Cacheable("users") is used, Spring will look up this specific instance instead of the fallback.
         for (CacheType type : CacheType.values()) {
