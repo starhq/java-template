@@ -52,7 +52,7 @@ jobs:
 
       - name: Build and Analyze with Gradle
         if: steps.check_gradle.outputs.exists == 'true'
-        run: ./gradlew build jacocoTestReport sonar --no-daemon
+        run: ./gradlew build jacocoTestReport sonar --no-daemon -Dspring.profiles.active=dev
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -68,7 +68,7 @@ jobs:
         if: steps.check_maven.outputs.exists == 'true'
         # Maven's 'setup-java' or specialized actions handle caching automatically 
         # but for clarity, we use the standard 'mvn' command.
-        run: mvn -B verify sonar:sonar
+        run: mvn -B verify sonar:sonar -Dspring.profiles.active=dev
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
