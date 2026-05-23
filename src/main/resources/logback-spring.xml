@@ -4,7 +4,7 @@
     <!-- ============================== -->
     <!-- Context and Properties -->
     <!-- ============================== -->
-    
+
 
     <!-- Spring Properties -->
     <springProperty scope="context" name="mailHost" source="spring.mail.host"/>
@@ -12,7 +12,7 @@
     <springProperty scope="context" name="mailUsername" source="spring.mail.username"/>
     <springProperty scope="context" name="mailPassword" source="spring.mail.password"/>
     <springProperty scope="context" name="mailTo" source="spring.mail.to" defaultValue="starimba@outlook.com"/>
-    <springProperty scope="context" name="appName" source="spring.application.name" defaultValue="app"/>
+    <springProperty scope="context" name="appName" source="spring.application.name" defaultValue="java-template"/>
 
     <!-- Name used to identify this logging context -->
     <contextName>${appName}</contextName>
@@ -20,11 +20,11 @@
     <!-- Log Path Configuration -->
     <property name="LOG_BASE_PATH" value="${LOG_PATH:-${user.home}/workspace/java/log}"/>
     <!-- <property name="APP_LOG_DIR" value="${appName}"/> -->
-    
+
     <!-- Log Patterns -->
     <property name="FILE_LOG_PATTERN" value="%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%thread] %X{traceId:-} %logger{40} - %msg%n"/>
     <property name="CONSOLE_LOG_PATTERN" value="%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(%-5level) %clr([%thread]){faint} %clr(%X{traceId:-}){magenta} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %highlight(%msg)\n%wEx"/>
-    
+
     <!-- Rolling Policy Configuration -->
     <property name="MAX_FILE_SIZE" value="100MB"/> <!-- Recommended: 100MB to 250MB -->
     <property name="MAX_HISTORY" value="30"/> <!-- Recommended: 7 to 30 days -->
@@ -50,7 +50,7 @@
     <!-- ============================== -->
     <!-- File Appenders -->
     <!-- ============================== -->
-    
+
     <!-- Main Application Log (INFO and above, excluding ERROR) -->
     <appender name="FILE_APP" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>${LOG_BASE_PATH}/${appName}/${appName}.log</file>
@@ -110,7 +110,7 @@
     <!-- ============================== -->
     <!-- Email Appender -->
     <!-- ============================== -->
-    
+
     <appender name="EMAIL" class="ch.qos.logback.classic.net.SMTPAppender">
         <smtpHost>${mailHost}</smtpHost>
         <smtpPort>${mailPort}</smtpPort>
@@ -136,7 +136,7 @@
     <!-- ============================== -->
     <!-- Async Appenders -->
     <!-- ============================== -->
-    
+
     <appender name="ASYNC_FILE_APP" class="ch.qos.logback.classic.AsyncAppender">
         <appender-ref ref="FILE_APP"/>
         <queueSize>512</queueSize>
@@ -164,7 +164,7 @@
     <!-- ============================== -->
     <!-- Logger Configuration -->
     <!-- ============================== -->
-    
+
     <!-- Framework Loggers -->
     <logger name="org.springframework" level="WARN"/>
     <logger name="org.springframework.boot" level="INFO"/>
@@ -185,7 +185,7 @@
     <logger name="com.zaxxer.hikari" level="INFO"/>
     <logger name="com.baomidou" level="WARN"/>
     <logger name="com.github.pagehelper" level="WARN"/>
-    
+
     <!-- Application Loggers -->
     <logger name="com.github.starhq" level="DEBUG">
         <appender-ref ref="CONSOLE"/>
@@ -196,7 +196,7 @@
     <!-- ============================== -->
     <!-- Profile-Specific Configuration -->
     <!-- ============================== -->
-    
+
     <!-- Production Profile -->
     <springProfile name="prod">
         <root level="INFO">

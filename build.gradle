@@ -250,3 +250,15 @@ jar {
 // tasks.named('jar') {
 //     finalizedBy 'copyDependencies'
 // }
+
+tasks.register('showEnv') {
+    doLast {
+        println "=== Environment Variables ==="
+        System.getenv().each { key, value ->
+            if (key =~ /USERNAME|PASSWORD|KEY|SPRING/) {
+                println "$key = $value"
+            }
+        }
+        println "=============================="
+    }
+}

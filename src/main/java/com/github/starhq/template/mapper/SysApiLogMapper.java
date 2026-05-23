@@ -57,7 +57,6 @@ import org.springframework.context.annotation.Profile;
  * @see ProfileConstants
  * @see org.springframework.context.annotation.Profile
  */
-@Profile(ProfileConstants.DEV)
 @Mapper
 public interface SysApiLogMapper extends BaseMapper<SysApiLog> {
 

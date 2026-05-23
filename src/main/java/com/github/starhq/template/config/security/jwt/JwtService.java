@@ -8,6 +8,7 @@ import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.io.EncodingException;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.crypto.SecretKey;
@@ -23,6 +24,7 @@ import java.util.Map;
  * @author starhq
  */
 @Slf4j
+@EnableConfigurationProperties(JwtProperties.class)
 public class JwtService {
 
     /**
