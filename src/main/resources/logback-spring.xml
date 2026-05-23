@@ -1,17 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<configuration scan="true" scanPeriod="60 seconds">
-
-     <!-- ✅ 终极防御：告诉 Logback 遇到无法解析的占位符时，不要抛出异常，直接忽略或保留原样 -->
-    <define name="UNRESOLVED_PASS_THROUGH" class="ch.qos.logback.core.helpers.Util" />
-    <if condition='isUndefined("logging.file.path")'>
-        <then>
-            <property name="LOG_BASE_PATH" value="./logs" />
-        </then>
-        <else>
-            <property name="LOG_BASE_PATH" value="${logging.file.path}" />
-        </else>
-    </if>
-
+<!--<configuration scan="true" scanPeriod="60 seconds">-->
+<configuration>
     <!-- ============================== -->
     <!-- Context and Properties -->
     <!-- ============================== -->
@@ -24,13 +13,13 @@
     <springProperty scope="context" name="mailPassword" source="spring.mail.password" defaultValue="unknown-pwd"/>
     <springProperty scope="context" name="mailTo" source="spring.mail.to" defaultValue="starimba@outlook.com"/>
     <springProperty scope="context" name="appName" source="spring.application.name" defaultValue="java-template"/>
-    <springProperty scope="context" name="LOG_BASE_PATH" source="logging.file.path" defaultValue="./logs"/>
-
 
     <!-- Name used to identify this logging context -->
     <contextName>${appName}</contextName>
 
     <!-- Log Path Configuration -->
+    <!--正在测试github-actions的ci一直不通过的问题,下面是测试代码-->
+    <property name="LOG_BASE_PATH" value="./logs"/>
     <!--<property name="LOG_BASE_PATH" value="${LOG_PATH:-${user.home}/workspace/java/log}"/>-->
     <!-- <property name="APP_LOG_DIR" value="${appName}"/> -->
 
@@ -121,31 +110,6 @@
         </filter>
     </appender>
 
-    <!-- ============================== -->
-    <!-- Email Appender -->
-    <!-- ============================== -->
-
-    <appender name="EMAIL" class="ch.qos.logback.classic.net.SMTPAppender">
-        <smtpHost>${mailHost}</smtpHost>
-        <smtpPort>${mailPort}</smtpPort>
-        <username>${mailUsername}</username>
-        <password>${mailPassword}</password>
-        <STARTTLS>true</STARTTLS>
-        <asynchronousSending>false</asynchronousSending>
-        <to>${mailTo}</to>
-        <from>${mailUsername}</from>
-        <subject>[${appName}] ERROR: %logger{20} - %msg{50}</subject>
-        <layout class="ch.qos.logback.classic.html.HTMLLayout">
-            <pattern>%d{yyyy-MM-dd HH:mm:ss}%level%thread%X{traceId}%logger{36}%msg</pattern>
-        </layout>
-        <cyclicBufferTracker class="ch.qos.logback.core.spi.CyclicBufferTracker">
-            <bufferSize>10</bufferSize>
-        </cyclicBufferTracker>
-        <evaluator class="ch.qos.logback.classic.boolex.OnErrorEvaluator"/>
-        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
-            <level>ERROR</level>
-        </filter>
-    </appender>
 
     <!-- ============================== -->
     <!-- Async Appenders -->
@@ -213,6 +177,32 @@
 
     <!-- Production Profile -->
     <springProfile name="prod">
+         <!-- ============================== -->
+        <!-- Email Appender -->
+        <!-- ============================== -->
+
+        <appender name="EMAIL" class="ch.qos.logback.classic.net.SMTPAppender">
+            <smtpHost>${mailHost}</smtpHost>
+            <smtpPort>${mailPort}</smtpPort>
+            <username>${mailUsername}</username>
+            <password>${mailPassword}</password>
+            <STARTTLS>true</STARTTLS>
+            <asynchronousSending>false</asynchronousSending>
+            <to>${mailTo}</to>
+            <from>${mailUsername}</from>
+            <subject>[${appName}] ERROR: %logger{20} - %msg{50}</subject>
+            <layout class="ch.qos.logback.classic.html.HTMLLayout">
+                <pattern>%d{yyyy-MM-dd HH:mm:ss}%level%thread%X{traceId}%logger{36}%msg</pattern>
+            </layout>
+            <cyclicBufferTracker class="ch.qos.logback.core.spi.CyclicBufferTracker">
+                <bufferSize>10</bufferSize>
+            </cyclicBufferTracker>
+            <evaluator class="ch.qos.logback.classic.boolex.OnErrorEvaluator"/>
+            <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+                <level>ERROR</level>
+            </filter>
+        </appender>
+
         <root level="INFO">
             <appender-ref ref="ASYNC_FILE_APP"/>
             <appender-ref ref="ASYNC_FILE_ERROR"/>
