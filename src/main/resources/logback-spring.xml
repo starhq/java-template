@@ -7,10 +7,10 @@
 
 
     <!-- Spring Properties -->
-    <springProperty scope="context" name="mailHost" source="spring.mail.host"/>
-    <springProperty scope="context" name="mailPort" source="spring.mail.port"/>
-    <springProperty scope="context" name="mailUsername" source="spring.mail.username"/>
-    <springProperty scope="context" name="mailPassword" source="spring.mail.password"/>
+    <springProperty scope="context" name="mailHost" source="spring.mail.host" defaultValue="unknown-host"/>
+    <springProperty scope="context" name="mailPort" source="spring.mail.port" defaultValue="587"/>
+    <springProperty scope="context" name="mailUsername" source="spring.mail.username" defaultValue="unknown-user"/>
+    <springProperty scope="context" name="mailPassword" source="spring.mail.password" defaultValue="unknown-pwd"/>
     <springProperty scope="context" name="mailTo" source="spring.mail.to" defaultValue="starimba@outlook.com"/>
     <springProperty scope="context" name="appName" source="spring.application.name" defaultValue="java-template"/>
 
@@ -23,7 +23,8 @@
 
     <!-- Log Patterns -->
     <property name="FILE_LOG_PATTERN" value="%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%thread] %X{traceId:-} %logger{40} - %msg%n"/>
-    <property name="CONSOLE_LOG_PATTERN" value="%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(%-5level) %clr([%thread]){faint} %clr(%X{traceId:-}){magenta} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %highlight(%msg)\n%wEx"/>
+    <property name="CONSOLE_LOG_PATTERN"
+              value="%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(%-5level) %clr([%thread]){faint} %clr(%X{traceId:-}){magenta} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %highlight(%msg)\n%wEx"/>
 
     <!-- Rolling Policy Configuration -->
     <property name="MAX_FILE_SIZE" value="100MB"/> <!-- Recommended: 100MB to 250MB -->
