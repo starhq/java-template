@@ -13,12 +13,14 @@
     <springProperty scope="context" name="mailPassword" source="spring.mail.password" defaultValue="unknown-pwd"/>
     <springProperty scope="context" name="mailTo" source="spring.mail.to" defaultValue="starimba@outlook.com"/>
     <springProperty scope="context" name="appName" source="spring.application.name" defaultValue="java-template"/>
+    <springProperty scope="context" name="LOG_BASE_PATH" source="logging.file.path" defaultValue="./logs"/>
+
 
     <!-- Name used to identify this logging context -->
     <contextName>${appName}</contextName>
 
     <!-- Log Path Configuration -->
-    <property name="LOG_BASE_PATH" value="${LOG_PATH:-${user.home}/workspace/java/log}"/>
+    <!--<property name="LOG_BASE_PATH" value="${LOG_PATH:-${user.home}/workspace/java/log}"/>-->
     <!-- <property name="APP_LOG_DIR" value="${appName}"/> -->
 
     <!-- Log Patterns -->
