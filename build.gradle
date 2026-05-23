@@ -191,9 +191,9 @@ check.dependsOn jacocoTestCoverageVerification
 
 sonar {
     properties {
-        property "sonar.projectName", "sonardemo"
-        property "sonar.projectDescription", "study how to use sonar cloud"
-        property "sonar.projectKey", "starhq_sonardemo"
+        property "sonar.projectName", "java_template"
+        property "sonar.projectDescription", "for ai"
+        property "sonar.projectKey", "starhq_java-template"
         property "sonar.organization", "starhq"
         property "sonar.host.url", "https://sonarcloud.io"
 
@@ -205,7 +205,8 @@ sonar {
 
         // 注意：这里引用的是 xml 报告，但上面 jacocoTestReport 设置了 xml.required = false
         // 如果 Sonar 需要上传覆盖率，请确保 XML 报告是开启的，或者此处路径正确
-        property "sonar.coverage.jacoco.xmlReportPaths", layout.buildDirectory.dir("reports/jacoco/test/jacocoTestReport.xml").get().asFile
+        property "sonar.coverage.jacoco.xmlReportPaths", layout.buildDirectory.dir("./build/reports/jacoco/test/jacocoTestReport.xml").get().asFile
+
     }
 }
 

@@ -24,8 +24,7 @@ import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("SysUserMapperHelper 单元测试")
@@ -126,14 +125,14 @@ class SysUserMapperHelperTest {
         void apply_withEmptySet_shouldReturnEmptyMap() {
             // given
             Set<Long> emptyIds = Collections.emptySet();
-            when(userMapper.selectList(any(LambdaQueryWrapper.class))).thenReturn(Collections.emptyList());
+            // when(userMapper.selectList(any(LambdaQueryWrapper.class))).thenReturn(Collections.emptyList());
 
             // when
             Map<Long, String> result = helper.apply(emptyIds);
 
             // then
             assertThat(result).isEmpty();
-            verify(userMapper).selectList(any(LambdaQueryWrapper.class));
+            verify(userMapper, never()).selectList(any(LambdaQueryWrapper.class));
         }
 
         @SuppressWarnings("unchecked")
