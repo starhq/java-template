@@ -50,8 +50,8 @@ spring:
   mail:
     host: smtp.qq.com
     port: 587
-    username: ${USERNAME}
-    password: ${PASSWORD}
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
     properties:
       mail:
         smtp:
@@ -62,7 +62,7 @@ spring:
 star:
   jwt:
     # 强烈建议使用环境变量，避免密钥泄露
-    key: ${KEY}
+    key: ${JWT_KEY}
     access: 30m
     refresh: 336h
 
