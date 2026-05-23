@@ -1,6 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration scan="true" scanPeriod="60 seconds">
 
+     <!-- ✅ 终极防御：告诉 Logback 遇到无法解析的占位符时，不要抛出异常，直接忽略或保留原样 -->
+    <define name="UNRESOLVED_PASS_THROUGH" class="ch.qos.logback.core.helpers.Util" />
+    <if condition='isUndefined("logging.file.path")'>
+        <then>
+            <property name="LOG_BASE_PATH" value="./logs" />
+        </then>
+        <else>
+            <property name="LOG_BASE_PATH" value="${logging.file.path}" />
+        </else>
+    </if>
+
     <!-- ============================== -->
     <!-- Context and Properties -->
     <!-- ============================== -->
