@@ -56,6 +56,9 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          MAIL_USERNAME: ${{ secrets.MAIL_USERNAME }}
+          MAIL_PASSWORD: ${{ secrets.MAIL_PASSWORD }}
+          JWT_KEY: ${{ secrets.JWT_KEY }}
           SONAR_SCANNER_OPTS: "-Xmx512m" # Prevents OOM errors in CI
 
       # --- MAVEN LOGIC ---
@@ -72,4 +75,7 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          MAIL_USERNAME: ${{ secrets.MAIL_USERNAME }}
+          MAIL_PASSWORD: ${{ secrets.MAIL_PASSWORD }}
+          JWT_KEY: ${{ secrets.JWT_KEY }}
           SONAR_SCANNER_OPTS: "-Xmx512m" # Prevents OOM errors in CI
