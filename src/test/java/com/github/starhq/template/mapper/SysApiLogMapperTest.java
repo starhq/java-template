@@ -2,13 +2,13 @@ package com.github.starhq.template.mapper;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.github.starhq.template.BaseMapperTestConfiguration;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.github.starhq.template.BaseMapperTest;
 import com.github.starhq.template.entity.SysApiLog;
 
-class SysApiLogMapperTest extends BaseMapperTest {
+class SysApiLogMapperTest extends BaseMapperTestConfiguration {
 
     @Autowired
     private SysApiLogMapper sysApiLogMapper;

@@ -72,6 +72,7 @@ class AuthControllerTest {
     private static final String DEVICE_FINGERPRINT = "test-device-fingerprint";
     private static final String TEST_USERNAME = "testuser";
     private static final String TEST_PASSWORD = "Wj@64066195";
+
     private static final String TEST_TOKEN = "test-jwt-token";
     private static final String TEST_CAPTCHA = RandomUtil.randomLetters(5);
     private static final String TEST_UUID = UUID.randomUUID().toString();

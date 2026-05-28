@@ -148,37 +148,4 @@ public interface SysRoleResourceMapper extends BaseMapper<SysRoleResource> {
      * @see <a href="https://www.postgresql.org/docs/current/sql-insert.html#SQL-ON-CONFLICT">PostgreSQL INSERT ... ON CONFLICT</a>
      */
     void upsertRoleResource(List<SysRoleResource> roleResources);
-
-    // ========== Inherited Methods from BaseMapper<SysRoleResource> ==========
-    //
-    // The following standard CRUD methods are automatically provided by MyBatis-Plus:
-    //
-    // // Insert (single)
-    // int insert(SysRoleResource entity);
-    //
-    // // Select
-    // SysRoleResource selectById(Serializable id);  // Note: composite key may require custom query
-    // List<SysRoleResource> selectBatchIds(Collection<? extends Serializable> idList);
-    // List<SysRoleResource> selectByMap(Map<String, Object> columnMap);
-    // SysRoleResource selectOne(LambdaQueryWrapper<SysRoleResource> queryWrapper);
-    // List<SysRoleResource> selectList(LambdaQueryWrapper<SysRoleResource> queryWrapper);
-    // <E extends IPage<SysRoleResource>> E selectPage(E page, LambdaQueryWrapper<SysRoleResource> queryWrapper);
-    //
-    // // Update (single)
-    // int updateById(SysRoleResource entity);
-    // int update(SysRoleResource entity, LambdaUpdateWrapper<SysRoleResource> updateWrapper);
-    //
-    // // Delete
-    // int deleteById(Serializable id);
-    // int deleteByMap(Map<String, Object> columnMap);
-    // int delete(LambdaQueryWrapper<SysRoleResource> queryWrapper);
-    //
-    // For junction tables with composite keys, consider adding custom methods:
-    // - deleteByRoleId(Long roleId)
-    // - deleteByResourceId(Long resourceId)
-    // - selectByRoleId(Long roleId)
-    //
-    // For detailed usage and advanced features, refer to:
-    // @see <a href="https://baomidou.com/pages/49cc81/">MyBatis-Plus BaseMapper Guide</a>
-
 }

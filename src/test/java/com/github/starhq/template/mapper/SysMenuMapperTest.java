@@ -2,7 +2,7 @@ package com.github.starhq.template.mapper;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.github.starhq.template.BaseMapperTest;
+import com.github.starhq.template.BaseMapperTestConfiguration;
 import com.github.starhq.template.common.enums.OpenStyle;
 import com.github.starhq.template.entity.SysMenu;
 import com.github.starhq.template.model.vo.menu.tree.MenuCheckVO;
@@ -14,7 +14,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class SysMenuMapperTest extends BaseMapperTest {
+class SysMenuMapperTest extends BaseMapperTestConfiguration {
 
     @Autowired
     private SysMenuMapper menuMapper;
@@ -63,13 +63,12 @@ class SysMenuMapperTest extends BaseMapperTest {
         var menus = menuMapper.selectAssignedMenus(wrapper);
 
         assertThat(menus).isNotNull();
-        assertThat(menus.size()).isGreaterThan(0);
+        assertThat(menus).hasSizeGreaterThan(0);
     }
 
     @Test
     void selectMenuPageByRoleId_shouldReturnCheckedResult() {
         // Given
-        // Page<MenuCheckVO> page = new Page<>(1, 10);
         Page<MenuCheckVO> page = new Page<>();
         page.setSearchCount(false);
 

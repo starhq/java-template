@@ -1,21 +1,17 @@
 package com.github.starhq.template.mapper;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.github.starhq.template.BaseMapperTest;
+import com.github.starhq.template.BaseMapperTestConfiguration;
 import com.github.starhq.template.common.enums.UserStatus;
 import com.github.starhq.template.entity.SysUser;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Profile;
-import org.springframework.core.env.Environment;
-import org.springframework.test.context.ActiveProfiles;
 
 import java.time.OffsetDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class UserMapperTest extends BaseMapperTest {
+class UserMapperTest extends BaseMapperTestConfiguration {
 
     @Autowired
     private SysUserMapper userMapper;

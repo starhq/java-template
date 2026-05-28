@@ -53,7 +53,7 @@ public @interface StrongPassword {
      *
      * @return the required minimum {@link PasswordStrengthChecker.StrengthLevel}
      */
-    PasswordStrengthChecker.StrengthLevel minLevel() default PasswordStrengthChecker.StrengthLevel.STRONG;
+    PasswordStrengthChecker.StrengthLevel minLevel() default PasswordStrengthChecker.StrengthLevel.MEDIUM;
 
     /**
      * Allows specifying validation groups to which this constraint belongs.

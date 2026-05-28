@@ -318,25 +318,24 @@ class TreeBuildUtilsTest {
             assertThat(result.getFirst().getChildren()).isEmpty(); // 孤儿没加进来
         }
 
-        // @Test
-        // @DisplayName("列表中存在重复的 ID - 后出现的节点会覆盖先出现的节点（Map特性）")
-        // void build_duplicateIds_lastOneWinsInMap() {
-        //     List<TestTreeNode> list = Arrays.asList(
-        //             TestTreeNode.of(1L, 0L, "根节点V1"),
-        //             TestTreeNode.of(2L, 1L, "属于V1的子节点"),
-        //             TestTreeNode.of(1L, 0L, "根节点V2(同ID覆盖)") // 同样的ID
-        //     );
-        //     List<TestTreeNode> result = TreeBuildUtils.build(list);
-        //
-        //     // 因为 HashMap put 会让 V2 覆盖 V1，而在第二次循环时，V2 被当成 root 加入，
-        //     // V1 已经从 map 中丢失了，"属于V1的子节点" 找到的 parent 实际上是 V2。
-        //     assertThat(result).hasSize(2);
-        //     assertThat(result.getFirst().getName()).isEqualTo("根节点V1");
-        //
-        //     // 子节点会挂到覆盖后的 V2 下面（因为Map里1L对应的已经是V2了）
-        //     assertThat(result.getFirst().getChildren()).hasSize(0);
-        //     assertThat(result.getFirst().getChildren().getFirst().getName()).isEqualTo("属于V1的子节点");
-        // }
+        @Test
+        @DisplayName("列表中存在重复的 ID - 后出现的节点会覆盖先出现的节点（Map特性）")
+        void build_duplicateIds_lastOneWinsInMap() {
+            List<TestTreeNode> list = Arrays.asList(
+                    TestTreeNode.of(1L, 0L, "根节点V1"),
+                    TestTreeNode.of(2L, 1L, "属于V1的子节点"),
+                    TestTreeNode.of(1L, 0L, "根节点V2(同ID覆盖)") // 同样的ID
+            );
+            List<TestTreeNode> result = TreeBuildUtils.build(list);
+
+            // 因为 HashMap put 会让 V2 覆盖 V1，而在第二次循环时，V2 被当成 root 加入，
+            // V1 已经从 map 中丢失了，"属于V1的子节点" 找到的 parent 实际上是 V2。
+            assertThat(result).hasSize(2);
+            assertThat(result.getFirst().getName()).isEqualTo("根节点V1");
+
+            // 子节点会挂到覆盖后的 V2 下面（因为Map里1L对应的已经是V2了）
+            assertThat(result.getFirst().getChildren()).hasSize(0);
+        }
 
         @Test
         @DisplayName("自引用节点（自己的 parentId 指向自己） - 应被识别为根节点，且无子节点")

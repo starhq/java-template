@@ -51,7 +51,6 @@ class HttpUtilsTest {
         when(attributes.getRequest()).thenReturn(request);
 
         when(request.getHeader("X-Forwarded-For")).thenReturn("10.0.0.1");
-        // when(request.getRemoteAddr()).thenReturn("127.0.0.1");
 
         String ip = HttpUtils.getClientIp();
 
@@ -63,7 +62,6 @@ class HttpUtilsTest {
     @Test
     void getClientIp_FromXForwardedFor_ShouldReturnFirstIp() {
         when(request.getHeader("X-Forwarded-For")).thenReturn("10.0.0.1, 192.168.1.1, 172.16.0.1");
-        // when(request.getRemoteAddr()).thenReturn("127.0.0.1");
 
         String ip = HttpUtils.getClientIp(request);
 
@@ -113,7 +111,6 @@ class HttpUtilsTest {
     @Test
     void extractToken_FromBearerHeader_ShouldExtractCorrectly() {
         when(request.getHeader("Authorization")).thenReturn("Bearer my-jwt-token-123");
-        // when(request.getCookies()).thenReturn(new Cookie[0]);
 
         String token = HttpUtils.extractToken(request);
 
@@ -127,7 +124,6 @@ class HttpUtilsTest {
         // 模拟 Cookie 中有 token
         Cookie mockCookie = new Cookie("jwt_token", "cookie-token-456");
         when(request.getCookies()).thenReturn(new Cookie[]{mockCookie});
-        // when(request.getParameter("token")).thenReturn("query-token-789");
 
         assertEquals("cookie-token-456", HttpUtils.extractToken(request));
     }

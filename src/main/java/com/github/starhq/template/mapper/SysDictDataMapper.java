@@ -51,31 +51,4 @@ import org.apache.ibatis.annotations.Mapper;
 @Mapper
 public interface SysDictDataMapper extends BaseMapper<SysDictData> {
 
-    // ========== Inherited Methods from BaseMapper<SysDictData> ==========
-    //
-    // The following standard CRUD methods are automatically provided by MyBatis-Plus:
-    //
-    // // Insert
-    // int insert(SysDictData entity);
-    //
-    // // Select
-    // SysDictData selectById(Serializable id);
-    // List<SysDictData> selectBatchIds(Collection<? extends Serializable> idList);
-    // List<SysDictData> selectByMap(Map<String, Object> columnMap);
-    // SysDictData selectOne(LambdaQueryWrapper<SysDictData> queryWrapper);
-    // List<SysDictData> selectList(LambdaQueryWrapper<SysDictData> queryWrapper);
-    // <E extends IPage<SysDictData>> E selectPage(E page, LambdaQueryWrapper<SysDictData> queryWrapper);
-    //
-    // // Update
-    // int updateById(SysDictData entity);
-    // int update(SysDictData entity, LambdaUpdateWrapper<SysDictData> updateWrapper);
-    //
-    // // Delete
-    // int deleteById(Serializable id);
-    // int deleteByMap(Map<String, Object> columnMap);
-    // int delete(LambdaQueryWrapper<SysDictData> queryWrapper);
-    //
-    // For detailed usage and advanced features, refer to:
-    // @see <a href="https://baomidou.com/pages/49cc81/">MyBatis-Plus BaseMapper Guide</a>
-
 }

@@ -19,8 +19,8 @@
 
     <!-- Log Path Configuration -->
     <!--正在测试github-actions的ci一直不通过的问题,下面是测试代码-->
-    <property name="LOG_BASE_PATH" value="./logs"/>
-    <!--<property name="LOG_BASE_PATH" value="${LOG_PATH:-${user.home}/workspace/java/log}"/>-->
+    <!--<property name="LOG_BASE_PATH" value="./logs"/>-->
+    <property name="LOG_BASE_PATH" value="${LOG_PATH:-${user.home}/workspace/java/log}"/>
     <!-- <property name="APP_LOG_DIR" value="${appName}"/> -->
 
     <!-- Log Patterns -->

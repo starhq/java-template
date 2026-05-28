@@ -1,4 +1,4 @@
-package com.github.starhq.template.model.dto.dictData;
+package com.github.starhq.template.model.dto.dict.data;
 
 import com.github.starhq.template.model.dto.page.PageRequest;
 import lombok.Data;
@@ -22,7 +22,6 @@ import java.io.Serial;
  * <p>
  * <strong>Query Behavior:</strong>
  * <p>
- * When used with {@link com.github.starhq.template.mapper.SysDictDataMapper#selectDictDataPage},
  * the filters are applied as follows:
  * <ul>
  *     <li>{@code dictTypeId}: Exact match on {@code sys_dict_data.type_id} foreign key</li>

@@ -11,6 +11,7 @@ import com.github.starhq.template.converter.ResourceConverter;
 import com.github.starhq.template.entity.SysResource;
 import com.github.starhq.template.entity.SysRoleResource;
 import com.github.starhq.template.event.EventService;
+import com.github.starhq.template.helper.CacheHelper;
 import com.github.starhq.template.helper.SysUserMapperHelper;
 import com.github.starhq.template.mapper.SysResourceMapper;
 import com.github.starhq.template.mapper.SysRoleResourceMapper;
@@ -20,7 +21,6 @@ import com.github.starhq.template.model.vo.resource.ResourceCheckVO;
 import com.github.starhq.template.model.vo.resource.ResourcePageVO;
 import com.github.starhq.template.model.vo.resource.ResourceSimpleVO;
 import com.github.starhq.template.service.ResourceService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -46,7 +46,6 @@ import java.util.List;
  * @see SysResource
  */
 @Service("resourceService")
-@RequiredArgsConstructor
 public class ResourceServiceImpl extends AuditBaseServiceImpl<SysResourceMapper, SysResource> implements ResourceService {
 
     /**
@@ -83,6 +82,28 @@ public class ResourceServiceImpl extends AuditBaseServiceImpl<SysResourceMapper,
      * @see CacheConstant
      */
     private final EventService eventService;
+
+    /**
+     * Constructs a new {@code ResourceServiceImpl} with the required dependencies.
+     *
+     * @param cacheHelper        the cache utility for batch username resolution (inherited from base class)
+     * @param userMapperHelper   the helper for resolving user IDs to usernames during audit field population
+     * @param roleResourceMapper the mapper for managing role-resource relationships and permission bindings
+     * @param resourceConverter  the converter for transforming between resource entities, DTOs, and VOs
+     * @param eventService       the service for publishing domain events (e.g., cache invalidation triggers)
+     */
+    public ResourceServiceImpl(CacheHelper cacheHelper,
+                               SysUserMapperHelper userMapperHelper,
+                               SysRoleResourceMapper roleResourceMapper,
+                               ResourceConverter resourceConverter,
+                               EventService eventService) {
+        super(cacheHelper);
+        this.userMapperHelper = userMapperHelper;
+        this.roleResourceMapper = roleResourceMapper;
+        this.resourceConverter = resourceConverter;
+        this.eventService = eventService;
+    }
+
 
     /**
      * Retrieves a paginated list of resource definitions with audit field resolution.

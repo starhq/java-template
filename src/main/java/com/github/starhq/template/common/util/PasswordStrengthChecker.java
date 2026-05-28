@@ -1,5 +1,7 @@
 package com.github.starhq.template.common.util;
 
+import lombok.experimental.UtilityClass;
+
 import java.util.Set;
 import java.util.regex.Pattern;
 
@@ -15,6 +17,7 @@ import java.util.regex.Pattern;
  *
  * @author starhq
  */
+@UtilityClass
 public class PasswordStrengthChecker {
 
     /**
@@ -119,6 +122,12 @@ public class PasswordStrengthChecker {
     private static final Pattern REPEATED_PATTERN = Pattern.compile("(.)\\1{2,}");
 
     /**
+     * Pre-compiled Regex to strip leading and trailing non-letters.
+     * Used to fast-check if strings like "!password123" contain the base word "password".
+     */
+    private static final Pattern STRIP_NON_ALPHA_PATTERN = Pattern.compile("^[^a-z]+|[^a-z]+$");
+
+    /**
      * Calculates a numerical strength score for the given password.
      *
      * @param password the password string to evaluate
@@ -142,7 +151,7 @@ public class PasswordStrengthChecker {
 
         // Add points for good practices
         score += getLengthScore(length);
-        score += getCharacterDiversityScore(metrics);
+        score += metrics.getTypeCount();
         score += getCombinationBonus(length, metrics);
 
         // Subtract points for bad practices
@@ -167,28 +176,22 @@ public class PasswordStrengthChecker {
      * Assigns points based on password length thresholds.
      *
      * @param length the trimmed length of the password
-     * @return length-based score (0-3)
+     * @return length-based score (0-7)
      */
     private static int getLengthScore(int length) {
-        if (length >= 12) return 3;
-        if (length >= 8) return 2;
-        if (length >= 6) return 1;
+        if (length >= 20) {
+            return 7;
+        }
+        if (length >= 16) {
+            return 5;
+        }
+        if (length >= 12) {
+            return 3;
+        }
+        if (length >= 8) {
+            return 1;
+        }
         return 0;
-    }
-
-    /**
-     * Assigns points based on how many different character types are used.
-     *
-     * @param metrics the pre-calculated character metrics
-     * @return diversity score (0-4)
-     */
-    private static int getCharacterDiversityScore(PasswordMetrics metrics) {
-        int score = 0;
-        if (metrics.hasDigits) score++;
-        if (metrics.hasLowercase) score++;
-        if (metrics.hasUppercase) score++;
-        if (metrics.hasSpecial) score++;
-        return score;
     }
 
     /**
@@ -203,10 +206,10 @@ public class PasswordStrengthChecker {
         int bonus = 0;
         int typeCount = metrics.getTypeCount();
 
-        if (length > 4 && typeCount >= 2) bonus++;
-        if (length > 6 && typeCount >= 3) bonus++;
+        if (length >= 8 && typeCount >= 3) bonus += 1;
+        if (length >= 12 && typeCount >= 4) bonus += 2;
         // Long passwords using all 4 character types get a massive +2 bonus
-        if (length > 8 && typeCount >= 4) bonus += 2;
+        if (length >= 16 && typeCount >= 4) bonus += 2;
 
         return bonus;
     }
@@ -224,12 +227,12 @@ public class PasswordStrengthChecker {
 
         // Pure lowercase/digits-only passwords are highly discouraged
         if (metrics.getTypeCount() == 1) {
-            penalty += 2;
+            penalty += 3;
         }
 
         // Penalty scales linearly for short passwords (e.g., length 4 gets -2, length 5 gets -1)
-        if (length < 6) {
-            penalty += (6 - length);
+        if (length < 8) {
+            penalty += (8 - length);
         }
 
         // Patterns like "aaa" or "abcabcabc"
@@ -239,12 +242,12 @@ public class PasswordStrengthChecker {
 
         // Matches against known breached password lists
         if (isCommonPassword(password)) {
-            penalty += 3;
+            penalty += 5;
         }
 
         // Keyboard walks like "123", "abc", "qwe"
         if (hasSequentialChars(password)) {
-            penalty++;
+            penalty += 2;
         }
 
         return penalty;
@@ -302,19 +305,17 @@ public class PasswordStrengthChecker {
      * @return true if it is deemed too common
      */
     private static boolean isCommonPassword(String password) {
-        String lowerPassword = password.toLowerCase();
+        String lower = password.toLowerCase();
 
-        return COMMON_PASSWORDS.stream().anyMatch(common -> {
-            if (lowerPassword.equals(common)) {
-                return true;
-            }
+        // 1. Check exact match
+        if (COMMON_PASSWORDS.contains(lower)) {
+            return true;
+        }
 
-            if (lowerPassword.matches("\\A\\Q" + common + "\\E[\\W\\d]*\\z")) {
-                return true;
-            }
-
-            return lowerPassword.matches("\\A[\\W\\d]*\\Q" + common + "\\E\\z");
-        });
+        // 2. Strip leading/trailing digits and symbols (e.g., "!password123" -> "password")
+        // and check against the Set in O(1) time.
+        String stripped = STRIP_NON_ALPHA_PATTERN.matcher(lower).replaceAll("");
+        return !stripped.isEmpty() && COMMON_PASSWORDS.contains(stripped);
     }
 
     /**
@@ -334,11 +335,11 @@ public class PasswordStrengthChecker {
             char c2 = password.charAt(i + 1);
             char c3 = password.charAt(i + 2);
 
-            if (c2 == c1 + 1 && c3 == c2 + 1) {
+            if ((c2 == c1 + 1 && c3 == c2 + 1) || (c2 == c1 - 1 && c3 == c2 - 1)) {
                 sequentialCount++;
             }
         }
-        return sequentialCount >= 2;
+        return sequentialCount >= 1;
     }
 
     /**
@@ -353,24 +354,33 @@ public class PasswordStrengthChecker {
         final boolean hasLowercase;
         final boolean hasUppercase;
         final boolean hasSpecial;
+        final int typeCount;
 
         PasswordMetrics(String password) {
-            boolean digits = false, lowercase = false, uppercase = false, special = false;
+            boolean digits = false;
+            boolean lowercase = false;
+            boolean uppercase = false;
+            boolean special = false;
+            int count = 0;
 
             for (char c : password.toCharArray()) {
                 // Only evaluate a character if its type hasn't been found yet
                 if (!digits && CharacterType.DIGIT.matches(c)) {
                     digits = true;
+                    count++;
                 } else if (!lowercase && CharacterType.LOWERCASE.matches(c)) {
                     lowercase = true;
+                    count++;
                 } else if (!uppercase && CharacterType.UPPERCASE.matches(c)) {
                     uppercase = true;
+                    count++;
                 } else if (!special && CharacterType.SPECIAL.matches(c)) {
                     special = true;
+                    count++;
                 }
 
                 // Performance optimization: stop scanning if all 4 types are already found
-                if (digits && lowercase && uppercase && special) {
+                if (count == 4) {
                     break;
                 }
             }
@@ -379,6 +389,7 @@ public class PasswordStrengthChecker {
             this.hasLowercase = lowercase;
             this.hasUppercase = uppercase;
             this.hasSpecial = special;
+            this.typeCount = count;
         }
 
         /**
@@ -387,12 +398,7 @@ public class PasswordStrengthChecker {
          * @return diversity count (0-4)
          */
         int getTypeCount() {
-            int count = 0;
-            if (hasDigits) count++;
-            if (hasLowercase) count++;
-            if (hasUppercase) count++;
-            if (hasSpecial) count++;
-            return count;
+            return typeCount;
         }
     }
 }

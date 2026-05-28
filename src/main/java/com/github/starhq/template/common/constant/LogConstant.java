@@ -1,14 +1,17 @@
 package com.github.starhq.template.common.constant;
 
+import lombok.experimental.UtilityClass;
+
 /**
  * Constants for logging configurations.
  *
  * @author wangjian
  */
-public interface LogConstant {
+@UtilityClass
+public class LogConstant {
 
     /**
      * Identifier for link tracing
      */
-    String TRACE = "trace";
+    public static final String TRACE = "trace";
 }

@@ -129,31 +129,4 @@ public interface SysAuditLogMapper extends BaseMapper<SysAuditLog> {
 
     );
 
-    // ========== Inherited Methods from BaseMapper<SysAuditLog> ==========
-    //
-    // The following standard CRUD methods are automatically provided by MyBatis-Plus:
-    //
-    // // Insert
-    // int insert(SysAuditLog entity);
-    //
-    // // Select
-    // SysAuditLog selectById(Serializable id);
-    // List<SysAuditLog> selectBatchIds(Collection<? extends Serializable> idList);
-    // List<SysAuditLog> selectByMap(Map<String, Object> columnMap);
-    // SysAuditLog selectOne(LambdaQueryWrapper<SysAuditLog> queryWrapper);
-    // List<SysAuditLog> selectList(LambdaQueryWrapper<SysAuditLog> queryWrapper);
-    // <E extends IPage<SysAuditLog>> E selectPage(E page, LambdaQueryWrapper<SysAuditLog> queryWrapper);
-    //
-    // // Update
-    // int updateById(SysAuditLog entity);
-    // int update(SysAuditLog entity, LambdaUpdateWrapper<SysAuditLog> updateWrapper);
-    //
-    // // Delete
-    // int deleteById(Serializable id);
-    // int deleteByMap(Map<String, Object> columnMap);
-    // int delete(LambdaQueryWrapper<SysAuditLog> queryWrapper);
-    //
-    // For detailed usage and advanced features, refer to:
-    // @see <a href="https://baomidou.com/pages/49cc81/">MyBatis-Plus BaseMapper Guide</a>
-
 }

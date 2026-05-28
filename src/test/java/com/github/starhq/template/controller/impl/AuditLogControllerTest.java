@@ -10,7 +10,10 @@ import com.github.starhq.template.model.dto.auditlog.AuditLogPageRequest;
 import com.github.starhq.template.model.vo.auditlog.AuditLogPageVO;
 import com.github.starhq.template.service.AuditLogService;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
@@ -80,7 +83,7 @@ class AuditLogControllerTest {
     }
 
     @Test
-    void queryAuditLogs_noSort_badRequest() throws Exception {
+    void queryAuditLogs_noSort_success() throws Exception {
         when(auditLogService.page(any(AuditLogPageRequest.class))).thenReturn(pageResult);
 
         mockMvc.perform(get(TestConstant.VERSION + "/audit-logs")
@@ -89,47 +92,30 @@ class AuditLogControllerTest {
                         .param("size", "10")
                         .param("sort", "")
                 )
-                .andExpect(status().isBadRequest());
-    }
-
-    @Test
-    void queryAuditLogs_noOrder_Success() throws Exception {
-        when(auditLogService.page(any(AuditLogPageRequest.class))).thenReturn(pageResult);
-
-        mockMvc.perform(get(TestConstant.VERSION + "/audit-logs")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .param("page", "1")
-                        .param("size", "10")
-                        .param("sort", "id")
-                        .param("asc", "")
-                )
                 .andExpect(status().isOk());
     }
 
-    @Test
-    void queryAuditLogs_Asc_Success() throws Exception {
+    @ParameterizedTest
+    @CsvSource({
+            // 格式：参数1, 参数2, 参数3, 参数4 (对应下面的占位符)
+            "1,       10,    id,       ''",           // 对应原来的 noOrder (asc为空字符串)
+            "1,       10,    id,       asc",        // 对应原来的 Asc
+            "1,       10,    id,       whatever"    // 对应原来的 Fallback
+    })
+    @DisplayName("查询审计日志: 不同的排序参数都应该成功")
+    void queryAuditLogs_WithVariousSortParams_ShouldReturnSuccess(
+            String page, String size, String sort, String asc) throws Exception {
+
+        // Mock 行为（对所有传入的参数都生效）
         when(auditLogService.page(any(AuditLogPageRequest.class))).thenReturn(pageResult);
 
+        // 执行请求（使用参数化传入的变量）
         mockMvc.perform(get(TestConstant.VERSION + "/audit-logs")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .param("page", "1")
-                        .param("size", "10")
-                        .param("sort", "id")
-                        .param("asc", "asc")
-                )
-                .andExpect(status().isOk());
-    }
-
-    @Test
-    void queryAuditLogs_Order_Fallback_Success() throws Exception {
-        when(auditLogService.page(any(AuditLogPageRequest.class))).thenReturn(pageResult);
-
-        mockMvc.perform(get(TestConstant.VERSION + "/audit-logs")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .param("page", "1")
-                        .param("size", "10")
-                        .param("sort", "id")
-                        .param("asc", "whatever")
+                        .param("page", page)
+                        .param("size", size)
+                        .param("sort", sort)
+                        .param("asc", asc)
                 )
                 .andExpect(status().isOk());
     }

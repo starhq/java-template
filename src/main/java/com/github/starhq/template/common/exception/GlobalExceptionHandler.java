@@ -6,6 +6,7 @@ import com.github.starhq.template.model.vo.Result;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 import org.springframework.beans.TypeMismatchException;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpHeaders;
@@ -65,8 +66,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
      * @return a standardized response containing the concatenated validation error messages
      */
     @Override
-    protected @NullMarked ResponseEntity<Object> handleMethodArgumentNotValid(
-            MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
+    protected ResponseEntity<Object> handleMethodArgumentNotValid(
+            MethodArgumentNotValidException ex, @Nullable HttpHeaders headers, HttpStatusCode status, @Nullable WebRequest request) {
         String message = formatFieldErrors(ex.getBindingResult().getFieldErrors());
         return buildValidationResponse(status.value(), message);
     }
@@ -83,8 +84,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
      * @return a standardized response indicating a body format error
      */
     @Override
-    protected @NullMarked ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex, HttpHeaders headers, HttpStatusCode status,
-                                                                              WebRequest request) {
+    protected ResponseEntity<Object> handleHttpMessageNotReadable(@Nullable HttpMessageNotReadableException ex, @Nullable HttpHeaders headers, HttpStatusCode status,
+                                                                  @Nullable WebRequest request) {
         return buildFrameworkResponse(status.value(), ErrorCode.PARAM_FORMAT);
     }
 
@@ -99,7 +100,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
      * @return a standardized response pointing out the specific parameter that failed conversion
      */
     @Override
-    protected @NullMarked ResponseEntity<Object> handleTypeMismatch(TypeMismatchException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
+    protected ResponseEntity<Object> handleTypeMismatch(@Nullable TypeMismatchException ex, @Nullable HttpHeaders headers, HttpStatusCode status,
+                                                        @Nullable WebRequest request) {
         return buildFrameworkResponse(status.value(), ErrorCode.QUERY_FORMAT, extractParamName(ex));
     }
 
@@ -113,8 +115,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
      * @return a standardized response indicating the missing parameter
      */
     @Override
-    protected @NullMarked ResponseEntity<Object> handleMissingServletRequestParameter(
-            MissingServletRequestParameterException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
+    protected ResponseEntity<Object> handleMissingServletRequestParameter(
+            MissingServletRequestParameterException ex, @Nullable HttpHeaders headers, HttpStatusCode status, @Nullable WebRequest request) {
         return buildFrameworkResponse(status.value(), ErrorCode.QUERY_FORMAT, ex.getParameterName());
     }
 
@@ -131,8 +133,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
      * @return a standardized 404 response
      */
     @Override
-    protected @NullMarked ResponseEntity<Object> handleNoHandlerFoundException(
-            NoHandlerFoundException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
+    protected ResponseEntity<Object> handleNoHandlerFoundException(
+            NoHandlerFoundException ex, @Nullable HttpHeaders headers, HttpStatusCode status, @Nullable WebRequest request) {
         return buildFrameworkResponse(status.value(), ErrorCode.NOT_FOUND, ex.getRequestURL());
     }
 
@@ -278,7 +280,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
      * @return a {@link ResponseEntity} wrapping the standardized {@link Result}
      */
     private ResponseEntity<Object> buildValidationResponse(Integer status, String message) {
-        Result<Void> result = messageUtils.buildErrorResponse(ErrorCode.VALIDATION_FAILED, message);
+        Result<Void> result = messageUtils.buildErrorResponse(ErrorCode.VALIDATION_FAILED.getCode(), message);
         return ResponseEntity.status(status).body(result);
     }
 
@@ -293,9 +295,14 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
      * @return the resolved parameter name, or a generic fallback string
      */
     private String extractParamName(TypeMismatchException ex) {
-        String name = ex instanceof MethodArgumentTypeMismatchException matme ?
-                matme.getName() : StringUtils.hasText(ex.getPropertyName()) ?
-                ex.getPropertyName() : "parameter";
+        String name;
+        if (ex instanceof MethodArgumentTypeMismatchException matme) {
+            name = matme.getName();
+        } else if (StringUtils.hasText(ex.getPropertyName())) {
+            name = ex.getPropertyName();
+        } else {
+            name = "parameter";
+        }
 
         String requiredType = Optional.ofNullable(ex.getRequiredType()).map(Class::getSimpleName).orElse("unknown type");
 

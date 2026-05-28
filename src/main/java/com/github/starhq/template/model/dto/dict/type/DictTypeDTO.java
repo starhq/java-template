@@ -1,4 +1,4 @@
-package com.github.starhq.template.model.dto.dictType;
+package com.github.starhq.template.model.dto.dict.type;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;

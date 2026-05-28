@@ -109,8 +109,6 @@ class RoleServiceImplTest {
         IPage<SysRole> mockDbPage = new Page<>(1, 10, 1);
         mockDbPage.setRecords(List.of(mockRole));
 
-        // when(cacheManager.getCache(anyString())).thenReturn(cache);
-
         // Mock selectPage 返回结果
         when(roleMapper.selectPage(any(), any(Wrapper.class))).thenReturn(mockDbPage);
 

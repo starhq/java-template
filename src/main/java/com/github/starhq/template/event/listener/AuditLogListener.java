@@ -137,10 +137,6 @@ public class AuditLogListener {
         try {
             // Persist to database (MyBatis-Plus auto-fills audit fields if MetaObjectHandler configured)
             auditLogMapper.insert(auditLog);
-
-            // Optional: record success metrics for observability
-            // metrics.counter("audit.log.persisted.success").increment();
-
         } catch (Exception e) {
             // Log failure with context but do not re-throw to avoid blocking async pool
             // Include traceable identifiers for correlation
@@ -148,12 +144,6 @@ public class AuditLogListener {
             Long targetId = auditLog.getTargetId();
             log.warn("Failed to persist audit log [action={}, targetId={}]: {}",
                     action, targetId, e.getMessage(), e);
-
-            // Optional fallback: record to local file or dead-letter queue for later replay
-            // fallbackService.recordToLocalFile(auditLog);
-
-            // Optional: record failure metrics for alerting
-            // metrics.counter("audit.log.persisted.failure").increment();
         }
     }
 }

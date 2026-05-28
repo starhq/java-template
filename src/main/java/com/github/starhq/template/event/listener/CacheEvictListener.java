@@ -157,20 +157,11 @@ public class CacheEvictListener {
             // Delegate to CacheHelper for batch invalidation across multiple cache regions
             // CacheHelper should handle both local (Caffeine) and distributed (Redis) caches
             cacheHelper.evict(keys, cacheNames);
-
-            // Optional: record success metrics for observability
-            // metrics.counter("cache.evict.success", "caches", String.join(",", cacheNames)).increment();
-
         } catch (Exception e) {
             // Log failure with context but do not re-throw to avoid blocking async pool
             // Include cache names for correlation
             log.warn("Failed to evict cache for keys: {}, caches: {}, error: {}",
                     keys, cacheNames, e.getMessage(), e);
-
-            // Optional: record failure metrics for alerting
-            // metrics.counter("cache.evict.failure").increment();
-
-            // Note: Never re-throw exceptions from async event listeners to prevent thread pool exhaustion
         }
     }
 }

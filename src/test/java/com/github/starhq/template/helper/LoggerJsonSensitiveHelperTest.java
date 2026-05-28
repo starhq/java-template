@@ -125,8 +125,7 @@ class LoggerJsonSensitiveHelperTest {
             String result = helper.mask(content, true);
 
             // then
-            assertThat(result).contains("\"name\":\"张三\"");
-            assertThat(result).contains("\"idCard\":\"*****\"");
+            assertThat(result).contains("\"name\":\"张三\"").contains("\"idCard\":\"*****\"");
         }
 
         @Test
@@ -198,17 +197,23 @@ class LoggerJsonSensitiveHelperTest {
         @DisplayName("提取 Header - 敏感 Header 替换，非敏感保留，空值显示 EMPTY")
         void mask_headers_shouldProcessCorrectly() throws Exception {
             // given
+            // 1. 固定返回的 Header 列表
             when(sensitiveFieldProperties.getHeaders()).thenReturn(Set.of("Authorization", "Content-Type"));
-            when(sensitiveFieldProperties.isSensitive("Authorization")).thenReturn(true);
-            // when(sensitiveFieldProperties.isSensitive("Content-Type")).thenReturn(false);
+
+            // 2. 【终极杀招】：拦截所有 isSensitive 调用，写出通用判断逻辑
+            // 这样不管 Set 怎么乱序遍历，Mockito 都能完美应对，永远不会报错！
+            when(sensitiveFieldProperties.isSensitive(anyString())).thenAnswer(invocation -> {
+                String headerName = invocation.getArgument(0);
+                // 模拟配置：只有 Authorization 是敏感的，其他都不是
+                return "Authorization".equalsIgnoreCase(headerName);
+            });
+
             when(sensitiveFieldProperties.getMaskValue()).thenReturn("******");
 
-            when(request.getHeader("Authorization")).thenReturn("Bearer token123");
-            when(request.getHeader("Content-Type")).thenReturn(null); // 模拟空值
+            when(request.getHeader("Content-Type")).thenReturn(null);
 
             when(jsonMapper.writeValueAsString(any())).thenAnswer(inv -> {
-                @SuppressWarnings("unchecked")
-                Map<String, String> map = (Map<String, String>) inv.getArgument(0);
+                Map<String, String> map = inv.getArgument(0);
                 return map.toString();
             });
 
@@ -216,8 +221,9 @@ class LoggerJsonSensitiveHelperTest {
             String result = helper.mask(request, true, true);
 
             // then
-            assertThat(result).contains("Authorization=******");
-            assertThat(result).contains("Content-Type=[EMPTY]");
+            assertThat(result)
+                    .contains("Authorization=******")
+                    .contains("Content-Type=[EMPTY]");
         }
 
         @Test
@@ -243,8 +249,8 @@ class LoggerJsonSensitiveHelperTest {
             String result = helper.mask(request, false, true);
 
             // then
-            assertThat(result).contains("password=***");
-            assertThat(result).contains("ids=[1, 2, 3]"); // 数组转 List
+            assertThat(result).contains("password=***")
+                    .contains("ids=[1, 2, 3]"); // 数组转 List
         }
 
         @Test

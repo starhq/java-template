@@ -32,7 +32,7 @@ public abstract class AbstractCaptcha implements ICaptcha {
      * Set custom fonts
      *
      */
-    protected List<Font> fonts;
+    protected transient List<Font> fonts;
 
     /**
      * Constructor.
@@ -42,7 +42,7 @@ public abstract class AbstractCaptcha implements ICaptcha {
      * @param codeCount      number of characters
      * @param interfereCount number of interference elements
      */
-    public AbstractCaptcha(
+    protected AbstractCaptcha(
             int width,
             int height,
             int codeCount,

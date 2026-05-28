@@ -313,7 +313,7 @@ public class CacheHelper {
 
             try {
                 dbData = dbLoader.apply(missIds);
-            } catch (Exception e) {
+            } catch (Exception _) {
                 dbData = new HashMap<>(missIds.size());
                 for (Long missId : missIds) {
                     dbData.put(missId, "unknown");

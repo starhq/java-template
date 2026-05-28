@@ -1,5 +1,7 @@
 package com.github.starhq.template.common.constant;
 
+import lombok.experimental.UtilityClass;
+
 /**
  * Constants representing active Spring profiles.
  *
@@ -10,7 +12,8 @@ package com.github.starhq.template.common.constant;
  * @author wangjian
  * @see org.springframework.context.annotation.Profile
  */
-public interface ProfileConstants {
+@UtilityClass
+public class ProfileConstants {
 
     /**
      * Profile expression indicating any environment <b>except</b> the development environment.
@@ -18,20 +21,20 @@ public interface ProfileConstants {
      * <p>Commonly used in Spring's {@code @Profile} annotation to exclude beans
      * from local development, such as {@code @Profile(NON_DEV)}.
      */
-    String NON_DEV = "!dev";
+    public static final String NON_DEV = "!dev";
 
     /**
      * Profile identifier for the local development environment.
      */
-    String DEV = "dev";
+    public static final String DEV = "dev";
 
     /**
      * Profile identifier for the testing/staging environment.
      */
-    String TEST = "test";
+    public static final String TEST = "test";
 
     /**
      * Profile identifier for the production environment.
      */
-    String PROD = "prod";
+    public static final String PROD = "prod";
 }

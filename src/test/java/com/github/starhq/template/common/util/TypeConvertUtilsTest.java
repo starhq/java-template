@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @description:
  * @date 2026/5/18 11:19
  */
-public class TypeConvertUtilsTest {
+class TypeConvertUtilsTest {
 
     @Test
     void convert_String_Success() {

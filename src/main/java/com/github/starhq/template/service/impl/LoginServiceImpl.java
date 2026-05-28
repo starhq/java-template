@@ -293,17 +293,17 @@ public class LoginServiceImpl implements LoginService {
             // Throws typed AuthenticationException subclasses for specific failure scenarios
             authentication = authenticationManager.authenticate(authenticationToken);
 
-        } catch (BadCredentialsException e) {
+        } catch (BadCredentialsException _) {
             // ✅ Translate to business exception: generic error to prevent username enumeration
             // Frontend shows "Invalid username or password" without revealing which field is wrong
             throw new CustomException(ErrorCode.CREDENTIALS, HttpStatus.UNAUTHORIZED);
 
-        } catch (DisabledException | LockedException e) {
+        } catch (DisabledException | LockedException _) {
             // ✅ Translate to business exception: specific error for account status issues
             // Frontend can show "Account is disabled" for better UX while maintaining security
             throw new CustomException(ErrorCode.DISABLED, HttpStatus.UNAUTHORIZED);
 
-        } catch (AuthenticationException e) {
+        } catch (AuthenticationException _) {
             // ✅ Fallback: catch any other authentication exception with generic error
             // Prevents information leakage from unexpected auth provider errors
             throw new CustomException(ErrorCode.UNAUTHORIZED, HttpStatus.UNAUTHORIZED);

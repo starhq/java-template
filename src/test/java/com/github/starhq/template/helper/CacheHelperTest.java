@@ -232,6 +232,34 @@ class CacheHelperTest {
             verify(cache, never()).get(any());
             verify(cache, never()).put(any(), any());
         }
+
+        @Test
+        @DisplayName("DB Loader 抛出异常 - 应捕获异常并返回 unknown，且不回写缓存")
+        @SuppressWarnings("unchecked")
+        void getBatch_dbLoaderThrowsException_shouldReturnUnknown() {
+            // given: 模拟缓存未命中
+            when(cacheManager.getCache("user")).thenReturn(cache);
+            when(cache.get(anyLong(), eq(String.class))).thenReturn(null);
+
+            // 【关键点】：创建一个 Mock 的 loader，并指定它在被调用时抛出 RuntimeException
+            Function<Set<Long>, Map<Long, String>> failLoader = mock(Function.class);
+            when(failLoader.apply(anySet())).thenThrow(new RuntimeException("Database connection failed"));
+
+            // when: 调用方法
+            Map<Long, String> result = cacheHelper.getBatchWithCache(Set.of(1L, 2L), "user", failLoader);
+
+            // then: 验证结果
+            // 1. 返回的数据大小应该是 2
+            assertThat(result).hasSize(2);
+            // 2. 因为 DB 挂了，原本缓存未命中的 1 和 2，都应该被赋值为 "unknown"
+            assertThat(result).containsEntry(1L, "unknown").containsEntry(2L, "unknown");
+
+            // 3. 验证 DB Loader 确实被触发过
+            verify(failLoader).apply(Set.of(1L, 2L));
+
+            // 4. 【核心业务验证】：因为拿到的 dbData 是异常降级数据，所以绝对不能回写到缓存里，否则会污染缓存！
+            verify(cache,times(2)).put(any(), any());
+        }
     }
 
     @Nested

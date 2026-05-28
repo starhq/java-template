@@ -194,7 +194,7 @@ public class Result<T> implements Serializable {
      * </ul>
      *
      */
-    private T data;
+    private transient T data;
 
     /**
      * Total count of records for paginated responses.

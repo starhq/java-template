@@ -10,6 +10,7 @@ import com.github.starhq.template.common.enums.TargetType;
 import com.github.starhq.template.converter.RoleConverter;
 import com.github.starhq.template.entity.*;
 import com.github.starhq.template.event.EventService;
+import com.github.starhq.template.helper.CacheHelper;
 import com.github.starhq.template.helper.RelationHelper;
 import com.github.starhq.template.helper.SysUserMapperHelper;
 import com.github.starhq.template.mapper.*;
@@ -19,7 +20,6 @@ import com.github.starhq.template.model.vo.role.RoleCheckVO;
 import com.github.starhq.template.model.vo.role.RolePageVO;
 import com.github.starhq.template.model.vo.role.RoleSimpleVO;
 import com.github.starhq.template.service.RoleService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,7 +27,7 @@ import java.io.Serializable;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
-import java.util.function.Consumer;
+import java.util.function.LongConsumer;
 
 /**
  * Service implementation for role management with CRUD operations, permission associations, caching, and audit trail support.
@@ -63,7 +63,6 @@ import java.util.function.Consumer;
  * @see RelationHelper
  */
 @Service("roleService")
-@RequiredArgsConstructor
 public class RoleServiceImpl extends AuditBaseServiceImpl<SysRoleMapper, SysRole> implements RoleService {
 
     /**
@@ -157,6 +156,51 @@ public class RoleServiceImpl extends AuditBaseServiceImpl<SysRoleMapper, SysRole
      * @see RoleConverter
      */
     private final RoleConverter roleConverter;
+
+    /**
+     * Constructs a new {@code RoleServiceImpl} with all required dependencies for RBAC management.
+     * <p>
+     * This constructor requires a comprehensive set of mappers to handle complex many-to-many
+     * relationships between roles, users, menus, buttons, and resources.
+     *
+     * @param cacheHelper        the cache utility for batch username resolution (inherited from base class)
+     * @param userMapperHelper   the helper for resolving user IDs to usernames during audit field population
+     * @param menuMapper         the mapper for querying menu details during role-menu assignment
+     * @param buttonMapper       the mapper for querying button details during role-button assignment
+     * @param resourceMapper     the mapper for querying resource details during role-resource assignment
+     * @param roleResourceMapper the mapper for managing role-resource relationships in the database
+     * @param roleMenuMapper     the mapper for managing role-menu relationships in the database
+     * @param roleButtonMapper   the mapper for managing role-button relationships in the database
+     * @param userRoleMapper     the mapper for managing user-role relationships in the database
+     * @param relationHelper     the utility helper for abstracting complex relational batch operations (e.g., delete and re-insert)
+     * @param eventService       the service for publishing domain events (e.g., clearing authorization caches)
+     * @param roleConverter      the converter for transforming between role entities, DTOs, and VOs
+     */
+    public RoleServiceImpl(CacheHelper cacheHelper,
+                           SysUserMapperHelper userMapperHelper,
+                           SysMenuMapper menuMapper,
+                           SysButtonMapper buttonMapper,
+                           SysResourceMapper resourceMapper,
+                           SysRoleResourceMapper roleResourceMapper,
+                           SysRoleMenuMapper roleMenuMapper,
+                           SysRoleButtonMapper roleButtonMapper,
+                           SysUserRoleMapper userRoleMapper,
+                           RelationHelper relationHelper,
+                           EventService eventService,
+                           RoleConverter roleConverter) {
+        super(cacheHelper);
+        this.menuMapper = menuMapper;
+        this.buttonMapper = buttonMapper;
+        this.resourceMapper = resourceMapper;
+        this.userMapperHelper = userMapperHelper;
+        this.roleResourceMapper = roleResourceMapper;
+        this.roleMenuMapper = roleMenuMapper;
+        this.roleButtonMapper = roleButtonMapper;
+        this.userRoleMapper = userRoleMapper;
+        this.relationHelper = relationHelper;
+        this.eventService = eventService;
+        this.roleConverter = roleConverter;
+    }
 
     /**
      * Retrieves a paginated list of role definitions with audit field resolution.
@@ -376,7 +420,7 @@ public class RoleServiceImpl extends AuditBaseServiceImpl<SysRoleMapper, SysRole
      * @see #validateResourceIds(Set)
      */
     private void assignResourcesToRole(Long roleId, Set<Long> resourceIds) {
-        Consumer<Long> delete = id -> roleResourceMapper.delete(
+        LongConsumer delete = id -> roleResourceMapper.delete(
                 new LambdaQueryWrapper<SysRoleResource>().eq(SysRoleResource::getRoleId, id)
         );
 
@@ -407,7 +451,7 @@ public class RoleServiceImpl extends AuditBaseServiceImpl<SysRoleMapper, SysRole
      * @see #validateMenuIds(Set)
      */
     private void assignMenusToRole(Long roleId, Set<Long> menuIds) {
-        Consumer<Long> delete = id -> roleMenuMapper.delete(
+        LongConsumer delete = id -> roleMenuMapper.delete(
                 new LambdaQueryWrapper<SysRoleMenu>().eq(SysRoleMenu::getRoleId, id)
         );
 
@@ -438,7 +482,7 @@ public class RoleServiceImpl extends AuditBaseServiceImpl<SysRoleMapper, SysRole
      * @see #validateButtonIds(Set)
      */
     private void assignButtonsToRole(Long roleId, Set<Long> buttonIds) {
-        Consumer<Long> delete = id -> roleButtonMapper.delete(
+        LongConsumer delete = id -> roleButtonMapper.delete(
                 new LambdaQueryWrapper<SysRoleButton>().eq(SysRoleButton::getRoleId, id)
         );
 

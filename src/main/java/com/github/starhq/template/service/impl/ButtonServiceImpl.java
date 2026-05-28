@@ -25,7 +25,6 @@ import com.github.starhq.template.model.vo.button.ButtonCheckVO;
 import com.github.starhq.template.model.vo.button.ButtonPageVO;
 import com.github.starhq.template.model.vo.button.ButtonSimpleVO;
 import com.github.starhq.template.service.ButtonService;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -104,7 +103,6 @@ import java.util.Objects;
  */
 @Slf4j
 @Service("buttonService")
-@RequiredArgsConstructor
 public class ButtonServiceImpl extends AuditBaseServiceImpl<SysButtonMapper, SysButton> implements ButtonService {
 
     /**
@@ -160,6 +158,30 @@ public class ButtonServiceImpl extends AuditBaseServiceImpl<SysButtonMapper, Sys
      * @see CacheConstant
      */
     private final EventService eventService;
+
+    /**
+     * Constructs a new {@code ButtonServiceImpl} with the required dependencies.
+     *
+     * @param cacheHelper      the cache utility for batch username resolution (inherited from base class)
+     * @param menuMapper       the mapper for querying menu associations to validate button existence
+     * @param roleButtonMapper the mapper for managing role-button relationships and authorization rules
+     * @param userMapperHelper the helper for resolving user IDs to usernames during audit field population
+     * @param buttonConverter  the converter for transforming between entities, DTOs, and VOs
+     * @param eventService     the service for publishing domain events (e.g., cache invalidation triggers)
+     */
+    public ButtonServiceImpl(CacheHelper cacheHelper,
+                             SysMenuMapper menuMapper,
+                             SysRoleButtonMapper roleButtonMapper,
+                             SysUserMapperHelper userMapperHelper,
+                             ButtonConverter buttonConverter,
+                             EventService eventService) {
+        super(cacheHelper);
+        this.menuMapper = menuMapper;
+        this.roleButtonMapper = roleButtonMapper;
+        this.userMapperHelper = userMapperHelper;
+        this.buttonConverter = buttonConverter;
+        this.eventService = eventService;
+    }
 
     /**
      * Retrieves a paginated list of button definitions with dynamic filtering and audit field resolution.

@@ -1,10 +1,12 @@
 package com.github.starhq.template.common.captcha.util;
 
 
+import lombok.experimental.UtilityClass;
+
 import java.security.SecureRandom;
 import java.util.Random;
-import java.util.concurrent.ThreadLocalRandom;
 
+@UtilityClass
 public final class RandomUtil {
     /**
      * 用于随机选的字符
@@ -14,12 +16,7 @@ public final class RandomUtil {
     /**
      * 初始化random
      */
-    private final static Random SECURE_RANDOM = new SecureRandom();
-
-    private final static ThreadLocalRandom RANDOM = ThreadLocalRandom.current();
-
-    private RandomUtil() {
-    }
+    private static final Random SECURE_RANDOM = new SecureRandom();
 
     /**
      * 获得定长的随机字母串
@@ -27,7 +24,7 @@ public final class RandomUtil {
      * @param length 定长
      * @return 字母串
      */
-    public static String randomLetters(final int length) {
+    public String randomLetters(final int length) {
         return randomString(LETTER, length);
     }
 
@@ -37,26 +34,21 @@ public final class RandomUtil {
      * @param limit 最大值不包括
      * @return 随机数
      */
-    public static int randomInt(final int limit) {
-        return RANDOM.nextInt(limit);
+    public int randomInt(final int limit) {
+        return SECURE_RANDOM.nextInt(limit);
     }
 
-    public static int randomInt(int origin, int bound) {
-        return RANDOM.nextInt(origin,bound);
+    public int randomInt(int origin, int bound) {
+        return SECURE_RANDOM.nextInt(origin, bound);
     }
 
-    public static double randomDouble(double origin, double bound) {
-        return RANDOM.nextDouble(origin, bound);
+    public double randomDouble(double origin, double bound) {
+        return SECURE_RANDOM.nextDouble(origin, bound);
     }
 
-    public static float randomFloat(float origin, float bound) {
-        return RANDOM.nextFloat(origin, bound);
+    public float randomFloat(float origin, float bound) {
+        return SECURE_RANDOM.nextFloat(origin, bound);
     }
-
-    public static boolean randomBoolean() {
-        return RANDOM.nextBoolean();
-    }
-
 
     /**
      * 获得一个随机字符串
@@ -65,7 +57,7 @@ public final class RandomUtil {
      * @param length     指定长度
      * @return 随机字符串
      */
-    public static String randomString(final String baseString, final int length) {
+    public String randomString(final String baseString, final int length) {
         StringBuilder builder = new StringBuilder(length);
         int tmp = Math.max(length, 1);
         int baseLength = baseString.length();

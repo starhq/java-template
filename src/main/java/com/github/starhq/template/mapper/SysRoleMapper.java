@@ -115,32 +115,4 @@ public interface SysRoleMapper extends BaseMapper<SysRole> {
      * @see <a href="https://baomidou.com/pages/49cc81/">MyBatis-Plus XML Mapping Guide</a>
      */
     List<RoleCheckVO> selectRolesByUserId(@Param("userId") Serializable userId);
-
-    // ========== Inherited Methods from BaseMapper<SysRole> ==========
-    //
-    // The following standard CRUD methods are automatically provided by MyBatis-Plus:
-    //
-    // // Insert
-    // int insert(SysRole entity);
-    //
-    // // Select
-    // SysRole selectById(Serializable id);
-    // List<SysRole> selectBatchIds(Collection<? extends Serializable> idList);
-    // List<SysRole> selectByMap(Map<String, Object> columnMap);
-    // SysRole selectOne(LambdaQueryWrapper<SysRole> queryWrapper);
-    // List<SysRole> selectList(LambdaQueryWrapper<SysRole> queryWrapper);
-    // <E extends IPage<SysRole>> E selectPage(E page, LambdaQueryWrapper<SysRole> queryWrapper);
-    //
-    // // Update
-    // int updateById(SysRole entity);
-    // int update(SysRole entity, LambdaUpdateWrapper<SysRole> updateWrapper);
-    //
-    // // Delete
-    // int deleteById(Serializable id);
-    // int deleteByMap(Map<String, Object> columnMap);
-    // int delete(LambdaQueryWrapper<SysRole> queryWrapper);
-    //
-    // For detailed usage and advanced features, refer to:
-    // @see <a href="https://baomidou.com/pages/49cc81/">MyBatis-Plus BaseMapper Guide</a>
-
 }

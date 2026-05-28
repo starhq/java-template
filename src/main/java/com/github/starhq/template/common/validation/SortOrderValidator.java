@@ -1,11 +1,10 @@
 package com.github.starhq.template.common.validation;
 
-import java.util.Set;
-
-import org.springframework.util.StringUtils;
-
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
+import org.springframework.util.StringUtils;
+
+import java.util.Set;
 
 /**
  * JSR-380 (Jakarta Validation) validator responsible for verifying that a provided
@@ -47,14 +46,14 @@ public class SortOrderValidator implements ConstraintValidator<SortField, String
      *
      * @param value   the sort field string provided by the client (e.g., "id" or "createTime")
      * @param context the Jakarta Validation context
-     * @return {@code true} if the value is non-empty and exists in the allowed whitelist;
+     * @return {@code true} if the value exists in the allowed whitelist;
      * {@code false} otherwise
      */
     @Override
     public boolean isValid(String value, ConstraintValidatorContext context) {
-        // Reject null, empty strings, or pure whitespace immediately
+        // PageRequest#getSort has callback. So let empty value pass
         if (!StringUtils.hasText(value)) {
-            return false;
+            return true;
         }
 
         // Verify against the whitelist to prevent SQL injection in ORDER BY clauses

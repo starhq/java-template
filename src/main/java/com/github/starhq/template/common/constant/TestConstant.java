@@ -1,5 +1,7 @@
 package com.github.starhq.template.common.constant;
 
+import lombok.experimental.UtilityClass;
+
 /**
  * Constants specific to testing configurations.
  *
@@ -8,7 +10,8 @@ package com.github.starhq.template.common.constant;
  *
  * @author wangjian
  */
-public interface TestConstant {
+@UtilityClass
+public class TestConstant {
 
     /**
      * Base API version path used in test requests.
@@ -16,5 +19,5 @@ public interface TestConstant {
      * <p>Typically prepended to MockMvc request URIs (e.g., {@code /v1/users})
      * to verify version-specific controller endpoints.
      */
-    String VERSION = "/v1";
+    public static final String VERSION = "/v1";
 }

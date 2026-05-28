@@ -1,6 +1,6 @@
 package com.github.starhq.template.mapper;
 
-import com.github.starhq.template.BaseMapperTest;
+import com.github.starhq.template.BaseMapperTestConfiguration;
 import com.github.starhq.template.entity.SysButton;
 import com.github.starhq.template.model.vo.button.ButtonCheckVO;
 import org.junit.jupiter.api.Test;
@@ -11,7 +11,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class SysButtonMapperTest extends BaseMapperTest {
+class SysButtonMapperTest extends BaseMapperTestConfiguration {
 
     @Autowired
     private SysButtonMapper buttonMapper;
@@ -65,8 +65,8 @@ class SysButtonMapperTest extends BaseMapperTest {
         List<ButtonCheckVO> result = buttonMapper.selectButtonsByRoleId(1L);
 
         assertThat(result).isNotNull();
-        assertThat(result.getFirst().getChecked()).isEqualTo(true);
-        assertThat(result.size()).isGreaterThan(0);
+        assertThat(result.getFirst().getChecked()).isTrue();
+        assertThat(result).hasSizeGreaterThan(0);
     }
 
     @Test
@@ -75,7 +75,7 @@ class SysButtonMapperTest extends BaseMapperTest {
 
         assertThat(result).isNotNull();
         assertThat(result.getFirst().getCode()).isNotEmpty();
-        assertThat(result.size()).isGreaterThan(0);
+        assertThat(result).hasSizeGreaterThan(0);
     }
 
     @Test
@@ -84,7 +84,7 @@ class SysButtonMapperTest extends BaseMapperTest {
 
         assertThat(result).isNotNull();
         assertThat(result.getFirst()).isEqualTo(1L);
-        assertThat(result.size()).isGreaterThan(0);
+        assertThat(result).hasSizeGreaterThan(0);
     }
 
     @Test

@@ -11,7 +11,6 @@ import tools.jackson.databind.SerializationContext;
 import tools.jackson.databind.ser.PropertyWriter;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -41,7 +40,7 @@ class SensitivePropertyFilterTest {
         filter.serializeAsProperty(pojo, jsonGenerator, serializationContext, propertyWriter);
 
         // Then: 验证调用了写脱敏值的方法，且参数正确
-        verify(jsonGenerator).writeStringProperty(eq("password"), eq("*****"));
+        verify(jsonGenerator).writeStringProperty("password", "*****");
         // 验证绝对没有调用原始的序列化方法
         verify(propertyWriter, never()).serializeAsProperty(any(), any(), any());
     }
@@ -62,6 +61,6 @@ class SensitivePropertyFilterTest {
         // Then: 验证没有调用脱敏方法
         verify(jsonGenerator, never()).writeStringProperty(anyString(), anyString());
         // 验证调用了原始的默认序列化方法放行
-        verify(propertyWriter).serializeAsProperty(eq(pojo), eq(jsonGenerator), eq(serializationContext));
+        verify(propertyWriter).serializeAsProperty(pojo, jsonGenerator, serializationContext);
     }
 }

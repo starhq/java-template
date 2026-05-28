@@ -218,32 +218,4 @@ public interface SysResourceMapper extends BaseMapper<SysResource> {
      * @see com.github.starhq.template.common.enums.UserStatus
      */
     List<Long> selectUserIdsByResourceId(@Param("resourceId") Serializable resourceId);
-
-    // ========== Inherited Methods from BaseMapper<SysResource> ==========
-    //
-    // The following standard CRUD methods are automatically provided by MyBatis-Plus:
-    //
-    // // Insert
-    // int insert(SysResource entity);
-    //
-    // // Select
-    // SysResource selectById(Serializable id);
-    // List<SysResource> selectBatchIds(Collection<? extends Serializable> idList);
-    // List<SysResource> selectByMap(Map<String, Object> columnMap);
-    // SysResource selectOne(LambdaQueryWrapper<SysResource> queryWrapper);
-    // List<SysResource> selectList(LambdaQueryWrapper<SysResource> queryWrapper);
-    // <E extends IPage<SysResource>> E selectPage(E page, LambdaQueryWrapper<SysResource> queryWrapper);
-    //
-    // // Update
-    // int updateById(SysResource entity);
-    // int update(SysResource entity, LambdaUpdateWrapper<SysResource> updateWrapper);
-    //
-    // // Delete
-    // int deleteById(Serializable id);
-    // int deleteByMap(Map<String, Object> columnMap);
-    // int delete(LambdaQueryWrapper<SysResource> queryWrapper);
-    //
-    // For detailed usage and advanced features, refer to:
-    // @see <a href="https://baomidou.com/pages/49cc81/">MyBatis-Plus BaseMapper Guide</a>
-
 }

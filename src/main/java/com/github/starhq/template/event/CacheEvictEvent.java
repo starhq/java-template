@@ -81,8 +81,8 @@ import java.util.Collection;
  * @see org.springframework.cache.CacheManager
  * @see java.util.Collection
  */
-public record CacheEvictEvent<ID>(
-        Collection<ID> keys,
+public record CacheEvictEvent<T>(
+        Collection<T> keys,
         Collection<String> cacheNames
 ) {
 }

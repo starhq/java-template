@@ -12,8 +12,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -36,7 +36,7 @@ class CacheEvictListenerTest {
         cacheEvictListener.handleEvictEvent(event);
 
         // Then: 验证底层的 cacheHelper 被正确调用，且参数匹配
-        verify(cacheHelper, times(1)).evict(eq(keys), eq(cacheNames));
+        verify(cacheHelper, times(1)).evict(keys, cacheNames);
     }
 
     @Test
@@ -75,5 +75,21 @@ class CacheEvictListenerTest {
 
         // Then: 验证第三层防御生效
         verify(cacheHelper, never()).evict(any(), any());
+    }
+
+    @Test
+    void handleEvictEvent_Fail_Exception() {
+        // Given: keys 为空集合，但 cacheNames 正常
+        List<Long> emptyKeys = List.of(1L);
+        List<String> cacheNames = List.of("user");
+        CacheEvictEvent<Long> event = new CacheEvictEvent<>(emptyKeys, cacheNames);
+
+        doThrow(new RuntimeException("Evict cache failure")).when(cacheHelper).evict(anyList(), anyList());
+
+        // When
+        assertDoesNotThrow(() -> cacheEvictListener.handleEvictEvent(event));
+
+        // Then: 验证第三层防御生效
+        verify(cacheHelper).evict(any(), any());
     }
 }

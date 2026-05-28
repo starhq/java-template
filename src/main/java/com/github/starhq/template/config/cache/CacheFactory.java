@@ -2,6 +2,7 @@ package com.github.starhq.template.config.cache;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
+import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -15,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
  * @see CacheType
  */
 @Slf4j
+@UtilityClass
 public class CacheFactory {
 
     /**
@@ -25,7 +27,7 @@ public class CacheFactory {
      * @param <V>       the type of cache values
      * @return a fully configured, ready-to-use Caffeine Cache instance
      */
-    public static <K, V> Cache<K, V> build(CacheType cacheType) {
+    public <K, V> Cache<K, V> build(CacheType cacheType) {
         return Caffeine
                 .newBuilder()
                 // Configures the Time-To-Live based on the last write operation.

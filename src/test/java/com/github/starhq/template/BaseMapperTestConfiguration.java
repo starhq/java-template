@@ -13,5 +13,5 @@ import org.springframework.test.context.ActiveProfiles;
 @Import({ TestcontainersConfiguration.class })
 @ImportAutoConfiguration({ FlywayAutoConfiguration.class, JacksonAutoConfiguration.class })
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-public class BaseMapperTest {
+public class BaseMapperTestConfiguration {
 }

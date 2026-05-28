@@ -97,7 +97,7 @@ public class ApiLogEventListener {
      *
      * @param event the {@link ApiLogEvent} containing the {@link SysApiLog} to persist, may be {@code null}
      * @see ApiLogEvent#apiLog()
-     * @see SysApiLogMapper#insert(Object) 
+     * @see SysApiLogMapper#insert(Object)
      * @see Async
      */
     @Async
@@ -116,21 +116,11 @@ public class ApiLogEventListener {
         try {
             // Persist to database (MyBatis-Plus auto-fills audit fields if configured)
             apiLogMapper.insert(apiLog);
-
-            // Optional: record success metrics for observability
-            // metrics.counter("api.log.persisted.success").increment();
-
         } catch (Exception e) {
             // Log failure with context but do not re-throw to avoid blocking async pool
             // Include traceId for correlation if available
             String traceId = apiLog.getTraceId() != null ? apiLog.getTraceId() : "unknown";
             log.warn("Failed to persist API log [traceId={}]: {}", traceId, e.getMessage(), e);
-
-            // Optional fallback: record to local file or dead-letter queue
-            // fallbackService.recordToLocalFile(apiLog);
-
-            // Optional: record failure metrics for alerting
-            // metrics.counter("api.log.persisted.failure").increment();
         }
     }
 }

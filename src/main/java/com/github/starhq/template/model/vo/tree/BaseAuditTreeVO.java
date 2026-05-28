@@ -236,6 +236,6 @@ public abstract class BaseAuditTreeVO<T> extends BaseAuditVO {
      * @see Tree
      * @see com.github.starhq.template.common.util.TreeBuildUtils#build(List, Long)
      */
-    private List<T> children;
+    private transient List<T> children;
 
 }

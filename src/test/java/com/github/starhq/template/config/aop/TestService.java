@@ -17,6 +17,7 @@ public class TestService {
             targetType = TargetType.USER
     )
     public void create(TestDTO dto) {
+        throw new UnsupportedOperationException();
     }
 
     @AuditLoggable(
@@ -24,6 +25,7 @@ public class TestService {
             targetType = TargetType.USER
     )
     public void remove(Long id) {
+        throw new UnsupportedOperationException();
     }
 
     @AuditLoggable(
@@ -31,6 +33,7 @@ public class TestService {
             targetType = TargetType.USER
     )
     public void update(Long id) {
+        throw new UnsupportedOperationException();
     }
 
     @AuditLoggable(
@@ -38,9 +41,11 @@ public class TestService {
             targetType = TargetType.USER
     )
     public void updateWithNoArg() {
+        throw new UnsupportedOperationException();
     }
 
     public void noAudit() {
+        throw new UnsupportedOperationException();
     }
 
     @AuditLoggable(
@@ -48,5 +53,6 @@ public class TestService {
             targetType = TargetType.USER
     )
     public void createNoId(NoIdDTO dto) {
+        throw new UnsupportedOperationException();
     }
 }

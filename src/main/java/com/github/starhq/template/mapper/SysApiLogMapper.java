@@ -4,7 +4,6 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.github.starhq.template.common.constant.ProfileConstants;
 import com.github.starhq.template.entity.SysApiLog;
 import org.apache.ibatis.annotations.Mapper;
-import org.springframework.context.annotation.Profile;
 
 /**
  * MyBatis-Plus mapper interface for {@link SysApiLog} entity persistence.
@@ -59,32 +58,5 @@ import org.springframework.context.annotation.Profile;
  */
 @Mapper
 public interface SysApiLogMapper extends BaseMapper<SysApiLog> {
-
-    // ========== Inherited Methods from BaseMapper<SysApiLog> ==========
-    //
-    // The following methods are automatically provided by MyBatis-Plus:
-    //
-    // // Insert
-    // int insert(SysApiLog entity);
-    //
-    // // Select
-    // SysApiLog selectById(Serializable id);
-    // List<SysApiLog> selectBatchIds(Collection<? extends Serializable> idList);
-    // List<SysApiLog> selectByMap(Map<String, Object> columnMap);
-    // SysApiLog selectOne(LambdaQueryWrapper<SysApiLog> queryWrapper);
-    // List<SysApiLog> selectList(LambdaQueryWrapper<SysApiLog> queryWrapper);
-    // <E extends IPage<SysApiLog>> E selectPage(E page, LambdaQueryWrapper<SysApiLog> queryWrapper);
-    //
-    // // Update
-    // int updateById(SysApiLog entity);
-    // int update(SysApiLog entity, LambdaUpdateWrapper<SysApiLog> updateWrapper);
-    //
-    // // Delete
-    // int deleteById(Serializable id);
-    // int deleteByMap(Map<String, Object> columnMap);
-    // int delete(LambdaQueryWrapper<SysApiLog> queryWrapper);
-    //
-    // For detailed usage, refer to:
-    // @see <a href="https://baomidou.com/pages/49cc81/">MyBatis-Plus BaseMapper Guide</a>
 
 }

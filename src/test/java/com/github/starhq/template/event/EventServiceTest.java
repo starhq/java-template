@@ -21,7 +21,7 @@ import static org.mockito.Mockito.verify;
  * @date 2026/5/16 22:51
  */
 @ExtendWith(MockitoExtension.class)
-public class EventServiceTest {
+class EventServiceTest {
 
     @Mock
     private ApplicationEventPublisher eventPublisher;

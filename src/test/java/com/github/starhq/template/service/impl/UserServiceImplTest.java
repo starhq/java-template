@@ -94,11 +94,11 @@ class UserServiceImplTest {
     @Test
     void testPage_Success() {
         // Given
-        KeyWordPageRequest request = new KeyWordPageRequest();
-        request.setPage(1L);
-        request.setSize(10L);
-        request.setSort("id");
-        request.setKeyword("test");
+        KeyWordPageRequest pageRequest = new KeyWordPageRequest();
+        pageRequest.setPage(1L);
+        pageRequest.setSize(10L);
+        pageRequest.setSort("id");
+        pageRequest.setKeyword("test");
 
         IPage<SysUser> mockDbPage = new Page<>(1, 10, 1);
         mockDbPage.setRecords(List.of(mockUser));
@@ -113,11 +113,11 @@ class UserServiceImplTest {
         when(userConverter.toPageVO(mockUser)).thenReturn(mockVo);
 
         // When
-        IPage<UserPageVO> result = userService.page(request);
+        IPage<UserPageVO> result = userService.page(pageRequest);
 
         // Then
         assertNotNull(result);
-        assertEquals("id", request.getSort());
+        assertEquals("id", pageRequest.getSort());
         assertEquals(1, result.getTotal());
         assertEquals(1, result.getRecords().size());
 
@@ -129,9 +129,9 @@ class UserServiceImplTest {
     @Test
     void testPage_WithNoKeyword_Success() {
         // Given
-        KeyWordPageRequest request = new KeyWordPageRequest();
-        request.setPage(1L);
-        request.setSize(10L);
+        KeyWordPageRequest pageRequest = new KeyWordPageRequest();
+        pageRequest.setPage(1L);
+        pageRequest.setSize(10L);
 
         IPage<SysUser> mockDbPage = new Page<>(1, 10, 1);
         mockDbPage.setRecords(List.of(mockUser));
@@ -146,7 +146,7 @@ class UserServiceImplTest {
         when(userConverter.toPageVO(mockUser)).thenReturn(mockVo);
 
         // When
-        IPage<UserPageVO> result = userService.page(request);
+        IPage<UserPageVO> result = userService.page(pageRequest);
 
         // Then
         assertNotNull(result);
@@ -162,10 +162,10 @@ class UserServiceImplTest {
     @Test
     void testPage_ReturnsEmptyPage() {
         // Given
-        KeyWordPageRequest request = new KeyWordPageRequest();
-        request.setPage(1L);
-        request.setSize(10L);
-        request.setKeyword("test");
+        KeyWordPageRequest pageRequest = new KeyWordPageRequest();
+        pageRequest.setPage(1L);
+        pageRequest.setSize(10L);
+        pageRequest.setKeyword("test");
 
         IPage<SysUser> mockDbPage = new Page<>(1, 10, 0);
 
@@ -173,7 +173,7 @@ class UserServiceImplTest {
         when(userMapper.selectPage(any(), any(Wrapper.class))).thenReturn(mockDbPage);
 
         // When
-        IPage<UserPageVO> result = userService.page(request);
+        IPage<UserPageVO> result = userService.page(pageRequest);
 
         // Then
         assertNotNull(result);

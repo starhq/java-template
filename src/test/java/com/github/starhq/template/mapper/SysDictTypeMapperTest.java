@@ -1,8 +1,8 @@
 package com.github.starhq.template.mapper;
 
-import com.github.starhq.template.BaseMapperTest;
+import com.github.starhq.template.BaseMapperTestConfiguration;
 import com.github.starhq.template.entity.SysDictType;
-import com.github.starhq.template.model.vo.dictType.DictTypeWithDataVO;
+import com.github.starhq.template.model.vo.dict.type.DictTypeWithDataVO;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -11,7 +11,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class SysDictTypeMapperTest extends BaseMapperTest {
+class SysDictTypeMapperTest extends BaseMapperTestConfiguration {
 
     @Autowired
     private SysDictTypeMapper dictTypeMapper;
@@ -80,7 +80,7 @@ class SysDictTypeMapperTest extends BaseMapperTest {
         List<DictTypeWithDataVO> result = dictTypeMapper.selectDictTypesWithData();
 
         assertThat(result).isNotNull();
-        assertThat(result.size()).isGreaterThan(0);
+        assertThat(result).hasSizeGreaterThan(0);
     }
 
     private SysDictType prepare(Long id, String type, String name) {

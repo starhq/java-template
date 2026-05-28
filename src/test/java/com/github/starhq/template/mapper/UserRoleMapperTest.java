@@ -1,7 +1,7 @@
 package com.github.starhq.template.mapper;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.github.starhq.template.BaseMapperTest;
+import com.github.starhq.template.BaseMapperTestConfiguration;
 import com.github.starhq.template.entity.SysUserRole;
 import org.apache.ibatis.executor.BatchResult;
 import org.junit.jupiter.api.Test;
@@ -12,7 +12,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
-class UserRoleMapperTest extends BaseMapperTest {
+class UserRoleMapperTest extends BaseMapperTestConfiguration {
 
     @Autowired
     private SysUserRoleMapper userRoleMapper;
@@ -23,7 +23,7 @@ class UserRoleMapperTest extends BaseMapperTest {
 
         List<BatchResult> inserts = userRoleMapper.insert(userRoles);
 
-        assertThat(inserts.size()).isEqualTo(1);
+        assertThat(inserts).hasSize(1);
     }
 
     @Test

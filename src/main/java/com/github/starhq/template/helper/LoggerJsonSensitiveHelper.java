@@ -215,11 +215,13 @@ public class LoggerJsonSensitiveHelper {
         Set<String> headers = sensitiveFieldProperties.getHeaders();
         Map<String, String> headerMap = new LinkedHashMap<>(headers.size());
         for (String header : headers) {
-            String value = request.getHeader(header);
-            // Mask sensitive headers; represent empty as "[EMPTY]" for audit clarity
-            headerMap.put(header, StringUtils.hasText(value) ?
-                    (sensitiveFieldProperties.isSensitive(header) ? sensitiveFieldProperties.getMaskValue() : value) :
-                    "[EMPTY]");
+            if (sensitiveFieldProperties.isSensitive(header)) {
+                headerMap.put(header, sensitiveFieldProperties.getMaskValue());
+            } else {
+                String value = request.getHeader(header);
+                String actualValue = StringUtils.hasText(value) ? value : "[EMPTY]";
+                headerMap.put(header, actualValue);
+            }
         }
         return headerMap;
     }
@@ -236,14 +238,18 @@ public class LoggerJsonSensitiveHelper {
     private Map<?, ?> getParamsMap(HttpServletRequest request) {
         Map<String, String[]> params = request.getParameterMap();
         if (params.isEmpty()) {
-            return null;
+            return Collections.emptyMap();
         }
 
         Map<String, Object> simpleParams = new LinkedHashMap<>(params.size());
-        params.forEach((key, values) ->
-                simpleParams.put(key, sensitiveFieldProperties.isSensitive(key) ?
-                        sensitiveFieldProperties.getMaskValue() :
-                        (values.length == 1 ? values[0] : Arrays.asList(values))));
+        params.forEach((key, values) -> {
+            if (sensitiveFieldProperties.isSensitive(key)) {
+                simpleParams.put(key, sensitiveFieldProperties.getMaskValue());
+            } else {
+                simpleParams.put(key, values.length == 1 ? values[0] : Arrays.asList(values));
+            }
+        });
+
         return simpleParams;
     }
 

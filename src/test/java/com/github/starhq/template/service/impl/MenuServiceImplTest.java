@@ -382,8 +382,6 @@ class MenuServiceImplTest {
         // Given
         List<Long> ids = List.of(1L, 2L);
         when(menuMapper.selectCount(any())).thenReturn(1L).thenReturn(0L); // 校验全过
-        // when(roleMenuMapper.delete(any())).thenReturn(2);
-        // when(menuMapper.deleteByIds(ids)).thenReturn(2);
 
         // When & throw
         assertThrows(NotFoundException.class, () -> menuService.removeByIds(ids));
@@ -396,9 +394,8 @@ class MenuServiceImplTest {
 
     @Test
     void removeById_Success() {
-        when(menuMapper.selectCount(any())).thenReturn(1L).thenReturn(0L);
         when(roleMenuMapper.delete(any())).thenReturn(1);
-        when(menuMapper.deleteByIds(anyCollection())).thenReturn(1);
+        when(menuMapper.deleteById(any(Long.class))).thenReturn(1);
 
         // When
         menuService.removeById(1L);

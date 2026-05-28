@@ -116,8 +116,6 @@ public class SysUser extends BaseEntity implements UserDetails {
      * boolean matches = new BCryptPasswordEncoder().matches(rawPassword, hashed);
      * }
      * </pre>
-     * The stored value includes salt and algorithm identifier:
-     * {@code "$2a$12$KIXxPZ3vJ8h5YqZ9mN2pOeL7wQ3rT6uV8xY1zA2bC3dE4fG5hI6jK"}
      * <p>
      * <strong>Security Requirements:</strong>
      * <ul>

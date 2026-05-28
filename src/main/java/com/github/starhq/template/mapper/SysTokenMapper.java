@@ -199,32 +199,4 @@ public interface SysTokenMapper extends BaseMapper<SysToken> {
      * @see SysToken
      */
     void upsertToken(SysToken token);
-
-    // ========== Inherited Methods from BaseMapper<SysToken> ==========
-    //
-    // The following standard CRUD methods are automatically provided by MyBatis-Plus:
-    //
-    // // Insert
-    // int insert(SysToken entity);
-    //
-    // // Select
-    // SysToken selectById(Serializable id);
-    // List<SysToken> selectBatchIds(Collection<? extends Serializable> idList);
-    // List<SysToken> selectByMap(Map<String, Object> columnMap);
-    // SysToken selectOne(LambdaQueryWrapper<SysToken> queryWrapper);
-    // List<SysToken> selectList(LambdaQueryWrapper<SysToken> queryWrapper);
-    // <E extends IPage<SysToken>> E selectPage(E page, LambdaQueryWrapper<SysToken> queryWrapper);
-    //
-    // // Update
-    // int updateById(SysToken entity);
-    // int update(SysToken entity, LambdaUpdateWrapper<SysToken> updateWrapper);
-    //
-    // // Delete
-    // int deleteById(Serializable id);
-    // int deleteByMap(Map<String, Object> columnMap);
-    // int delete(LambdaQueryWrapper<SysToken> queryWrapper);
-    //
-    // For detailed usage and advanced features, refer to:
-    // @see <a href="https://baomidou.com/pages/49cc81/">MyBatis-Plus BaseMapper Guide</a>
-
 }

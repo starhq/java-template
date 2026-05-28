@@ -1,6 +1,6 @@
 package com.github.starhq.template.mapper;
 
-import com.github.starhq.template.BaseMapperTest;
+import com.github.starhq.template.BaseMapperTestConfiguration;
 import com.github.starhq.template.entity.SysDictData;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,7 +9,7 @@ import java.time.OffsetDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class SysDictDataMapperTest extends BaseMapperTest {
+class SysDictDataMapperTest extends BaseMapperTestConfiguration {
 
     @Autowired
     private SysDictDataMapper dictDataMapper;

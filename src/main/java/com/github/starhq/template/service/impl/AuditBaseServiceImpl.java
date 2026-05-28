@@ -88,7 +88,7 @@ import java.util.stream.Stream;
  * @see BaseAuditVO#populateAuditFields(Long, Long, Map)
  * @see CacheHelper#getBatchWithCache(Set, String, Function)
  */
-public class AuditBaseServiceImpl<M extends BaseMapper<T>, T extends BaseEntity>
+public abstract class AuditBaseServiceImpl<M extends BaseMapper<T>, T extends BaseEntity>
         extends BaseServiceImpl<M, T> {
 
     /**
@@ -119,8 +119,19 @@ public class AuditBaseServiceImpl<M extends BaseMapper<T>, T extends BaseEntity>
      * @see CacheHelper
      * @see CacheConstant#ADMIN_NAME
      */
-    @Autowired
-    protected CacheHelper cacheHelper;
+    protected final CacheHelper cacheHelper;
+
+    /**
+     * Constructs the base audit service with the required cache helper.
+     * <p>
+     * This constructor is designed to be called by subclass constructors via {@code super(cacheHelper)}.
+     *
+     * @param cacheHelper the cache utility used for batch username resolution
+     *                    and cache invalidation in {@link #pageVO}
+     */
+    protected AuditBaseServiceImpl(CacheHelper cacheHelper) {
+        this.cacheHelper = cacheHelper;
+    }
 
     /**
      * Executes a paginated query with automatic audit field population.

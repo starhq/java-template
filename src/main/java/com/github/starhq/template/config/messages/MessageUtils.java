@@ -69,7 +69,7 @@ public class MessageUtils {
         if (StringUtils.hasText(i18nKey)) {
             try {
                 return messageSource.getMessage(i18nKey, args, locale);
-            } catch (NoSuchMessageException e) {
+            } catch (NoSuchMessageException _) {
                 // Expected behavior if the key is intentionally missing for this specific error
                 log.debug("Message key '{}' not found, trying fallback...", i18nKey);
             }
@@ -79,7 +79,7 @@ public class MessageUtils {
         if (StringUtils.hasText(defaultMessage) && looksLikeI18nKey(defaultMessage)) {
             try {
                 return messageSource.getMessage(defaultMessage, args, locale);
-            } catch (NoSuchMessageException e) {
+            } catch (NoSuchMessageException _) {
                 log.debug("Fallback key '{}' not found", defaultMessage);
             }
         }

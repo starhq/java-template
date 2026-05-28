@@ -7,18 +7,12 @@ import com.github.starhq.template.common.exception.BusinessException;
 import com.github.starhq.template.common.exception.CustomException;
 import com.github.starhq.template.common.util.SecurityContextUtils;
 import com.github.starhq.template.common.util.SecurityUserUtils;
-import com.github.starhq.template.converter.UserConverter;
-import com.github.starhq.template.entity.SysRole;
 import com.github.starhq.template.entity.SysToken;
 import com.github.starhq.template.entity.SysUser;
-import com.github.starhq.template.entity.SysUserRole;
 import com.github.starhq.template.event.EventService;
-import com.github.starhq.template.mapper.SysRoleMapper;
 import com.github.starhq.template.mapper.SysTokenMapper;
 import com.github.starhq.template.mapper.SysUserMapper;
-import com.github.starhq.template.mapper.SysUserRoleMapper;
 import com.github.starhq.template.model.dto.user.ResetPasswordDTO;
-import com.github.starhq.template.model.dto.user.UserDTO;
 import com.github.starhq.template.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.jspecify.annotations.NullMarked;
@@ -28,7 +22,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.util.CollectionUtils;
 
@@ -103,33 +96,6 @@ public class AuthServiceImpl extends BaseServiceImpl<SysUserMapper, SysUser> imp
      * @see SysTokenMapper
      */
     private final SysTokenMapper tokenMapper;
-
-    /**
-     * Mapper for {@link SysRole} database operations (role management).
-     * <p>
-     * Used for fetching default roles during user registration.
-     *
-     * @see SysRoleMapper
-     */
-    private final SysRoleMapper roleMapper;
-
-    /**
-     * Mapper for {@link SysUserRole} junction table operations (user-role assignment).
-     * <p>
-     * Used for batch inserting default role assignments during registration.
-     *
-     * @see SysUserRoleMapper
-     */
-    private final SysUserRoleMapper userRoleMapper;
-
-    /**
-     * Converter for transforming between {@link UserDTO} and {@link SysUser} entities.
-     * <p>
-     * Ensures consistent field mapping and avoids boilerplate conversion code.
-     *
-     * @see UserConverter
-     */
-    private final UserConverter userConverter;
 
     /**
      * Password encoder for hashing passwords before storage.
@@ -236,96 +202,6 @@ public class AuthServiceImpl extends BaseServiceImpl<SysUserMapper, SysUser> imp
         }
 
         // 4. Return SysUser as UserDetails (entity implements UserDetails interface)
-        return user;
-    }
-
-    /**
-     * Registers a new user account with password encoding and default role assignment.
-     * <p>
-     * <strong>Deprecation Notice:</strong>
-     * <p>
-     * This method is marked {@code @Deprecated} because registration logic should be moved
-     * to the controller layer for better separation of concerns. Future implementations
-     * should handle DTO validation, password encoding, and business logic orchestration in controllers.
-     * <p>
-     * <strong>Transaction Guidance:</strong>
-     * <p>
-     * Annotated with {@code @Transactional(rollbackFor = Exception.class)} to ensure:
-     * <ul>
-     *     <li>Atomicity: User insertion and role assignment succeed or fail together</li>
-     *     <li>Consistency: If role assignment fails, user insertion is rolled back</li>
-     *     <li>Isolation: Concurrent registrations with same username are properly serialized by database</li>
-     * </ul>
-     * <p>
-     * <strong>Processing Steps:</strong>
-     * <ol>
-     *     <li>Convert {@link UserDTO} to {@link SysUser} entity via {@link UserConverter}</li>
-     *     <li>Encode password via {@link PasswordEncoder} before persistence (never store plain text)</li>
-     *     <li>Insert user via enhanced {@link #insert} method with duplicate key handling</li>
-     *     <li>Assign default roles via {@link #assignDefaultRoles} (typically {@code ROLE_USER})</li>
-     *     <li>Return {@link SysUser} as {@link UserDetails} for immediate auto-login</li>
-     * </ol>
-     * <p>
-     * <strong>Security Considerations:</strong>
-     * <ul>
-     *     <li><strong>Password Encoding</strong>: Always encode via {@code passwordEncoder.encode()} before storage</li>
-     *     <li><strong>Duplicate Prevention</strong>: {@link #insert} catches {@code DuplicateKeyException} and throws business-friendly error</li>
-     *     <li><strong>Default Roles</strong>: Ensure at least one default role exists to prevent orphaned accounts</li>
-     *     <li><strong>Input Validation</strong>: Controller should validate DTO fields (username format, password strength) before calling this method</li>
-     * </ul>
-     * <p>
-     * <strong>Usage Example:</strong>
-     * <pre>
-     * {@code
-     * // Controller: Handle registration request (deprecated pattern)
-     * @PostMapping("/register")
-     * public Result<UserSimpleVO> register(@Valid @RequestBody UserDTO dto) {
-     *     try {
-     *         // Register user (returns UserDetails for auto-login)
-     *         UserDetails userDetails = authService.register(dto);
-     *
-     *         // Generate JWT token for immediate authentication
-     *         String token = jwtTokenProvider.createToken(userDetails);
-     *
-     *         return Result.success(
-     *             userConverter.toSimpleVO((SysUser) userDetails),
-     *             Map.of("token", token)
-     *         );
-     *     } catch (DuplicateException e) {
-     *         return Result.fail(ErrorCode.USER_DUPLICATE_USERNAME);
-     *     } catch (BusinessException e) {
-     *         return Result.fail(e.getErrorCode());
-     *     }
-     * }
-     * }
-     * </pre>
-     *
-     * @param userDto the registration data with username, password, email; must not be {@code null}
-     * @return {@link UserDetails} for the newly registered user; ready for authentication
-     * @throws IllegalArgumentException                                       if {@code userDto} is {@code null} or missing required fields
-     * @throws com.github.starhq.template.common.exception.DuplicateException if username already exists
-     * @throws BusinessException                                              if role assignment fails or no default roles configured
-     * @see UserDTO
-     * @see UserConverter#toEntity(UserDTO)
-     * @see #assignDefaultRoles(SysUser)
-     * @deprecated Registration logic should be moved to controller layer; this method will be removed in v2.0
-     */
-    @Deprecated
-    @Transactional(rollbackFor = Exception.class)
-    @Override
-    public UserDetails register(UserDTO userDto) {
-        // 1. Convert DTO to entity and encode password
-        SysUser user = userConverter.toEntity(userDto);
-        // TODO: Move password encoding to controller layer for better separation of concerns
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-
-        // 2. Insert user with business error handling (duplicate key → USER_DUPLICATE_USERNAME)
-        insert(user, ErrorCode.USER_DUPLICATE_USERNAME, ErrorCode.USER_INSERT_FAILED);
-
-        // 3. Assign default roles (e.g., ROLE_USER) to new account
-        assignDefaultRoles(user);
-
-        // 4. Return entity as UserDetails for immediate auto-login
         return user;
     }
 
@@ -455,63 +331,6 @@ public class AuthServiceImpl extends BaseServiceImpl<SysUserMapper, SysUser> imp
     }
 
     // ====================== Private Helper Methods ======================
-
-    /**
-     * Assigns default roles to a newly registered user.
-     * <p>
-     * This method fetches all roles marked as {@code isDefault = true} and creates
-     * junction table entries ({@link SysUserRole}) to establish user-role relationships.
-     * <p>
-     * <strong>Business Rules:</strong>
-     * <ul>
-     *     <li><strong>At Least One Default</strong>: Throws {@link BusinessException} if no default roles configured (prevents orphaned accounts)</li>
-     *     <li><strong>Batch Insert</strong>: Uses {@code userRoleMapper.insert(List)} for efficient bulk insertion</li>
-     *     <li><strong>Authority Population</strong>: Sets {@code user.setAuthorities()} for immediate use in returned {@link UserDetails}</li>
-     * </ul>
-     * <p>
-     * <strong>Error Handling:</strong>
-     * <ul>
-     *     <li><strong>No Default Roles</strong>: Throws {@code BusinessException(NO_ROLES)} to alert administrators of misconfiguration</li>
-     *     <li><strong>Insert Failure</strong>: Catches generic exceptions and wraps with {@code USER_INSERT_FAILED} for consistent error reporting</li>
-     * </ul>
-     * <p>
-     * <strong>Usage Context:</strong>
-     * <p>
-     * Called exclusively from {@link #register(UserDTO)} during new user creation.
-     * Not intended for manual role assignment (use {@code RoleService} for that).
-     *
-     * @param user the newly created user entity; must have valid {@code id} populated
-     * @throws BusinessException if no default roles found or batch insert fails
-     * @see SysRole#getIsDefault()
-     * @see SysUserRole#SysUserRole(Long, Long)
-     */
-    private void assignDefaultRoles(SysUser user) {
-        // Fetch all roles marked as default (e.g., ROLE_USER)
-        List<SysRole> defaultRoles = roleMapper.selectList(
-                new LambdaQueryWrapper<SysRole>().eq(SysRole::getIsDefault, true)
-        );
-
-        // Ensure at least one default role exists (prevent orphaned accounts)
-        if (CollectionUtils.isEmpty(defaultRoles)) {
-            throw new BusinessException(ErrorCode.NO_ROLES);
-        }
-
-        // Set authorities on user entity for immediate use in returned UserDetails
-        user.setAuthorities(defaultRoles);
-
-        // Create junction table entries for batch insert
-        List<SysUserRole> userRoles = defaultRoles.stream()
-                .map(role -> new SysUserRole(user.getId(), role.getId()))
-                .toList();
-
-        try {
-            // Efficient bulk insert via MyBatis-Plus
-            userRoleMapper.insert(userRoles);
-        } catch (Exception e) {
-            // Wrap with business error code for consistent API responses
-            throw new BusinessException(ErrorCode.USER_INSERT_FAILED, e);
-        }
-    }
 
     /**
      * Validates password change rules for security and user experience.

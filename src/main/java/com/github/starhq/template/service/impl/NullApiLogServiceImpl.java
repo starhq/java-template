@@ -14,6 +14,7 @@ public class NullApiLogServiceImpl implements ApiLogService {
 
     @Override
     public void create(SysApiLog apiLog) {
+        throw new UnsupportedOperationException("Manual creation of API logs is not supported.");
     }
 
     @Override

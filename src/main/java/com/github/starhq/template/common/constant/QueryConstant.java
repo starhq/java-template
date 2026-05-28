@@ -1,5 +1,7 @@
 package com.github.starhq.template.common.constant;
 
+import lombok.experimental.UtilityClass;
+
 /**
  * Constants for query parameters.
  *
@@ -10,37 +12,38 @@ package com.github.starhq.template.common.constant;
  *
  * @author wangjian
  */
-public interface QueryConstant {
+@UtilityClass
+public class QueryConstant {
 
     /**
      * Query parameter key mapped to the username field.
      */
-    String USERNAME = "username";
+    public static final String USERNAME = "username";
 
     /**
      * Query parameter key mapped to the user's unique identifier.
      */
-    String USER_ID = "user_id";
+    public static final String USER_ID = "user_id";
 
     /**
      * Query parameter key used to define the sorting order (e.g., 'asc' or 'desc').
      */
-    String SORT = "sort_order";
+    public static final String SORT = "sort_order";
 
     /**
      * Query parameter key mapped to a dictionary or category type identifier.
      */
-    String TYPE_ID = "type_id";
+    public static final String TYPE_ID = "type_id";
 
     /**
      * Query parameter key mapped to the menu's unique identifier.
      */
-    String MENU_ID = "menu_id";
+    public static final String MENU_ID = "menu_id";
 
     /**
      * Query parameter key used for filtering by the target entity type (e.g., in audit logs).
      */
-    String TARGET_TYPE = "target_type";
+    public static final String TARGET_TYPE = "target_type";
 
     /**
      * Query parameter key for nested property access.
@@ -48,5 +51,5 @@ public interface QueryConstant {
      * <p>Specifically used in frameworks like MyBatis-Plus to resolve associated table
      * fields, translating to an SQL JOIN query like {@code creator.username}.
      */
-    String CREATOR = "creator.username";
+    public static final String CREATOR = "creator.username";
 }

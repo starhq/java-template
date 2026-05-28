@@ -1,6 +1,5 @@
 package com.github.starhq.template.config.security.properties;
 
-import jakarta.annotation.PostConstruct;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -54,9 +53,4 @@ public class JwtProperties {
      * the risk of interception.
      */
     private Duration refresh = Duration.ofDays(7);
-
-    @PostConstruct
-    public void init() {
-        System.out.println("JwtProperties @PostConstruct - key is: '" + key + "'");
-    }
 }

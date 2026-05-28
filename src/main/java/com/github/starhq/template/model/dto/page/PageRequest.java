@@ -6,7 +6,6 @@ import com.github.starhq.template.common.enums.SortEnum;
 import com.github.starhq.template.common.validation.SortField;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import org.springframework.util.StringUtils;
 
@@ -119,12 +118,11 @@ public class PageRequest implements Serializable {
 
     // ==================== Fields ====================
 
-    @Min(value = 1, message = "Page number cannot be less than 1")
+    @Min(value = 1, message = "{error.param.min}")
     private Long page;
 
-    @NotNull(message = "Page size cannot be null")
-    @Min(value = 1, message = "Page size must be at least 1")
-    @Max(value = 100, message = "Page size cannot exceed 100")
+    @Min(value = 1, message = "{error.param.min}")
+    @Max(value = 100, message = "{error.param.max}")
     private Long size;
 
     @SortField

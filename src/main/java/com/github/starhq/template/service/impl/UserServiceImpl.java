@@ -15,6 +15,7 @@ import com.github.starhq.template.entity.SysToken;
 import com.github.starhq.template.entity.SysUser;
 import com.github.starhq.template.entity.SysUserRole;
 import com.github.starhq.template.event.EventService;
+import com.github.starhq.template.helper.CacheHelper;
 import com.github.starhq.template.helper.RelationHelper;
 import com.github.starhq.template.helper.SysUserMapperHelper;
 import com.github.starhq.template.mapper.SysRoleMapper;
@@ -26,7 +27,6 @@ import com.github.starhq.template.model.dto.user.UserDTO;
 import com.github.starhq.template.model.vo.user.UserPageVO;
 import com.github.starhq.template.model.vo.user.UserSimpleVO;
 import com.github.starhq.template.service.UserService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -34,7 +34,7 @@ import org.springframework.util.StringUtils;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Set;
-import java.util.function.Consumer;
+import java.util.function.LongConsumer;
 
 /**
  * Service implementation for user management with CRUD operations, role associations, caching, and audit trail support.
@@ -70,7 +70,6 @@ import java.util.function.Consumer;
  * @see RelationHelper
  */
 @Service("userService")
-@RequiredArgsConstructor
 public class UserServiceImpl extends AuditBaseServiceImpl<SysUserMapper, SysUser> implements UserService {
 
     /**
@@ -132,6 +131,40 @@ public class UserServiceImpl extends AuditBaseServiceImpl<SysUserMapper, SysUser
      * @see RelationHelper#assignRelations
      */
     private final RelationHelper relationHelper;
+
+    /**
+     * Constructs a new {@code UserServiceImpl} with the required dependencies.
+     * <p>
+     * This constructor injects mappers for user state management, token lifecycle,
+     * and role assignments.
+     *
+     * @param cacheHelper      the cache utility for batch username resolution (inherited from base class)
+     * @param userRoleMapper   the mapper for managing user-role relational bindings during assignment/removal
+     * @param tokenMapper      the mapper for managing user session tokens (e.g., invalidating tokens on logout/password change)
+     * @param roleMapper       the mapper for querying role details during user role assignment
+     * @param userMapperHelper the helper for resolving user IDs to usernames during audit field population
+     * @param userConverter    the converter for transforming between user entities, DTOs, and VOs
+     * @param eventService     the service for publishing domain events (e.g., user creation, cache invalidation)
+     * @param relationHelper   the utility helper for abstracting complex relational batch operations
+     */
+    public UserServiceImpl(CacheHelper cacheHelper,
+                           SysUserRoleMapper userRoleMapper,
+                           SysTokenMapper tokenMapper,
+                           SysRoleMapper roleMapper,
+                           SysUserMapperHelper userMapperHelper,
+                           UserConverter userConverter,
+                           EventService eventService,
+                           RelationHelper relationHelper) {
+        super(cacheHelper);
+        this.userRoleMapper = userRoleMapper;
+        this.tokenMapper = tokenMapper;
+        this.roleMapper = roleMapper;
+        this.userMapperHelper = userMapperHelper;
+        this.userConverter = userConverter;
+        this.eventService = eventService;
+        this.relationHelper = relationHelper;
+    }
+
 
     /**
      * Retrieves a paginated list of user definitions with dynamic filtering and audit field resolution.
@@ -356,7 +389,7 @@ public class UserServiceImpl extends AuditBaseServiceImpl<SysUserMapper, SysUser
      * @see #validateRoleIds(Set)
      */
     private void assignRolesToUser(Long userId, Set<Long> roleIds) {
-        Consumer<Long> delete = id -> userRoleMapper.delete(
+        LongConsumer delete = id -> userRoleMapper.delete(
                 new LambdaQueryWrapper<SysUserRole>().eq(SysUserRole::getUserId, id)
         );
 

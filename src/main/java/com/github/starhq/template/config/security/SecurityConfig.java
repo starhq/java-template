@@ -86,7 +86,16 @@ public class SecurityConfig {
      * @throws Exception if configuration fails.
      */
     @Bean
-    SecurityFilterChain securityFilterChain(HttpSecurity http, CorsConfigurationSource corsConfigurationSource, WhiteListProperties whiteListProperties, AuthenticationProvider authenticationProvider, AuthenticationEntryPoint entryPoint, AccessDeniedHandler accessDeniedHandler, LogoutHandler logoutHandler, JwtAuthenticationFilter jwtAuthenticationFilter, RequestResponseLoggingFilter requestResponseLoggingFilter, ResourceFilter resourceFilter) throws Exception {
+    SecurityFilterChain securityFilterChain(HttpSecurity http,
+                                            CorsConfigurationSource corsConfigurationSource,
+                                            WhiteListProperties whiteListProperties,
+                                            AuthenticationProvider authenticationProvider,
+                                            AuthenticationEntryPoint entryPoint,
+                                            AccessDeniedHandler accessDeniedHandler,
+                                            LogoutHandler logoutHandler,
+                                            JwtAuthenticationFilter jwtAuthenticationFilter,
+                                            RequestResponseLoggingFilter requestResponseLoggingFilter,
+                                            ResourceFilter resourceFilter) throws IllegalStateException {
         http
                 // Register CORS configuration (must be registered early, ideally via Nginx instead for pure backend setups)
                 .cors(cors -> cors.configurationSource(corsConfigurationSource))

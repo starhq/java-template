@@ -32,7 +32,7 @@ class CaptchaUtilsTest {
         try (OutputStream testImage = new FileOutputStream(imageFile)) {
             captcha.write(result, testImage);
             assertTrue(imageFile.exists());
-        } catch (IOException e) {
+        } catch (IOException _) {
             assertFalse(imageFile.exists());
         }
     }
@@ -53,7 +53,7 @@ class CaptchaUtilsTest {
         try (OutputStream testImage = new FileOutputStream(imageFile)) {
             captcha.write(result, testImage);
             assertTrue(imageFile.exists());
-        } catch (IOException e) {
+        } catch (IOException _) {
             assertFalse(imageFile.exists());
         }
     }
@@ -74,7 +74,7 @@ class CaptchaUtilsTest {
         try (OutputStream testImage = new FileOutputStream(imageFile)) {
             captcha.write(result, testImage);
             assertTrue(imageFile.exists());
-        } catch (IOException e) {
+        } catch (IOException _) {
             assertFalse(imageFile.exists());
         }
     }

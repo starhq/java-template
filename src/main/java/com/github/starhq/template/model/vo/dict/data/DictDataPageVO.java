@@ -1,6 +1,6 @@
-package com.github.starhq.template.model.vo.dictData;
+package com.github.starhq.template.model.vo.dict.data;
 
-import com.github.starhq.template.model.vo.BaseIdVO;
+import com.github.starhq.template.model.vo.BaseAuditVO;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import tools.jackson.databind.annotation.JsonSerialize;
@@ -9,16 +9,19 @@ import tools.jackson.databind.ser.std.ToStringSerializer;
 import java.io.Serial;
 
 /**
- * Lightweight view object for dictionary data metadata in dropdowns, selectors, and internal service communication.
+ * View object for paginated dictionary data responses in admin console or API clients.
  * <p>
- * This class extends {@link BaseIdVO} to inherit the dictionary data entry's unique identifier
- * and provides minimal fields required for data reference and display. Designed for scenarios
- * where full dictionary details are unnecessary, such as:
+ * This class extends {@link BaseAuditVO} to inherit common audit trail fields
+ * ({@code createdBy}, {@code createdAt}, {@code updatedBy}, {@code updatedAt})
+ * and adds dictionary-specific business fields for comprehensive data management.
+ * Designed for rendering dictionary entries in management interfaces with full context.
+ * <p>
+ * <strong>Primary Use Cases:</strong>
  * <ul>
- *     <li><strong>UI Components</strong>: Populating dropdowns, radio buttons, tags with label/value pairs</li>
- *     <li><strong>Configuration Hints</strong>: Providing safe metadata for frontend form binding without exposing audit fields</li>
- *     <li><strong>Internal Service Communication</strong>: Passing dictionary references between microservices for distributed config</li>
- *     <li><strong>Cache Optimization</strong>: Storing dictionary metadata in Redis/Caffeine with minimal memory footprint</li>
+ *     <li><strong>Dictionary Management</strong>: Display paginated dictionary entries with filtering by type, label, value</li>
+ *     <li><strong>UI Component Population</strong>: Provide structured data for dropdowns, radio buttons, and tags</li>
+ *     <li><strong>Audit & Reporting</strong>: Track dictionary data creation/modification history via inherited audit fields</li>
+ *     <li><strong>Frontend Integration</strong>: Provide structured data for Vue/React table components with sorting/pagination</li>
  * </ul>
  * <p>
  * <strong>Label vs. Value Separation:</strong>
@@ -36,14 +39,6 @@ import java.io.Serial;
  * }
  * </pre>
  * <p>
- * <strong>Design Principles:</strong>
- * <ul>
- *     <li><strong>Minimalism</strong>: Only includes fields essential for dictionary identification and display (id, typeId, label, value)</li>
- *     <li><strong>Immutability-Friendly</strong>: Stateless VO suitable for caching and concurrent access</li>
- *     <li><strong>Serialization-Ready</strong>: Implements {@link java.io.Serializable} with fixed {@code serialVersionUID} for cross-JVM compatibility</li>
- *     <li><strong>Framework-Neutral</strong>: No framework-specific annotations beyond JSON serialization; usable in any Java context</li>
- * </ul>
- * <p>
  * <strong>Serialization Strategy:</strong>
  * <p>
  * The {@code typeId} field uses {@code @JsonSerialize(using = ToStringSerializer.class)}
@@ -54,13 +49,13 @@ import java.io.Serial;
  * @author starhq (maintainer)
  * @version 1.0
  * @date 2026-04-10
- * @see BaseIdVO
+ * @see BaseAuditVO
  * @see com.github.starhq.template.entity.SysDictData
  * @see com.github.starhq.template.service.DictDataService
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
-public class DictDataSimpleVO extends BaseIdVO {
+public class DictDataPageVO extends BaseAuditVO {
 
     /**
      * Serial version UID for serialization compatibility.
@@ -72,7 +67,7 @@ public class DictDataSimpleVO extends BaseIdVO {
      * @see java.io.Serializable
      */
     @Serial
-    private static final long serialVersionUID = -1167008823137757214L;
+    private static final long serialVersionUID = 7807113097916961890L;
 
     /**
      * The unique identifier of the parent dictionary type that owns this data entry.
@@ -97,28 +92,25 @@ public class DictDataSimpleVO extends BaseIdVO {
      * }
      * </pre>
      * <p>
+     * <strong>Query Pattern:</strong>
+     * <pre>
+     * {@code
+     * // Fetch all data entries for a dictionary type
+     * GET /api/v1/dict-data?typeId=1001
+     *
+     * // Frontend usage: populate dropdown
+     * <select v-model="form.status">
+     *   <option v-for="opt in options" :value="opt.value">{{ opt.label }}</option>
+     * </select>
+     * }
+     * </pre>
+     * <p>
      * <strong>Technical Details:</strong>
      * <ul>
      *     <li>Type: {@link Long} — references {@code sys_dict_type.id} for foreign key integrity</li>
      *     <li>Nullability: Should not be {@code null} — every data entry must belong to a type</li>
      *     <li>Index Recommendation: {@code CREATE INDEX idx_type_id ON sys_dict_data(type_id)}</li>
      * </ul>
-     * <p>
-     * <strong>Usage Example:</strong>
-     * <pre>
-     * {@code
-     * // Frontend: Group dictionary data by type in a cascader
-     * const groupedData = dictItems.reduce((acc, item) => {
-     *   const typeId = item.typeId;
-     *   if (!acc[typeId]) acc[typeId] = [];
-     *   acc[typeId].push(item);
-     *   return acc;
-     * }, {});
-     *
-     * // Backend: Fetch data by type for form initialization
-     * List<DictDataSimpleVO> statusOptions = dictDataService.getDataByTypeCode("user_status");
-     * }
-     * </pre>
      *
      * @see com.github.starhq.template.entity.SysDictType
      * @see ToStringSerializer
@@ -151,19 +143,21 @@ public class DictDataSimpleVO extends BaseIdVO {
      * <strong>Frontend Display Example:</strong>
      * <pre>
      * {@code
-     * // Vue 3: Populate a select dropdown
-     * <a-select v-model="form.status" :options="statusOptions">
-     *   <a-select-option v-for="opt in statusOptions" :key="opt.value" :value="opt.value">
-     *     {{ opt.label }}
-     *   </a-select-option>
-     * </a-select>
+     * // Vue 3 table column
+     * <a-table-column title="Label" data-index="label">
+     *   <template #bodyCell="{ text }">
+     *     <a-tag color="blue">{{ text }}</a-tag>
+     *   </template>
+     * </a-table-column>
      *
-     * // React: Render radio group with dictionary data
-     * <Radio.Group value={form.status} onChange={setStatus}>
+     * // React: Populate a select dropdown
+     * <Select value={form.status} onChange={setStatus}>
      *   {options.map(opt => (
-     *     <Radio key={opt.value} value={opt.value}>{opt.label}</Radio>
+     *     <Select.Option key={opt.value} value={opt.value}>
+     *       {opt.label}
+     *     </Select.Option>
      *   ))}
-     * </Radio.Group>
+     * </Select>
      * }
      * </pre>
      *
@@ -240,8 +234,8 @@ public class DictDataSimpleVO extends BaseIdVO {
      * <p>
      * <strong>Frontend Display Strategy:</strong>
      * <ul>
-     *     <li>Show as tooltip on hover: {@code <a-tooltip :title="item.description">}</li>
-     *     <li>Truncate long descriptions with ellipsis for dropdown layout</li>
+     *     <li>Show as tooltip on hover: {@code <a-tooltip :title="record.description">}</li>
+     *     <li>Truncate long descriptions with ellipsis for table layout</li>
      *     <li>Support markdown formatting if rich text descriptions are enabled</li>
      * </ul>
      * <p>

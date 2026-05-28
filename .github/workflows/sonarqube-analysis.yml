@@ -52,7 +52,7 @@ jobs:
 
       - name: Build and Analyze with Gradle
         if: steps.check_gradle.outputs.exists == 'true'
-        run: ./gradlew build sonar --stacktrace --info --no-daemon
+        run: ./gradlew build sonar --no-daemon
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -56,7 +56,7 @@ public class PasswordStrengthValidator implements ConstraintValidator<StrongPass
     public boolean isValid(String password, ConstraintValidatorContext context) {
         // Delegate null/empty checks to Spring's utility (handles both null and empty strings safely)
         if (!StringUtils.hasText(password)) {
-            return false;
+            return true;
         }
 
         // Evaluate the password against the heuristic algorithm

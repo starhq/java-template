@@ -220,32 +220,4 @@ public interface SysMenuMapper extends BaseMapper<SysMenu> {
      * @see com.github.starhq.template.common.enums.UserStatus
      */
     List<Long> selectUserIdsByMenuId(@Param("menuId") Serializable menuId);
-
-    // ========== Inherited Methods from BaseMapper<SysMenu> ==========
-    //
-    // The following standard CRUD methods are automatically provided by MyBatis-Plus:
-    //
-    // // Insert
-    // int insert(SysMenu entity);
-    //
-    // // Select
-    // SysMenu selectById(Serializable id);
-    // List<SysMenu> selectBatchIds(Collection<? extends Serializable> idList);
-    // List<SysMenu> selectByMap(Map<String, Object> columnMap);
-    // SysMenu selectOne(LambdaQueryWrapper<SysMenu> queryWrapper);
-    // List<SysMenu> selectList(LambdaQueryWrapper<SysMenu> queryWrapper);
-    // <E extends IPage<SysMenu>> E selectPage(E page, LambdaQueryWrapper<SysMenu> queryWrapper);
-    //
-    // // Update
-    // int updateById(SysMenu entity);
-    // int update(SysMenu entity, LambdaUpdateWrapper<SysMenu> updateWrapper);
-    //
-    // // Delete
-    // int deleteById(Serializable id);
-    // int deleteByMap(Map<String, Object> columnMap);
-    // int delete(LambdaQueryWrapper<SysMenu> queryWrapper);
-    //
-    // For detailed usage and advanced features, refer to:
-    // @see <a href="https://baomidou.com/pages/49cc81/">MyBatis-Plus BaseMapper Guide</a>
-
 }

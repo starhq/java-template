@@ -1,22 +1,25 @@
-package com.github.starhq.template.model.vo.dictType;
+package com.github.starhq.template.model.vo.dict.type;
 
-import com.github.starhq.template.model.vo.BaseIdVO;
+import com.github.starhq.template.model.vo.BaseAuditVO;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.io.Serial;
 
 /**
- * Lightweight view object for dictionary type metadata in dropdowns, selectors, and internal service communication.
+ * View object for paginated dictionary type responses in admin console or API clients.
  * <p>
- * This class extends {@link BaseIdVO} to inherit the dictionary type's unique identifier
- * and provides minimal fields required for type reference and display. Designed for scenarios
- * where full dictionary type details are unnecessary, such as:
+ * This class extends {@link BaseAuditVO} to inherit common audit trail fields
+ * ({@code createdBy}, {@code createdAt}, {@code updatedBy}, {@code updatedAt})
+ * and adds dictionary type-specific business fields for comprehensive type management.
+ * Designed for rendering dictionary type lists in management interfaces with full context.
+ * <p>
+ * <strong>Primary Use Cases:</strong>
  * <ul>
- *     <li><strong>UI Components</strong>: Populating dropdowns, cascaders, or tree selectors with dictionary type options</li>
- *     <li><strong>Configuration Hints</strong>: Providing safe metadata for frontend form binding without exposing audit fields</li>
- *     <li><strong>Internal Service Communication</strong>: Passing dictionary type references between microservices for distributed config</li>
- *     <li><strong>Cache Optimization</strong>: Storing dictionary type metadata in Redis/Caffeine with minimal memory footprint</li>
+ *     <li><strong>Dictionary Type Management</strong>: Display paginated dictionary types with filtering by type code, name</li>
+ *     <li><strong>Admin Console</strong>: Provide structured data for Vue/React table components with sorting/pagination</li>
+ *     <li><strong>Audit & Reporting</strong>: Track dictionary type creation/modification history via inherited audit fields</li>
+ *     <li><strong>Configuration Export</strong>: Export dictionary type definitions for backup or migration</li>
  * </ul>
  * <p>
  * <strong>Field Semantics:</strong>
@@ -28,23 +31,22 @@ import java.io.Serial;
  * <p>
  * <strong>Design Principles:</strong>
  * <ul>
- *     <li><strong>Minimalism</strong>: Only includes fields essential for dictionary type identification and display (id, type, name, description)</li>
- *     <li><strong>Immutability-Friendly</strong>: Stateless VO suitable for caching and concurrent access</li>
- *     <li><strong>Serialization-Ready</strong>: Implements {@link java.io.Serializable} with fixed {@code serialVersionUID} for cross-JVM compatibility</li>
- *     <li><strong>Framework-Neutral</strong>: No framework-specific annotations; usable in any Java context</li>
+ *     <li><strong>Separation of Concerns</strong>: Entity persistence ({@code SysDictType}) vs. UI presentation ({@code DictTypePageVO})</li>
+ *     <li><strong>Audit Integration</strong>: Inherits audit fields from {@link BaseAuditVO} for compliance tracking</li>
+ *     <li><strong>Serialization-Ready</strong>: Implements {@link java.io.Serializable} with fixed {@code serialVersionUID} for caching</li>
  * </ul>
  *
  * @author wangjian
  * @author starhq (maintainer)
  * @version 1.0
  * @date 2026-04-09
- * @see BaseIdVO
+ * @see BaseAuditVO
  * @see com.github.starhq.template.entity.SysDictType
  * @see com.github.starhq.template.service.DictTypeService
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
-public class DictTypeSimpleVO extends BaseIdVO {
+public class DictTypePageVO extends BaseAuditVO {
 
     /**
      * Serial version UID for serialization compatibility.
@@ -56,7 +58,7 @@ public class DictTypeSimpleVO extends BaseIdVO {
      * @see java.io.Serializable
      */
     @Serial
-    private static final long serialVersionUID = 2986620577899369251L;
+    private static final long serialVersionUID = 2095749722209419518L;
 
     /**
      * The unique technical identifier/code for this dictionary type.
@@ -86,20 +88,11 @@ public class DictTypeSimpleVO extends BaseIdVO {
      * <strong>Usage Example:</strong>
      * <pre>
      * {@code
-     * // Frontend: Use type code as key to access data list
-     * const dictionaries = {
-     *   user_status: [
-     *     { label: "Enabled", value: "1" },
-     *     { label: "Disabled", value: "0" }
-     *   ],
-     *   order_type: [
-     *     { label: "Standard", value: "STD" },
-     *     { label: "Express", value: "EXP" }
-     *   ]
-     * };
+     * // Fetch dictionary data by type code
+     * List<DictDataVO> statuses = dictDataService.getDataByTypeCode("user_status");
      *
-     * // Usage in form binding
-     * <select v-model="form.status" :options="dictionaries.user_status" />
+     * // Frontend API request
+     * GET /api/v1/dict-types/user_status/data
      * }
      * </pre>
      *
@@ -123,22 +116,23 @@ public class DictTypeSimpleVO extends BaseIdVO {
      *     <li>Use title case or sentence case for readability: {@code "User Status"} not {@code "user status"}</li>
      * </ul>
      * <p>
+     * <strong>Uniqueness Consideration:</strong>
+     * <p>
+     * While not enforced at the database level, it is recommended to keep {@code name}
+     * unique to avoid confusion in admin UIs. If duplicate names are allowed, ensure
+     * the UI displays additional context (e.g., {@code type} code) to distinguish entries.
+     * <p>
      * <strong>Frontend Display Example:</strong>
      * <pre>
      * {@code
-     * // Vue 3: Populate a select dropdown
-     * <a-select v-model="form.dictType" :options="typeOptions">
-     *   <a-select-option v-for="opt in typeOptions" :key="opt.type" :value="opt.type">
-     *     {{ opt.name }}
-     *   </a-select-option>
-     * </a-select>
-     *
-     * // React: Render radio group with dictionary types
-     * <Radio.Group value={form.dictType} onChange={setDictType}>
-     *   {types.map(t => (
-     *     <Radio key={t.type} value={t.type}>{t.name}</Radio>
-     *   ))}
-     * </Radio.Group>
+     * // Vue 3 table column
+     * <a-table-column title="Type Name" data-index="name">
+     *   <template #bodyCell="{ text, record }">
+     *     <a-tooltip :title="`Code: ${record.type}`">
+     *       {{ text }}
+     *     </a-tooltip>
+     *   </template>
+     * </a-table-column>
      * }
      * </pre>
      *
@@ -149,24 +143,24 @@ public class DictTypeSimpleVO extends BaseIdVO {
     /**
      * Optional explanatory text describing the purpose and usage rules of this dictionary type.
      * <p>
-     * Useful for:
+     * This field helps system administrators understand:
      * <ul>
-     *     <li>Admin console tooltips explaining what the type controls</li>
-     *     <li>Documenting deprecated types or migration notes</li>
-     *     <li>Clarifying complex business rules (e.g., {@code "Used only for enterprise accounts"})</li>
+     *     <li>What business scenario this type supports (e.g., "Status codes for user account lifecycle")</li>
+     *     <li>Any special constraints or dependencies (e.g., "Referenced by user.profile.status field")</li>
+     *     <li>Deprecation notices or migration guidance for legacy types</li>
      * </ul>
      * <p>
-     * <strong>Content Guidelines:</strong>
+     * <strong>Best Practices:</strong>
      * <ul>
-     *     <li>Write in clear, imperative language targeting system administrators</li>
+     *     <li>Write descriptions in clear, imperative language targeting non-technical administrators</li>
      *     <li>Avoid exposing internal implementation details or sensitive business logic</li>
-     *     <li>Keep under 255 characters for optimal storage and UI rendering</li>
+     *     <li>Update descriptions when modifying type behavior to keep documentation in sync</li>
      * </ul>
      * <p>
      * <strong>Frontend Display Strategy:</strong>
      * <ul>
-     *     <li>Show as tooltip on hover: {@code <a-tooltip :title="item.description">}</li>
-     *     <li>Truncate long descriptions with ellipsis for dropdown layout</li>
+     *     <li>Show as tooltip on hover: {@code <a-tooltip :title="record.description">}</li>
+     *     <li>Truncate long descriptions with ellipsis for table layout</li>
      *     <li>Support markdown formatting if rich text descriptions are enabled</li>
      * </ul>
      * <p>

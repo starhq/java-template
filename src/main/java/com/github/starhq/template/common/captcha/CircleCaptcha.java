@@ -129,15 +129,12 @@ public class CircleCaptcha extends AbstractCaptcha {
 
     private void drawInterfere(Graphics2D g) {
         for (int i = 0; i < this.interfereCount; i++) {
-            // Color c = ImageUtil.randomColor();
-
             int r = RandomUtil.randomInt(30, 160);
             int gVal = RandomUtil.randomInt(30, 160);
             int b = RandomUtil.randomInt(30, 160);
 
             // --- 核心改动：极淡的颜色 ---
             // Alpha 设为 40-70，这样气泡就像半透明的水印
-            // g.setColor(new Color(c.getRed(), c.getGreen(), c.getBlue(), RandomUtil.randomInt(40, 70)));
             g.setColor(new Color(r, gVal, b, RandomUtil.randomInt(70, 120)));
 
             int circleSize = RandomUtil.randomInt(height / 3, height / 2);

@@ -104,10 +104,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         Claims claims;
         try {
             claims = jwtService.parseToken(token);
-        } catch (ExpiredJwtException e) {
+        } catch (ExpiredJwtException _) {
             handleUnauthorized(response, ErrorCode.TOKEN_EXPIRED);
             return;
-        } catch (JwtException e) {
+        } catch (JwtException _) {
             // Catches malformed signatures, unsupported tokens, etc.
             handleUnauthorized(response, ErrorCode.TOKEN_INVALID);
             return;
@@ -119,7 +119,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         UserDetails userDetails;
         try {
             userDetails = userDetailsService.loadUserByUsername(username);
-        } catch (UsernameNotFoundException e) {
+        } catch (UsernameNotFoundException _) {
             // Prevent username enumeration by returning a generic credential error
             handleUnauthorized(response, ErrorCode.CREDENTIALS);
             return;

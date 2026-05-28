@@ -146,32 +146,4 @@ public interface SysUserMapper extends BaseMapper<SysUser> {
      * @see com.github.starhq.template.common.enums.UserStatus
      */
     SysUser selectUserWithRole(@Param(Constants.WRAPPER) Wrapper<SysUser> wrapper);
-
-    // ========== Inherited Methods from BaseMapper<SysUser> ==========
-    //
-    // The following standard CRUD methods are automatically provided by MyBatis-Plus:
-    //
-    // // Insert
-    // int insert(SysUser entity);
-    //
-    // // Select
-    // SysUser selectById(Serializable id);
-    // List<SysUser> selectBatchIds(Collection<? extends Serializable> idList);
-    // List<SysUser> selectByMap(Map<String, Object> columnMap);
-    // SysUser selectOne(LambdaQueryWrapper<SysUser> queryWrapper);
-    // List<SysUser> selectList(LambdaQueryWrapper<SysUser> queryWrapper);
-    // <E extends IPage<SysUser>> E selectPage(E page, LambdaQueryWrapper<SysUser> queryWrapper);
-    //
-    // // Update
-    // int updateById(SysUser entity);
-    // int update(SysUser entity, LambdaUpdateWrapper<SysUser> updateWrapper);
-    //
-    // // Delete
-    // int deleteById(Serializable id);
-    // int deleteByMap(Map<String, Object> columnMap);
-    // int delete(LambdaQueryWrapper<SysUser> queryWrapper);
-    //
-    // For detailed usage and advanced features, refer to:
-    // @see <a href="https://baomidou.com/pages/49cc81/">MyBatis-Plus BaseMapper Guide</a>
-
 }

@@ -1,10 +1,13 @@
 package com.github.starhq.template.common.captcha;
 
+import lombok.experimental.UtilityClass;
+
 /**
  * Factory utility for creating different types of captchas.
  *
  * @author wangjian
  */
+@UtilityClass
 public class CaptchaUtil {
 
     /**
@@ -14,7 +17,7 @@ public class CaptchaUtil {
      * @param height image height
      * @return {@link LineCaptcha}
      */
-    public static LineCaptcha createLineCaptcha(int width, int height) {
+    public LineCaptcha createLineCaptcha(int width, int height) {
         return new LineCaptcha(width, height);
     }
 
@@ -27,7 +30,7 @@ public class CaptchaUtil {
      * @param lineCount number of interference lines
      * @return {@link LineCaptcha}
      */
-    public static LineCaptcha createLineCaptcha(int width, int height, int codeCount, int lineCount) {
+    public LineCaptcha createLineCaptcha(int width, int height, int codeCount, int lineCount) {
         return new LineCaptcha(width, height, codeCount, lineCount);
     }
 
@@ -39,7 +42,7 @@ public class CaptchaUtil {
      * @return {@link CircleCaptcha}
      * @since 3.2.3
      */
-    public static CircleCaptcha createCircleCaptcha(int width, int height) {
+    public CircleCaptcha createCircleCaptcha(int width, int height) {
         return new CircleCaptcha(width, height);
     }
 
@@ -53,7 +56,7 @@ public class CaptchaUtil {
      * @return {@link CircleCaptcha}
      * @since 3.2.3
      */
-    public static CircleCaptcha createCircleCaptcha(int width, int height, int codeCount, int circleCount) {
+    public CircleCaptcha createCircleCaptcha(int width, int height, int codeCount, int circleCount) {
         return new CircleCaptcha(width, height, codeCount, circleCount);
     }
 
@@ -65,7 +68,7 @@ public class CaptchaUtil {
      * @return {@link ShearCaptcha}
      * @since 3.2.3
      */
-    public static ShearCaptcha createShearCaptcha(int width, int height) {
+    public ShearCaptcha createShearCaptcha(int width, int height) {
         return new ShearCaptcha(width, height);
     }
 
@@ -79,7 +82,7 @@ public class CaptchaUtil {
      * @return {@link ShearCaptcha}
      * @since 3.3.0
      */
-    public static ShearCaptcha createShearCaptcha(int width, int height, int codeCount, int thickness) {
+    public ShearCaptcha createShearCaptcha(int width, int height, int codeCount, int thickness) {
         return new ShearCaptcha(width, height, codeCount, thickness);
     }
 }

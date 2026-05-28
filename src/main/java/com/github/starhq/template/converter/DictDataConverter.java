@@ -1,9 +1,9 @@
 package com.github.starhq.template.converter;
 
 import com.github.starhq.template.entity.SysDictData;
-import com.github.starhq.template.model.dto.dictData.DictDataDTO;
-import com.github.starhq.template.model.vo.dictData.DictDataPageVO;
-import com.github.starhq.template.model.vo.dictData.DictDataSimpleVO;
+import com.github.starhq.template.model.dto.dict.data.DictDataDTO;
+import com.github.starhq.template.model.vo.dict.data.DictDataPageVO;
+import com.github.starhq.template.model.vo.dict.data.DictDataSimpleVO;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;

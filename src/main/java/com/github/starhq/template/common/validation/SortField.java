@@ -41,7 +41,7 @@ public @interface SortField {
      *
      * @return the i18n error message key
      */
-    String message() default "{error.param.format}";
+    String message() default "{error.param.sort}";
 
     /**
      * Allows specifying validation groups to which this constraint belongs.

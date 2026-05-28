@@ -71,9 +71,9 @@ public class ShearCaptcha extends AbstractCaptcha {
         // 确保字符在旋转后不会超出左右边界，计算每个字符可分配的最大宽度
         int horizontalSpacePerChar = width / len;
         // 字号不能超过分配宽度的 1.2 倍（防止字符过宽重叠太严重）
-        finalFontSize = Math.min(finalFontSize, (int)(horizontalSpacePerChar * 1.2));
+        finalFontSize = Math.min(finalFontSize, (int) (horizontalSpacePerChar * 1.2));
 
-        Font baseFont = getRandomFont().deriveFont(Font.BOLD, (float) finalFontSize);
+        Font baseFont = getRandomFont().deriveFont(Font.BOLD, finalFontSize);
         g.setFont(baseFont);
         FontMetrics metrics = g.getFontMetrics();
 

@@ -9,11 +9,11 @@ import com.github.starhq.template.model.vo.resource.ResourceCheckVO;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.github.starhq.template.BaseMapperTest;
+import com.github.starhq.template.BaseMapperTestConfiguration;
 import com.github.starhq.template.common.enums.HttpMethod;
 import com.github.starhq.template.entity.SysResource;
 
-class SysResourceMapperTest extends BaseMapperTest {
+class SysResourceMapperTest extends BaseMapperTestConfiguration {
 
     @Autowired
     private SysResourceMapper resourceMapper;
@@ -55,7 +55,7 @@ class SysResourceMapperTest extends BaseMapperTest {
 
         assertThat(result).isNotNull();
         assertThat(result.getFirst().getChecked()).isTrue();
-        assertThat(result.size()).isGreaterThan(0);
+        assertThat(result).hasSizeGreaterThan(0);
     }
 
     @Test
@@ -64,7 +64,7 @@ class SysResourceMapperTest extends BaseMapperTest {
 
         assertThat(result).isNotNull();
         assertThat(result.getFirst().getMethods()).isEqualTo(31);
-        assertThat(result.size()).isGreaterThan(0);
+        assertThat(result).hasSizeGreaterThan(0);
     }
 
     @Test
@@ -73,7 +73,7 @@ class SysResourceMapperTest extends BaseMapperTest {
 
         assertThat(result).isNotNull();
         assertThat(result.getFirst()).isEqualTo(1);
-        assertThat(result.size()).isGreaterThan(0);
+        assertThat(result).hasSizeGreaterThan(0);
     }
 
     @Test

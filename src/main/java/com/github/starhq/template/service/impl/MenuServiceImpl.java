@@ -16,6 +16,7 @@ import com.github.starhq.template.converter.MenuConverter;
 import com.github.starhq.template.entity.SysMenu;
 import com.github.starhq.template.entity.SysRoleMenu;
 import com.github.starhq.template.event.EventService;
+import com.github.starhq.template.helper.CacheHelper;
 import com.github.starhq.template.helper.SysUserMapperHelper;
 import com.github.starhq.template.mapper.SysMenuMapper;
 import com.github.starhq.template.mapper.SysRoleMenuMapper;
@@ -26,7 +27,6 @@ import com.github.starhq.template.model.vo.menu.tree.LeftNavVO;
 import com.github.starhq.template.model.vo.menu.tree.MenuCheckVO;
 import com.github.starhq.template.model.vo.menu.tree.MenuListVO;
 import com.github.starhq.template.service.MenuService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -111,7 +111,6 @@ import java.util.Objects;
  * @see LeftNavVO
  */
 @Service("menuService")
-@RequiredArgsConstructor
 public class MenuServiceImpl extends AuditBaseServiceImpl<SysMenuMapper, SysMenu> implements MenuService {
 
     /**
@@ -165,6 +164,27 @@ public class MenuServiceImpl extends AuditBaseServiceImpl<SysMenuMapper, SysMenu
      * @see CacheConstant
      */
     private final EventService eventService;
+
+    /**
+     * Constructs a new {@code MenuServiceImpl} with the required dependencies.
+     *
+     * @param cacheHelper      the cache utility for batch username resolution (inherited from base class)
+     * @param userMapperHelper the helper for resolving user IDs to usernames during audit field population
+     * @param roleMenuMapper   the mapper for managing role-menu relationships and authorization bindings
+     * @param menuConverter    the converter for transforming between menu entities, DTOs, and tree-structured VOs
+     * @param eventService     the service for publishing domain events (e.g., cache invalidation triggers)
+     */
+    public MenuServiceImpl(CacheHelper cacheHelper,
+                           SysUserMapperHelper userMapperHelper,
+                           SysRoleMenuMapper roleMenuMapper,
+                           MenuConverter menuConverter,
+                           EventService eventService) {
+        super(cacheHelper);
+        this.userMapperHelper = userMapperHelper;
+        this.roleMenuMapper = roleMenuMapper;
+        this.menuConverter = menuConverter;
+        this.eventService = eventService;
+    }
 
     /**
      * Retrieves a hierarchical list of menu definitions for admin console management.
@@ -634,8 +654,16 @@ public class MenuServiceImpl extends AuditBaseServiceImpl<SysMenuMapper, SysMenu
     @Transactional(rollbackFor = Exception.class)
     @Override
     public boolean removeById(Serializable id) {
-        // Delegate to batch deletion method for consistent logic
-        return this.removeByIds(Collections.singletonList(id));
+        // 1. Cascading delete: Remove all role-menu assignments for this menu
+        roleMenuMapper.delete(new LambdaQueryWrapper<SysRoleMenu>().eq(SysRoleMenu::getMenuId, id));
+
+        // 2. Delete menu with business error handling
+        delete(id, ErrorCode.MENU_NOT_FOUND, ErrorCode.MENU_DELETE_FAILED);
+
+        // 3. Publish distributed cache eviction event for multi-node consistency
+        eventService.notifyCacheEvict(List.of(id), List.of(CacheConstant.MENU));
+
+        return true;
     }
 
     /**

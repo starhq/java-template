@@ -38,8 +38,8 @@ public class TypeConvertUtils {
         }
 
         // Fast path for the most common expected type
-        if (value instanceof Long) {
-            return (Long) value;
+        if (value instanceof Long longValue) {
+            return longValue;
         }
 
         // Fallback path: convert to string and parse (handles String, Integer, BigDecimal, etc.)

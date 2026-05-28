@@ -209,6 +209,26 @@ class AuditLogAspectTest {
                 .notifyAuditLogSave(any());
     }
 
+    @Test
+    void logAfterSuccess_Null_Arg_ShouldDoNothing()
+            throws Exception {
+
+        Method method = TestService.class
+                .getMethod("updateWithNoArg");
+
+        when(joinPoint.getSignature()).thenReturn(methodSignature);
+
+        when(methodSignature.getMethod()).thenReturn(method);
+
+        when(joinPoint.getArgs())
+                .thenReturn(null);
+
+        auditLogAspect.logAfterSuccess(joinPoint);
+
+        verify(eventService, never())
+                .notifyAuditLogSave(any());
+    }
+
     // =========================================================
     // EVENT FAILURE SHOULD NOT BREAK BUSINESS
     // =========================================================

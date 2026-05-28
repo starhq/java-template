@@ -125,7 +125,6 @@ class SysUserMapperHelperTest {
         void apply_withEmptySet_shouldReturnEmptyMap() {
             // given
             Set<Long> emptyIds = Collections.emptySet();
-            // when(userMapper.selectList(any(LambdaQueryWrapper.class))).thenReturn(Collections.emptyList());
 
             // when
             Map<Long, String> result = helper.apply(emptyIds);

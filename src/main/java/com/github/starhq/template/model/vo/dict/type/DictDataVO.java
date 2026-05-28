@@ -1,4 +1,4 @@
-package com.github.starhq.template.model.vo.dictType;
+package com.github.starhq.template.model.vo.dict.type;
 
 import lombok.Data;
 

@@ -1,6 +1,6 @@
 package com.github.starhq.template.mapper;
 
-import com.github.starhq.template.BaseMapperTest;
+import com.github.starhq.template.BaseMapperTestConfiguration;
 import com.github.starhq.template.entity.SysRole;
 import com.github.starhq.template.model.vo.role.RoleCheckVO;
 import org.junit.jupiter.api.Test;
@@ -11,7 +11,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class SysRoleMapperTest extends BaseMapperTest {
+class SysRoleMapperTest extends BaseMapperTestConfiguration {
 
     @Autowired
     private SysRoleMapper roleMapper;
@@ -55,7 +55,7 @@ class SysRoleMapperTest extends BaseMapperTest {
         List<RoleCheckVO> result = roleMapper.selectRolesByUserId(1L);
 
         assertThat(result).isNotNull();
-        assertThat(result.size()).isEqualTo(2);
+        assertThat(result).hasSize(2);
         assertThat(result.getFirst().getName()).isEqualTo("Administrator");
     }
 

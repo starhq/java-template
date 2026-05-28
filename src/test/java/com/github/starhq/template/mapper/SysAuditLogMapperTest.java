@@ -3,7 +3,7 @@ package com.github.starhq.template.mapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.github.starhq.template.BaseMapperTest;
+import com.github.starhq.template.BaseMapperTestConfiguration;
 import com.github.starhq.template.common.enums.TargetType;
 import com.github.starhq.template.entity.SysAuditLog;
 import com.github.starhq.template.model.vo.auditlog.AuditLogPageVO;
@@ -14,7 +14,7 @@ import java.time.OffsetDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class SysAuditLogMapperTest extends BaseMapperTest {
+class SysAuditLogMapperTest extends BaseMapperTestConfiguration {
 
     @Autowired
     private SysAuditLogMapper auditLogMapper;

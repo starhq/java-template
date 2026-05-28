@@ -94,7 +94,6 @@ class TokenServiceImplTest {
         mockToken.setRevoked(false);
 
         mockTokenDTO = new TokenSimpleDTO();
-        // mockTokenDTO.setUserId(1L);
         mockTokenDTO.setAccessToken("mock-access-token");
 
         token = JwtToken.builder().accessToken("acc").refreshToken("ref").tokenType("Bear").expiresIn(3600L).build();
@@ -118,9 +117,6 @@ class TokenServiceImplTest {
 
             // Mock JWT 生成
             when(jwtService.build(anyMap(), anyString())).thenReturn(token);
-
-            // // Mock Cache
-            // when(cacheManager.getCache(CacheType.TOKEN.getCacheName())).thenReturn(cache);
 
             // Mock Converter
             when(tokenConverter.toSimpleDTO(any(SysToken.class))).thenReturn(mockTokenDTO);
@@ -200,8 +196,6 @@ class TokenServiceImplTest {
         // 1. 准备模拟的 Request 和 Response
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.setRemoteAddr("192.168.1.100"); // 模拟 IP
-        // 如果你的 HttpUtils 是从 Header 取 IP，也可以设置 Header
-        // request.addHeader("X-Forwarded-For", "10.0.0.1");
 
         ServletRequestAttributes attributes = new ServletRequestAttributes(request);
 
@@ -221,9 +215,6 @@ class TokenServiceImplTest {
             // Mock JWT 生成
             when(jwtService.build(anyMap(), anyString())).thenReturn(token);
 
-            // Mock Cache
-            // when(cacheManager.getCache(CacheType.TOKEN.getCacheName())).thenReturn(cache);
-
             // Mock Converter
             when(tokenConverter.toSimpleDTO(any(SysToken.class))).thenReturn(mockTokenDTO);
 
@@ -233,7 +224,6 @@ class TokenServiceImplTest {
             // Then
             assertNotNull(result);
             verify(tokenMapper).upsertToken(any(SysToken.class));
-            // verify(cache).put(eq(1L), any(TokenSimpleDTO.class));
         }
     }
 
@@ -244,8 +234,6 @@ class TokenServiceImplTest {
         // 1. 准备模拟的 Request 和 Response
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.setRemoteAddr("192.168.1.100"); // 模拟 IP
-        // 如果你的 HttpUtils 是从 Header 取 IP，也可以设置 Header
-        // request.addHeader("X-Forwarded-For", "10.0.0.1");
 
         ServletRequestAttributes attributes = new ServletRequestAttributes(request);
 
@@ -270,9 +258,6 @@ class TokenServiceImplTest {
 
     @Test
     void testRefresh_UserNotFound() {
-        // Given
-        // when(userMapper.selectUserWithRole(any())).thenReturn(null);
-
         // When & Then
 
         CustomException exception = assertThrows(CustomException.class, () -> tokenService.refresh());
@@ -290,13 +275,8 @@ class TokenServiceImplTest {
         // 1. 准备模拟的 Request 和 Response
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.setRemoteAddr("192.168.1.100"); // 模拟 IP
-        // 如果你的 HttpUtils 是从 Header 取 IP，也可以设置 Header
-        // request.addHeader("X-Forwarded-For", "10.0.0.1");
 
         ServletRequestAttributes attributes = new ServletRequestAttributes(request);
-
-        // Mock 查询用户及角色
-        // when(userMapper.selectUserWithRole(any())).thenReturn(mockUser);
 
         // Mock 静态方法 checkUserStatus (需要 mockito-inline)
         try (MockedStatic<SecurityContextUtils> mockedStatic = mockStatic(SecurityContextUtils.class);

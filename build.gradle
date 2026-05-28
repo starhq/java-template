@@ -113,21 +113,20 @@ jacocoTestReport {
     afterEvaluate {
         classDirectories.setFrom(files(classDirectories.files.collect {
             fileTree(dir: it, excludes: [
-                    // 基础包
-//                    '**/dto/**',
-//                    '**/vo/**',
-//                    '**/entity/**',
-//                    '**/enums/**',
-//                    // 基础组件
-//                    '**/aop/**',
-//                    '**/converter/**',
+                    // 过滤器
                     '**/filter/**',
+                    // 配置文件
                     '**/config/**',
+                    // 常量
                     '**/constant/**',
+                    // 异常
                     '**/exception/',
+                    // 转换器
                     '**/ResourceConverter.class',
-                    '**/Result.class',
                     '**/*ConverterImpl.class',
+                    // 响应
+                    '**/Result.class',
+                    // 空实现
                     '**/Null*.class',
                     // 主类与生成类
                     '**/*Application.class',
@@ -149,21 +148,20 @@ jacocoTestCoverageVerification {
     afterEvaluate {
         classDirectories.setFrom(files(classDirectories.files.collect {
             fileTree(dir: it, excludes: [
-                    // 基础包
-//                    '**/dto/**',
-//                    '**/vo/**',
-//                    '**/entity/**',
-//                    '**/enums/**',
-//                    // 基础组件
-//                    '**/aop/**',
-//                    '**/converter/**',
+                    // 过滤器
                     '**/filter/**',
+                    // 配置文件
                     '**/config/**',
+                    // 常量
                     '**/constant/**',
+                    // 异常
                     '**/exception/',
+                    // 转换器
                     '**/ResourceConverter.class',
-                    '**/Result.class',
                     '**/*ConverterImpl.class',
+                    // 响应
+                    '**/Result.class',
+                    // 空实现
                     '**/Null*.class',
                     // 主类与生成类
                     '**/*Application.class',
@@ -196,6 +194,28 @@ sonar {
         property "sonar.projectKey", "starhq_java-template"
         property "sonar.organization", "starhq"
         property "sonar.host.url", "https://sonarcloud.io"
+
+        property "sonar.coverage.exclusions", [
+                // 过滤器
+                '**/filter/**',
+                // 配置文件
+                '**/config/**',
+                // 常量
+                '**/constant/**',
+                // 异常
+                '**/exception/',
+                // 转换器
+                '**/ResourceConverter.class',
+                '**/*ConverterImpl.class',
+                // 响应
+                '**/Result.class',
+                // 空实现
+                '**/Null*.class',
+                // 主类与生成类
+                '**/*Application.class',
+                '**/*$*',
+                '**/*Builder.class',
+                '**/*_.class']
 
         property "sonar.sources", "src/main/java"
         property "sonar.tests", "src/test/java"

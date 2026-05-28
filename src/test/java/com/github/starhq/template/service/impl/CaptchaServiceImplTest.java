@@ -70,7 +70,7 @@ class CaptchaServiceImplTest {
             // Mock IP 限制：返回 1 (小于 10)
             when(cache.get(anyString(), any(Callable.class))).thenReturn(new AtomicInteger(1));
             // Mock UUID 未被占用：返回 null
-            when(cache.get(eq(TEST_UUID), eq(String.class))).thenReturn(null);
+            when(cache.get(TEST_UUID, String.class)).thenReturn(null);
 
             when(response.getOutputStream()).thenReturn(outputStream);
             CaptchaResult mockResult = new CaptchaResult(TEST_CODE, null);
@@ -80,8 +80,8 @@ class CaptchaServiceImplTest {
             captchaService.generateCode(TEST_UUID, response);
 
             // Then
-            verify(cache).put(eq(TEST_UUID), eq(TEST_CODE));
-            verify(captcha).write(eq(mockResult), eq(outputStream));
+            verify(cache).put(TEST_UUID, TEST_CODE);
+            verify(captcha).write(mockResult, outputStream);
             verify(response).setContentType(MediaType.IMAGE_PNG_VALUE);
         }
     }
@@ -134,7 +134,7 @@ class CaptchaServiceImplTest {
             when(cacheHelper.getCache(anyString())).thenReturn(cache);
             when(cache.get(anyString(), any(Callable.class))).thenReturn(new AtomicInteger(1));
             // Mock UUID 已存在：返回 code
-            when(cache.get(eq(TEST_UUID), eq(String.class))).thenReturn(TEST_CODE);
+            when(cache.get(TEST_UUID, String.class)).thenReturn(TEST_CODE);
 
             CustomException ex = assertThrows(CustomException.class, () ->
                     captchaService.generateCode(TEST_UUID, response)
@@ -156,7 +156,7 @@ class CaptchaServiceImplTest {
             mockedStatic.when(RequestContextUtil::getContext).thenReturn(context);
             when(cacheHelper.getCache(anyString())).thenReturn(cache);
             when(cache.get(anyString(), any(Callable.class))).thenReturn(new AtomicInteger(1));
-            when(cache.get(eq(TEST_UUID), eq(String.class))).thenReturn(null);
+            when(cache.get(TEST_UUID, String.class)).thenReturn(null);
 
             when(response.getOutputStream()).thenReturn(outputStream);
             when(captcha.generate()).thenReturn(new CaptchaResult(TEST_CODE, null));
@@ -190,14 +190,14 @@ class CaptchaServiceImplTest {
             // Mock 失败次数检查：未超限
             when(cache.get(contains("verify:fail"), eq(Integer.class))).thenReturn(null);
             // Mock 获取验证码：存在且匹配
-            when(cache.get(eq(TEST_UUID), eq(String.class))).thenReturn(TEST_CODE);
+            when(cache.get(TEST_UUID, String.class)).thenReturn(TEST_CODE);
 
             // When
             captchaService.verify(TEST_UUID, TEST_CODE);
 
             // Then
             // 验证执行了“一票否决”逻辑（不管对错，先删掉）
-            verify(cache).evict(eq(TEST_UUID));
+            verify(cache).evict(TEST_UUID);
             // 验证成功后，清除了失败计数器
             verify(cache).evict(contains("verify:fail"));
         }
@@ -257,14 +257,14 @@ class CaptchaServiceImplTest {
             when(cache.get(contains("verify:fail"), eq(Integer.class))).thenReturn(2);
 
             // 【关键修改 2】：Mock 获取验证码成功
-            when(cache.get(eq(TEST_UUID), eq(String.class))).thenReturn(correctCode);
+            when(cache.get(TEST_UUID, String.class)).thenReturn(correctCode);
 
             // When: 输入正确的验证码
             // 这里不应该抛出任何异常
             assertDoesNotThrow(() -> captchaService.verify(TEST_UUID, correctCode));
 
             // Then: 验证正常的清理逻辑被执行了
-            verify(cache).evict(eq(TEST_UUID));
+            verify(cache).evict(TEST_UUID);
             // 验证成功后，失败次数计数器被清除
             verify(cache).evict(contains("verify:fail"));
         }
@@ -286,13 +286,13 @@ class CaptchaServiceImplTest {
             // 【关键修改】：Mock 失败次数为 null（第一次来验证，或者之前的记录过期了）
             when(cache.get(contains("verify:fail"), eq(Integer.class))).thenReturn(null);
 
-            when(cache.get(eq(TEST_UUID), eq(String.class))).thenReturn(correctCode);
+            when(cache.get(TEST_UUID, String.class)).thenReturn(correctCode);
 
             // When
             assertDoesNotThrow(() -> captchaService.verify(TEST_UUID, correctCode));
 
             // Then
-            verify(cache).evict(eq(TEST_UUID));
+            verify(cache).evict(TEST_UUID);
             verify(cache).evict(contains("verify:fail"));
         }
     }
@@ -311,7 +311,7 @@ class CaptchaServiceImplTest {
             when(cacheHelper.getCache(anyString())).thenReturn(cache);
             when(cache.get(contains("verify:fail"), eq(Integer.class))).thenReturn(null);
             // Mock 获取验证码：不存在 (返回 null)
-            when(cache.get(eq(TEST_UUID), eq(String.class))).thenReturn(null);
+            when(cache.get(TEST_UUID, String.class)).thenReturn(null);
 
             assertThrows(BusinessException.class, () ->
                     captchaService.verify(TEST_UUID, "1234")
@@ -333,7 +333,7 @@ class CaptchaServiceImplTest {
             when(cacheHelper.getCache(anyString())).thenReturn(cache);
             when(cache.get(contains("verify:fail"), eq(Integer.class))).thenReturn(null);
             // Mock 获取验证码：存在
-            when(cache.get(eq(TEST_UUID), eq(String.class))).thenReturn(TEST_CODE);
+            when(cache.get(TEST_UUID, String.class)).thenReturn(TEST_CODE);
 
             // Mock 失败次数自增逻辑：模拟 cache.get 返回一个新的 AtomicInteger 并执行自增
             when(cache.get(contains("verify:fail"), any(Callable.class)))
@@ -347,7 +347,7 @@ class CaptchaServiceImplTest {
             );
 
             // 验证即使输错了，原验证码也被“一票否决”删除了
-            verify(cache).evict(eq(TEST_UUID));
+            verify(cache).evict(TEST_UUID);
             // 验证失败计数器并没有被清除
             verify(cache, never()).evict(contains("verify:fail"));
         }

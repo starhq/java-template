@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
+import java.util.function.LongConsumer;
 
 /**
  * Generic helper for managing many-to-many relationship assignments in RBAC systems.
@@ -215,7 +216,7 @@ public class RelationHelper {
      */
     public <E> void assignRelations(Long ownerId,
                                     Set<Long> targetIds,
-                                    Consumer<Long> deleteLogic,
+                                    LongConsumer deleteLogic,
                                     BiFunction<Long, Long, E> entityFactory,
                                     Consumer<List<E>> upsertLogic,
                                     Consumer<Set<Long>> validator,

@@ -2,7 +2,8 @@ package com.github.starhq.template.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.github.starhq.template.entity.SysDictType;
-import com.github.starhq.template.model.vo.dictType.DictTypeWithDataVO;
+import com.github.starhq.template.model.vo.dict.data.DictDataSimpleVO;
+import com.github.starhq.template.model.vo.dict.type.DictTypeWithDataVO;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
@@ -144,36 +145,8 @@ public interface SysDictTypeMapper extends BaseMapper<SysDictType> {
      *
      * @return a list of {@link DictTypeWithDataVO} with nested {@code dataList}; empty list if no active types; never {@code null}
      * @see DictTypeWithDataVO
-     * @see com.github.starhq.template.model.vo.dictData.DictDataSimpleVO
+     * @see DictDataSimpleVO
      * @see <a href="https://mybatis.org/mybatis-3/sqlmap-xml.html#Result_Maps">MyBatis Collection Mapping Guide</a>
      */
     List<DictTypeWithDataVO> selectDictTypesWithData();
-
-    // ========== Inherited Methods from BaseMapper<SysDictType> ==========
-    //
-    // The following standard CRUD methods are automatically provided by MyBatis-Plus:
-    //
-    // // Insert
-    // int insert(SysDictType entity);
-    //
-    // // Select
-    // SysDictType selectById(Serializable id);
-    // List<SysDictType> selectBatchIds(Collection<? extends Serializable> idList);
-    // List<SysDictType> selectByMap(Map<String, Object> columnMap);
-    // SysDictType selectOne(LambdaQueryWrapper<SysDictType> queryWrapper);
-    // List<SysDictType> selectList(LambdaQueryWrapper<SysDictType> queryWrapper);
-    // <E extends IPage<SysDictType>> E selectPage(E page, LambdaQueryWrapper<SysDictType> queryWrapper);
-    //
-    // // Update
-    // int updateById(SysDictType entity);
-    // int update(SysDictType entity, LambdaUpdateWrapper<SysDictType> updateWrapper);
-    //
-    // // Delete
-    // int deleteById(Serializable id);
-    // int deleteByMap(Map<String, Object> columnMap);
-    // int delete(LambdaQueryWrapper<SysDictType> queryWrapper);
-    //
-    // For detailed usage and advanced features, refer to:
-    // @see <a href="https://baomidou.com/pages/49cc81/">MyBatis-Plus BaseMapper Guide</a>
-
 }

@@ -211,32 +211,4 @@ public interface SysButtonMapper extends BaseMapper<SysButton> {
      * @see com.github.starhq.template.common.enums.UserStatus
      */
     List<Long> selectUserIdsByButtonId(@Param("buttonId") Serializable buttonId);
-
-    // ========== Inherited Methods from BaseMapper<SysButton> ==========
-    //
-    // The following standard CRUD methods are automatically provided by MyBatis-Plus:
-    //
-    // // Insert
-    // int insert(SysButton entity);
-    //
-    // // Select
-    // SysButton selectById(Serializable id);
-    // List<SysButton> selectBatchIds(Collection<? extends Serializable> idList);
-    // List<SysButton> selectByMap(Map<String, Object> columnMap);
-    // SysButton selectOne(LambdaQueryWrapper<SysButton> queryWrapper);
-    // List<SysButton> selectList(LambdaQueryWrapper<SysButton> queryWrapper);
-    // <E extends IPage<SysButton>> E selectPage(E page, LambdaQueryWrapper<SysButton> queryWrapper);
-    //
-    // // Update
-    // int updateById(SysButton entity);
-    // int update(SysButton entity, LambdaUpdateWrapper<SysButton> updateWrapper);
-    //
-    // // Delete
-    // int deleteById(Serializable id);
-    // int deleteByMap(Map<String, Object> columnMap);
-    // int delete(LambdaQueryWrapper<SysButton> queryWrapper);
-    //
-    // For detailed usage and advanced features, refer to:
-    // @see <a href="https://baomidou.com/pages/49cc81/">MyBatis-Plus BaseMapper Guide</a>
-
 }

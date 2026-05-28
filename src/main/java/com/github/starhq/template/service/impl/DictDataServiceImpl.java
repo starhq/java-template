@@ -16,12 +16,11 @@ import com.github.starhq.template.helper.CacheHelper;
 import com.github.starhq.template.helper.SysUserMapperHelper;
 import com.github.starhq.template.mapper.SysDictDataMapper;
 import com.github.starhq.template.mapper.SysDictTypeMapper;
-import com.github.starhq.template.model.dto.dictData.DictDataDTO;
-import com.github.starhq.template.model.dto.dictData.DictDataPageRequest;
-import com.github.starhq.template.model.vo.dictData.DictDataPageVO;
-import com.github.starhq.template.model.vo.dictData.DictDataSimpleVO;
+import com.github.starhq.template.model.dto.dict.data.DictDataDTO;
+import com.github.starhq.template.model.dto.dict.data.DictDataPageRequest;
+import com.github.starhq.template.model.vo.dict.data.DictDataPageVO;
+import com.github.starhq.template.model.vo.dict.data.DictDataSimpleVO;
 import com.github.starhq.template.service.DictDataService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.io.Serializable;
@@ -95,7 +94,6 @@ import java.util.Objects;
  * @see DictDataSimpleVO
  */
 @Service("dictDataService")
-@RequiredArgsConstructor
 public class DictDataServiceImpl extends AuditBaseServiceImpl<SysDictDataMapper, SysDictData> implements DictDataService {
 
     /**
@@ -134,6 +132,28 @@ public class DictDataServiceImpl extends AuditBaseServiceImpl<SysDictDataMapper,
      * @see DictDataConverter
      */
     private final DictDataConverter dictDataConverter;
+
+    /**
+     * Constructs a new {@code DictDataServiceImpl} with the required dependencies.
+     *
+     * @param cacheHelper       the cache utility for batch username resolution and cache invalidation
+     * @param dictTypeMapper    the mapper for dictionary type validation and database operations
+     * @param userMapperHelper  the helper for resolving user IDs to usernames
+     * @param dictDataConverter the converter for transforming between DTOs, entities, and VOs
+     */
+    public DictDataServiceImpl(
+            CacheHelper cacheHelper,
+            SysDictTypeMapper dictTypeMapper,
+            SysUserMapperHelper userMapperHelper,
+            DictDataConverter dictDataConverter) {
+
+        super(cacheHelper);
+
+        this.dictTypeMapper = dictTypeMapper;
+        this.userMapperHelper = userMapperHelper;
+        this.dictDataConverter = dictDataConverter;
+    }
+
 
     /**
      * Retrieves a paginated list of dictionary data entries with dynamic filtering and audit field resolution.

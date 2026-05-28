@@ -15,13 +15,12 @@ import com.github.starhq.template.helper.CacheHelper;
 import com.github.starhq.template.helper.SysUserMapperHelper;
 import com.github.starhq.template.mapper.SysDictDataMapper;
 import com.github.starhq.template.mapper.SysDictTypeMapper;
-import com.github.starhq.template.model.dto.dictType.DictTypeDTO;
+import com.github.starhq.template.model.dto.dict.type.DictTypeDTO;
 import com.github.starhq.template.model.dto.page.PageRequest;
-import com.github.starhq.template.model.vo.dictType.DictTypePageVO;
-import com.github.starhq.template.model.vo.dictType.DictTypeSimpleVO;
-import com.github.starhq.template.model.vo.dictType.DictTypeWithDataVO;
+import com.github.starhq.template.model.vo.dict.type.DictTypePageVO;
+import com.github.starhq.template.model.vo.dict.type.DictTypeSimpleVO;
+import com.github.starhq.template.model.vo.dict.type.DictTypeWithDataVO;
 import com.github.starhq.template.service.DictTypeService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -98,7 +97,6 @@ import java.util.List;
  * @see DictTypeWithDataVO
  */
 @Service("dictTypeService")
-@RequiredArgsConstructor
 public class DictTypeServiceImpl extends AuditBaseServiceImpl<SysDictTypeMapper, SysDictType> implements DictTypeService {
 
     /**
@@ -149,6 +147,27 @@ public class DictTypeServiceImpl extends AuditBaseServiceImpl<SysDictTypeMapper,
      * @see CacheConstant
      */
     private final EventService eventService;
+
+    /**
+     * Constructs a new {@code DictTypeServiceImpl} with the required dependencies.
+     *
+     * @param cacheHelper       the cache utility for batch username resolution (inherited from base class)
+     * @param dictDataMapper    the mapper for dictionary data operations, used to check data associations before deletion
+     * @param userMapperHelper  the helper for resolving user IDs to usernames during audit field population
+     * @param dictTypeConverter the converter for transforming between dictionary type entities, DTOs, and VOs
+     * @param eventService      the service for publishing domain events (e.g., cache invalidation triggers)
+     */
+    public DictTypeServiceImpl(CacheHelper cacheHelper,
+                               SysDictDataMapper dictDataMapper,
+                               SysUserMapperHelper userMapperHelper,
+                               DictTypeConverter dictTypeConverter,
+                               EventService eventService) {
+        super(cacheHelper);
+        this.dictDataMapper = dictDataMapper;
+        this.userMapperHelper = userMapperHelper;
+        this.dictTypeConverter = dictTypeConverter;
+        this.eventService = eventService;
+    }
 
     /**
      * Retrieves a paginated list of dictionary type definitions with audit field resolution.
