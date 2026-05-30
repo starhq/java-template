@@ -68,7 +68,6 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     protected @Nullable ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
         String message = formatFieldErrors(ex.getBindingResult().getFieldErrors());
         return buildValidationResponse(status.value(), message);
-
     }
 
     // ====================== Common HTTP Errors ======================
@@ -144,7 +143,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
      */
     @Override
     protected @Nullable ResponseEntity<Object> handleHttpRequestMethodNotSupported(HttpRequestMethodNotSupportedException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
-        return buildFrameworkResponse(status.value(), ErrorCode.NOT_SUPPORT, ex.getMethod(), ex.getSupportedHttpMethods());
+        return buildFrameworkResponse(status.value(), ErrorCode.NOT_SUPPORT, ex.getMethod(), Objects.requireNonNull(ex.getSupportedHttpMethods()));
     }
 
     // ====================== Business & System Exceptions ======================
@@ -224,7 +223,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
      * @param ex the custom exception to log
      */
     private void logCustomException(CustomException ex) {
-        HttpStatus status = Objects.requireNonNullElse(ex.getStatus(), HttpStatus.INTERNAL_SERVER_ERROR);
+        HttpStatus status = ex.getStatus();
         if (status.is4xxClientError()) {
             log.warn("Client error [{}]: {}", status.value(), ex.getMessage());
         } else {
