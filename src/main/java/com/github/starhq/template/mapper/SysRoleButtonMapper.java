@@ -149,37 +149,4 @@ public interface SysRoleButtonMapper extends BaseMapper<SysRoleButton> {
      * @see <a href="https://www.postgresql.org/docs/current/sql-insert.html#SQL-ON-CONFLICT">PostgreSQL INSERT ... ON CONFLICT</a>
      */
     void upsertRoleButton(@Param("list") List<SysRoleButton> roleButtons);
-
-    // ========== Inherited Methods from BaseMapper<SysRoleButton> ==========
-    //
-    // The following standard CRUD methods are automatically provided by MyBatis-Plus:
-    //
-    // // Insert (single)
-    // int insert(SysRoleButton entity);
-    //
-    // // Select
-    // SysRoleButton selectById(Serializable id);  // Note: composite key may require custom query
-    // List<SysRoleButton> selectBatchIds(Collection<? extends Serializable> idList);
-    // List<SysRoleButton> selectByMap(Map<String, Object> columnMap);
-    // SysRoleButton selectOne(LambdaQueryWrapper<SysRoleButton> queryWrapper);
-    // List<SysRoleButton> selectList(LambdaQueryWrapper<SysRoleButton> queryWrapper);
-    // <E extends IPage<SysRoleButton>> E selectPage(E page, LambdaQueryWrapper<SysRoleButton> queryWrapper);
-    //
-    // // Update (single)
-    // int updateById(SysRoleButton entity);
-    // int update(SysRoleButton entity, LambdaUpdateWrapper<SysRoleButton> updateWrapper);
-    //
-    // // Delete
-    // int deleteById(Serializable id);
-    // int deleteByMap(Map<String, Object> columnMap);
-    // int delete(LambdaQueryWrapper<SysRoleButton> queryWrapper);
-    //
-    // For junction tables with composite keys, consider adding custom methods:
-    // - deleteByRoleId(Long roleId)
-    // - deleteByButtonId(Long buttonId)
-    // - selectByRoleId(Long roleId)
-    //
-    // For detailed usage and advanced features, refer to:
-    // @see <a href="https://baomidou.com/pages/49cc81/">MyBatis-Plus BaseMapper Guide</a>
-
 }

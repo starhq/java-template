@@ -334,7 +334,7 @@ class TreeBuildUtilsTest {
             assertThat(result.getFirst().getName()).isEqualTo("根节点V1");
 
             // 子节点会挂到覆盖后的 V2 下面（因为Map里1L对应的已经是V2了）
-            assertThat(result.getFirst().getChildren()).hasSize(0);
+            assertThat(result.getFirst().getChildren()).isEmpty();
         }
 
         @Test

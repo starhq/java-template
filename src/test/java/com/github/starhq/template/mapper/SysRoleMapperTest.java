@@ -54,8 +54,8 @@ class SysRoleMapperTest extends BaseMapperTestConfiguration {
     void selectRolesByUserId_shouldReturnPagedResult() {
         List<RoleCheckVO> result = roleMapper.selectRolesByUserId(1L);
 
-        assertThat(result).isNotNull();
-        assertThat(result).hasSize(2);
+        assertThat(result).isNotNull()
+                .hasSize(2);
         assertThat(result.getFirst().getName()).isEqualTo("Administrator");
     }
 

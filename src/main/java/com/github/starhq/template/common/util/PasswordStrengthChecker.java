@@ -125,7 +125,7 @@ public class PasswordStrengthChecker {
      * Pre-compiled Regex to strip leading and trailing non-letters.
      * Used to fast-check if strings like "!password123" contain the base word "password".
      */
-    private static final Pattern STRIP_NON_ALPHA_PATTERN = Pattern.compile("^[^a-z]+|[^a-z]+$");
+    private static final Pattern STRIP_NON_ALPHA_PATTERN = Pattern.compile("(^[^a-z]+)|([^a-z]+$)");
 
     /**
      * Calculates a numerical strength score for the given password.

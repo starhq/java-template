@@ -250,15 +250,16 @@ class CacheHelperTest {
 
             // then: 验证结果
             // 1. 返回的数据大小应该是 2
-            assertThat(result).hasSize(2);
             // 2. 因为 DB 挂了，原本缓存未命中的 1 和 2，都应该被赋值为 "unknown"
-            assertThat(result).containsEntry(1L, "unknown").containsEntry(2L, "unknown");
+            assertThat(result).hasSize(2)
+                    .containsEntry(1L, "unknown")
+                    .containsEntry(2L, "unknown");
 
             // 3. 验证 DB Loader 确实被触发过
             verify(failLoader).apply(Set.of(1L, 2L));
 
             // 4. 【核心业务验证】：因为拿到的 dbData 是异常降级数据，所以绝对不能回写到缓存里，否则会污染缓存！
-            verify(cache,times(2)).put(any(), any());
+            verify(cache, times(2)).put(any(), any());
         }
     }
 

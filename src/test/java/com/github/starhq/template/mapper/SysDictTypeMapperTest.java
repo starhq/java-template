@@ -79,8 +79,8 @@ class SysDictTypeMapperTest extends BaseMapperTestConfiguration {
     void selectDictTypes_shouldReturnResult() {
         List<DictTypeWithDataVO> result = dictTypeMapper.selectDictTypesWithData();
 
-        assertThat(result).isNotNull();
-        assertThat(result).hasSizeGreaterThan(0);
+        assertThat(result).isNotNull()
+                .hasSizeGreaterThan(0);
     }
 
     private SysDictType prepare(Long id, String type, String name) {

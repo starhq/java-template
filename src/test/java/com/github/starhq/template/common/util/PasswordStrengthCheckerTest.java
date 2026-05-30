@@ -117,13 +117,13 @@ class PasswordStrengthCheckerTest {
         @Test
         @DisplayName("8位纯小写连续字母: 加分被惩罚抵消，最终得分为 0")
         void length8_shouldScoreOne() {
-            assertThat(PasswordStrengthChecker.calculateScore("abcdefgh")).isEqualTo(0);
+            assertThat(PasswordStrengthChecker.calculateScore("abcdefgh")).isZero();
         }
 
         @Test
         @DisplayName("12位纯小写连续字母: 加分被惩罚抵消，最终得分为 0")
         void length12_shouldScoreTwo() {
-            assertThat(PasswordStrengthChecker.calculateScore("abcdefghijkl")).isEqualTo(0);
+            assertThat(PasswordStrengthChecker.calculateScore("abcdefghijkl")).isZero();
         }
     }
 
@@ -138,7 +138,7 @@ class PasswordStrengthCheckerTest {
         @DisplayName("短密码惩罚：长度为 5，扣 1 分 (6-5)")
         void shortPassword_shouldPenalize() {
             // a1Bc5 (len5, types=3) -> len(0)+div(3)+comb(0) - short(3) - single(0) = 0
-            assertThat(PasswordStrengthChecker.calculateScore("a1Bc5")).isEqualTo(0);
+            assertThat(PasswordStrengthChecker.calculateScore("a1Bc5")).isZero();
         }
 
         @Test
@@ -165,7 +165,7 @@ class PasswordStrengthCheckerTest {
         @DisplayName("弱口令库命中惩罚(包含)：'Password123' 包含 'password'，扣 5 分")
         void commonPasswordContains_shouldPenalize() {
             // "Password123" (len11, types=3) -> len(1)+div(3)+comb(1) - common(5) - seq(2, "123") = -2 -> 0
-            assertThat(PasswordStrengthChecker.calculateScore("Password123")).isEqualTo(0);
+            assertThat(PasswordStrengthChecker.calculateScore("Password123")).isZero();
         }
 
         @Test
@@ -206,22 +206,22 @@ class PasswordStrengthCheckerTest {
         void fourTypes_shouldAddDiversityScore() {
             // "aA1@" (len4, types=4) -> len(0)+div(4)+comb(0) - short(4) = 0
             // "aA1a" (len4, types=3) -> len(0)+div(3)+comb(0) - short(4) = -1 -> 0
-            assertThat(PasswordStrengthChecker.calculateScore("aA1@")).isEqualTo(0);
-            assertThat(PasswordStrengthChecker.calculateScore("aA1a")).isEqualTo(0);
+            assertThat(PasswordStrengthChecker.calculateScore("aA1@")).isZero();
+            assertThat(PasswordStrengthChecker.calculateScore("aA1a")).isZero();
         }
 
         @Test
         @DisplayName("组合奖励 1：长度>4 且 类型>=2，奖励 1 分")
         void comboBonus1_shouldApply() {
             // "a1bcd" (len5, types=2) -> len(0)+div(2)+comb(1) - short(3) - seq(2) = -3 -> 0
-            assertThat(PasswordStrengthChecker.calculateScore("a1bcd")).isEqualTo(0);
+            assertThat(PasswordStrengthChecker.calculateScore("a1bcd")).isZero();
         }
 
         @Test
         @DisplayName("组合奖励 2：长度>6 且 类型>=3，奖励 1 分")
         void comboBonus2_shouldApply() {
             // "aB1cdef" (len7, types=3) -> len(0)+div(3)+comb(0) - short(1) - seq(2) = 0
-            assertThat(PasswordStrengthChecker.calculateScore("aB1cdef")).isEqualTo(0);
+            assertThat(PasswordStrengthChecker.calculateScore("aB1cdef")).isZero();
         }
 
         @Test

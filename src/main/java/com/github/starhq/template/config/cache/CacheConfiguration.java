@@ -37,8 +37,4 @@ public class CacheConfiguration {
 
         return manager;
     }
-
-    // TODO: Implement cache warmup logic.
-    // It is highly recommended to preload critical, read-heavy caches (like DICT_TYPE, PERMISSION)
-    // during application startup using @PostConstruct or ApplicationRunner to prevent cold-start latency spikes.
 }

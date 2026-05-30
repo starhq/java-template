@@ -62,8 +62,8 @@ class SysMenuMapperTest extends BaseMapperTestConfiguration {
 
         var menus = menuMapper.selectAssignedMenus(wrapper);
 
-        assertThat(menus).isNotNull();
-        assertThat(menus).hasSizeGreaterThan(0);
+        assertThat(menus).isNotNull()
+                .hasSizeGreaterThan(0);
     }
 
     @Test

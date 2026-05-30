@@ -34,7 +34,7 @@ public class CustomException extends RuntimeException {
      * <p>These are passed to {@link String#format(String, Object...)} or similar mechanisms
      * in the global exception handler to replace placeholders in the i18n message template.
      */
-    private transient final Object[] args;
+    private final transient Object[] args;
 
     /**
      * The HTTP status code that should be mapped to the client response.

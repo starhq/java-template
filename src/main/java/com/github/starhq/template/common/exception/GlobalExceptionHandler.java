@@ -5,8 +5,6 @@ import com.github.starhq.template.config.messages.MessageUtils;
 import com.github.starhq.template.model.vo.Result;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.jspecify.annotations.NullMarked;
-import org.jspecify.annotations.Nullable;
 import org.springframework.beans.TypeMismatchException;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpHeaders;
@@ -67,9 +65,10 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
      */
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(
-            MethodArgumentNotValidException ex, @Nullable HttpHeaders headers, HttpStatusCode status, @Nullable WebRequest request) {
+            MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
         String message = formatFieldErrors(ex.getBindingResult().getFieldErrors());
         return buildValidationResponse(status.value(), message);
+
     }
 
     // ====================== Common HTTP Errors ======================
@@ -84,8 +83,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
      * @return a standardized response indicating a body format error
      */
     @Override
-    protected ResponseEntity<Object> handleHttpMessageNotReadable(@Nullable HttpMessageNotReadableException ex, @Nullable HttpHeaders headers, HttpStatusCode status,
-                                                                  @Nullable WebRequest request) {
+    protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex, HttpHeaders headers, HttpStatusCode status,
+                                                                  WebRequest request) {
         return buildFrameworkResponse(status.value(), ErrorCode.PARAM_FORMAT);
     }
 
@@ -100,8 +99,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
      * @return a standardized response pointing out the specific parameter that failed conversion
      */
     @Override
-    protected ResponseEntity<Object> handleTypeMismatch(@Nullable TypeMismatchException ex, @Nullable HttpHeaders headers, HttpStatusCode status,
-                                                        @Nullable WebRequest request) {
+    protected ResponseEntity<Object> handleTypeMismatch(TypeMismatchException ex, HttpHeaders headers, HttpStatusCode status,
+                                                        WebRequest request) {
         return buildFrameworkResponse(status.value(), ErrorCode.QUERY_FORMAT, extractParamName(ex));
     }
 
@@ -116,7 +115,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
      */
     @Override
     protected ResponseEntity<Object> handleMissingServletRequestParameter(
-            MissingServletRequestParameterException ex, @Nullable HttpHeaders headers, HttpStatusCode status, @Nullable WebRequest request) {
+            MissingServletRequestParameterException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
         return buildFrameworkResponse(status.value(), ErrorCode.QUERY_FORMAT, ex.getParameterName());
     }
 
@@ -134,7 +133,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
      */
     @Override
     protected ResponseEntity<Object> handleNoHandlerFoundException(
-            NoHandlerFoundException ex, @Nullable HttpHeaders headers, HttpStatusCode status, @Nullable WebRequest request) {
+            NoHandlerFoundException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
         return buildFrameworkResponse(status.value(), ErrorCode.NOT_FOUND, ex.getRequestURL());
     }
 
@@ -148,8 +147,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
      * @return a standardized 405 response
      */
     @Override
-    protected @NullMarked ResponseEntity<Object> handleHttpRequestMethodNotSupported(HttpRequestMethodNotSupportedException ex, HttpHeaders headers,
-                                                                                     HttpStatusCode status, WebRequest request) {
+    protected ResponseEntity<Object> handleHttpRequestMethodNotSupported(HttpRequestMethodNotSupportedException ex, HttpHeaders headers,
+                                                                         HttpStatusCode status, WebRequest request) {
         return buildFrameworkResponse(status.value(), ErrorCode.NOT_SUPPORT, ex.getMethod(), ex.getSupportedHttpMethods());
     }
 
