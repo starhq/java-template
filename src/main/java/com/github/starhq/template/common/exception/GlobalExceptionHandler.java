@@ -84,7 +84,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
      * @return a standardized response indicating a body format error
      */
     @Override
-    protected @Nullable ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
+    protected @Nullable ResponseEntity<@NonNull Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex, HttpHeaders headers,
+                                                                                     HttpStatusCode status, WebRequest request) {
         return buildFrameworkResponse(status.value(), ErrorCode.PARAM_FORMAT);
     }
 
@@ -99,7 +100,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
      * @return a standardized response pointing out the specific parameter that failed conversion
      */
     @Override
-    protected @Nullable ResponseEntity<Object> handleTypeMismatch(TypeMismatchException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
+    protected @Nullable ResponseEntity<@NonNull Object> handleTypeMismatch(TypeMismatchException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
         return buildFrameworkResponse(status.value(), ErrorCode.QUERY_FORMAT, extractParamName(ex));
     }
 
@@ -113,7 +114,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
      * @return a standardized response indicating the missing parameter
      */
     @Override
-    protected @Nullable ResponseEntity<Object> handleMissingServletRequestParameter(MissingServletRequestParameterException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
+    protected @Nullable ResponseEntity<@NonNull Object> handleMissingServletRequestParameter(MissingServletRequestParameterException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
         return buildFrameworkResponse(status.value(), ErrorCode.QUERY_FORMAT, ex.getParameterName());
     }
 
@@ -130,7 +131,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
      * @return a standardized 404 response
      */
     @Override
-    protected @Nullable ResponseEntity<Object> handleNoHandlerFoundException(NoHandlerFoundException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
+    protected @Nullable ResponseEntity<@NonNull Object> handleNoHandlerFoundException(NoHandlerFoundException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
         return buildFrameworkResponse(status.value(), ErrorCode.NOT_FOUND, ex.getRequestURL());
     }
 
@@ -144,7 +145,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
      * @return a standardized 405 response
      */
     @Override
-    protected @Nullable ResponseEntity<Object> handleHttpRequestMethodNotSupported(HttpRequestMethodNotSupportedException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
+    protected @Nullable ResponseEntity<@NonNull Object> handleHttpRequestMethodNotSupported(HttpRequestMethodNotSupportedException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
         return buildFrameworkResponse(status.value(), ErrorCode.NOT_SUPPORT, ex.getMethod(), Objects.requireNonNull(ex.getSupportedHttpMethods()));
     }
 
