@@ -5,7 +5,7 @@ import com.github.starhq.template.config.messages.MessageUtils;
 import com.github.starhq.template.model.vo.Result;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import org.springframework.beans.TypeMismatchException;
 import org.springframework.dao.DataAccessException;
@@ -66,8 +66,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
      * @return a standardized response containing the concatenated validation error messages
      */
     @Override
-    protected @NullMarked ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatusCode status,
-                                                                              WebRequest request) {
+    protected @Nullable ResponseEntity<@NonNull Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatusCode status,
+                                                                                     WebRequest request) {
         String message = formatFieldErrors(ex.getBindingResult().getFieldErrors());
         return buildValidationResponse(status.value(), message);
     }
