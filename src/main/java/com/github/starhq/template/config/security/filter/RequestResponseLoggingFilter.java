@@ -227,8 +227,10 @@ public class RequestResponseLoggingFilter extends OncePerRequestFilter {
                 (responseContentType.startsWith("image/")
                         || responseContentType.startsWith("application/octet-stream"))) {
             return "[Binary Data]";
-        } else {
+        } else if (responseContentType != null && responseContentType.contains("application/json")) {
             return getBodyString(response.getContentAsByteArray());
+        } else {
+            return truncateContent(new String(response.getContentAsByteArray()));
         }
     }
 
@@ -325,7 +327,8 @@ public class RequestResponseLoggingFilter extends OncePerRequestFilter {
             }
 
             appendDetailedLogs(logBuilder, request, response);
-            log.debug(logBuilder.toString());
+            String detail = logBuilder.toString();
+            log.debug(detail);
         } else {
             // Production mode: Ultra-fast parameterized logging, no string concatenation overhead
             log.info("HTTP {} {} status={} duration={}ms traceId={}",

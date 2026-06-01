@@ -68,10 +68,9 @@ star:
 
   white-list:
     - /auth/login
-    - /auth/register
-    - /auth/refresh
     - /auth/captcha
-    - /auth/reset-password
+    - /actuator/**
+    - /error
 
   cors:
     allowed-origin-patterns:
@@ -88,7 +87,3 @@ star:
       - "*"
     allow-credentials: true
     max-age: 3600
-
-mybatis-plus:
-  configuration:
-    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl

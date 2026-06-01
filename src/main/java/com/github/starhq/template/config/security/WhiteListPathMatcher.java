@@ -2,6 +2,7 @@ package com.github.starhq.template.config.security;
 
 import com.github.starhq.template.config.security.properties.WhiteListProperties;
 import lombok.RequiredArgsConstructor;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.util.CollectionUtils;
 
 /**
@@ -20,6 +21,8 @@ public class WhiteListPathMatcher {
      * Injected configuration containing the list of allowed public paths.
      */
     private final WhiteListProperties whiteListProperties;
+
+    private static final AntPathMatcher MATCHER = new AntPathMatcher();
 
     /**
      * Evaluates if a given request path should be considered public (whitelisted).
@@ -45,6 +48,6 @@ public class WhiteListPathMatcher {
 
         // Perform prefix matching against the YAML list
         return whiteListProperties.getWhiteList().stream()
-                .anyMatch(requestPath::contains);
+                .anyMatch((white) -> MATCHER.match(white, requestPath));
     }
 }

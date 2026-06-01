@@ -33,7 +33,7 @@ FROM eclipse-temurin:25.0.2_10-jre-alpine
 # 安装运行时依赖 (curl 用于健康检查, unzip 用于分层加载)
 # 使用 --no-cache 减少层数大小
 RUN apk add --no-cache curl unzip && \
-    # 处理时区 (使用虚拟包技巧，安装完立刻删除 tzdata 数据包，只保留时区文件)
+    # 处理时区 (使用虚拟包技巧,安装完立刻删除 tzdata 数据包,只保留时区文件) \
     apk add --no-cache --virtual .build-deps tzdata && \
     cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && \
     echo "Asia/Shanghai" > /etc/timezone && \

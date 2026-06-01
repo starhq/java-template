@@ -74,6 +74,7 @@ dependencies {
     // --- Tools ---
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
+    implementation 'io.micrometer:micrometer-registry-prometheus:1.17.0-RC1'
 
     // --- MapStruct ---
     implementation libs.mapstruct
@@ -270,15 +271,3 @@ jar {
 // tasks.named('jar') {
 //     finalizedBy 'copyDependencies'
 // }
-
-tasks.register('showEnv') {
-    doLast {
-        println "=== Environment Variables ==="
-        System.getenv().each { key, value ->
-            if (key =~ /USERNAME|PASSWORD|KEY|SPRING/) {
-                println "$key = $value"
-            }
-        }
-        println "=============================="
-    }
-}

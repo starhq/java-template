@@ -83,7 +83,7 @@ public class SecurityConfig {
      * @param requestResponseLoggingFilter Injected filter for audit logging.
      * @param resourceFilter               Injected filter for dynamic DB-driven authorization.
      * @return The fully constructed {@link SecurityFilterChain}.
-     * @throws Exception if configuration fails.
+     * @throws IllegalStateException if configuration fails.
      */
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http,
@@ -111,12 +111,6 @@ public class SecurityConfig {
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 // Define authorization rules
                 .authorizeHttpRequests(auth -> auth
-                        // Spring Boot default error endpoint (usually forwards to /error)
-                        .requestMatchers("/error").permitAll()
-                        // Actuator health checks
-                        .requestMatchers("/actuator/health").permitAll()
-                        // Actuator all endpoints (requires ACTUATOR_ADMIN role to view raw metrics data)
-                        .requestMatchers("/actuator").hasRole("ACTUATOR_ADMIN")
                         // Apply whitelist bypass
                         .requestMatchers(whiteListProperties.getWhiteList().toArray(new String[0])).permitAll()
                         // Catch-all: everything else requires authentication

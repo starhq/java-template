@@ -2,8 +2,7 @@ spring:
   config:
     import: "optional:file:./.env[.properties]"
   messages:
-    basename:
-      - i18n/messages
+    basename: i18n/messages
     encoding: UTF-8
     use-code-as-default-message: true
     cache-duration: 3600s
@@ -37,11 +36,6 @@ spring:
         write-numbers-as-strings: false
     use-jackson2-defaults: false
 
-  mvc:
-    apiversion:
-      default: v1
-      use:
-        path-segment: 0
     format:
       date-time: yyyy-MM-dd HH:mm:ss
 
@@ -86,11 +80,18 @@ management:
         include:
           - health
           - info
-          - metrics
+#          - metrics
+          - prometheus
   endpoint:
+    prometheus:
+      enabled: true
     health:
       show-details: always
       show-components: always
   health:
     db:
       enabled: true
+  metrics:
+    tags:
+      application: ${spring.application.name:my-app}
+      environment: ${spring.profiles.active:dev}

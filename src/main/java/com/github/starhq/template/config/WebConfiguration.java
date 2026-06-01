@@ -4,6 +4,7 @@ import com.github.starhq.template.config.converter.SortEnumConverter;
 import com.github.starhq.template.config.converter.TargetTypeConverter;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.format.FormatterRegistry;
+import org.springframework.web.servlet.config.annotation.ApiVersionConfigurer;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
@@ -33,5 +34,13 @@ public class WebConfiguration implements WebMvcConfigurer {
         registry.addConverter(new TargetTypeConverter());
         // Registers the converter for sorting directions (e.g., String "asc" -> SortEnum.ASC)
         registry.addConverter(new SortEnumConverter());
+    }
+
+    @Override
+    public void configureApiVersioning(ApiVersionConfigurer configurer) {
+        configurer.usePathSegment(0, path ->
+                !path.value().contains("/auth/")
+        );
+        configurer.setDefaultVersion("v1");
     }
 }

@@ -1,7 +1,6 @@
 package com.github.starhq.template.controller.impl;
 
 import com.github.starhq.template.common.captcha.util.RandomUtil;
-import com.github.starhq.template.common.constant.TestConstant;
 import com.github.starhq.template.config.messages.MessageUtils;
 import com.github.starhq.template.config.security.jwt.JwtToken;
 import com.github.starhq.template.controller.AuthController;
@@ -95,7 +94,7 @@ class AuthControllerTest {
 
         when(loginService.login(loginRequest)).thenReturn(jwtToken);
 
-        mockMvc.perform(post(TestConstant.VERSION + "/auth/login")
+        mockMvc.perform(post("/auth/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("X-Device-Fingerprint", DEVICE_FINGERPRINT)
                         .content(jsonMapper.writeValueAsString(loginRequest)))
@@ -109,7 +108,7 @@ class AuthControllerTest {
     void refresh_Success() throws Exception {
         when(tokenService.refresh()).thenReturn(jwtToken);
 
-        mockMvc.perform(post(TestConstant.VERSION + "/auth/refresh")
+        mockMvc.perform(post("/auth/refresh")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("X-Device-Fingerprint", DEVICE_FINGERPRINT))
                 .andExpect(status().isOk())
@@ -124,7 +123,7 @@ class AuthControllerTest {
 
         when(authService.resetPassword(resetRequest)).thenReturn(true);
 
-        mockMvc.perform(patch(TestConstant.VERSION + "/auth/reset-password")
+        mockMvc.perform(patch("/auth/reset-password")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(jsonMapper.writeValueAsString(resetRequest)))
                 .andExpect(status().isOk());
@@ -134,7 +133,7 @@ class AuthControllerTest {
     void resetCaptcha_Success() throws Exception {
         doNothing().when(captchaService).generateCode(TEST_UUID, response);
 
-        mockMvc.perform(get(TestConstant.VERSION + "/auth/captcha")
+        mockMvc.perform(get("/auth/captcha")
                         .contentType(MediaType.APPLICATION_JSON)
                         .param("uuid", TEST_UUID)
                 )

@@ -128,4 +128,5 @@ public class CommonConfiguration {
                                                         SensitiveFieldProperties sensitiveFieldProperties) {
         return new LoggerJsonSensitiveHelper(jsonMapper, sensitiveFieldProperties);
     }
+
 }

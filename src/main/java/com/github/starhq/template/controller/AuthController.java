@@ -26,7 +26,7 @@ import org.springframework.web.bind.annotation.*;
  * @author starhq
  */
 @RestController
-@RequestMapping(value = "/{version}/auth", version = "v1")
+@RequestMapping("/auth")
 @RequiredArgsConstructor
 public class AuthController {
 

@@ -161,7 +161,7 @@
     <logger name="org.quartz" level="WARN"/>
     <logger name="org.thymeleaf" level="WARN"/>
     <logger name="com.zaxxer.hikari" level="INFO"/>
-    <logger name="com.baomidou" level="WARN"/>
+    <logger name="com.baomidou" level="ERROR"/>
     <logger name="com.github.pagehelper" level="WARN"/>
 
     <!-- Application Loggers -->
@@ -223,7 +223,7 @@
             <appender-ref ref="FILE_DEBUG"/>
         </root>
         
-        <logger name="com.github.starhq" level="DEBUG"/>
+        <logger name="com.github.starhq" level="DEBUG" additivity="false"/>
     </springProfile>
 
     <!-- Test Profile -->
@@ -232,7 +232,7 @@
             <appender-ref ref="CONSOLE"/>
         </root>
         
-        <logger name="com.github.starhq" level="DEBUG"/>
+        <logger name="com.github.starhq" level="DEBUG" additivity="false"/>
     </springProfile>
 
 </configuration>
