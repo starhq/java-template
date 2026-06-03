@@ -2,6 +2,9 @@ package com.github.starhq.template.event;
 
 import com.github.starhq.template.entity.SysApiLog;
 import com.github.starhq.template.entity.SysAuditLog;
+import com.github.starhq.template.event.domain.ApiLogEvent;
+import com.github.starhq.template.event.domain.AuditLogEvent;
+import com.github.starhq.template.event.domain.CacheEvictEvent;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 

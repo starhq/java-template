@@ -16,10 +16,10 @@ import com.github.starhq.template.helper.CacheHelper;
 import com.github.starhq.template.helper.SysUserMapperHelper;
 import com.github.starhq.template.mapper.SysDictDataMapper;
 import com.github.starhq.template.mapper.SysDictTypeMapper;
-import com.github.starhq.template.model.dto.dict.data.DictDataDTO;
-import com.github.starhq.template.model.dto.dict.data.DictDataPageRequest;
-import com.github.starhq.template.model.vo.dict.data.DictDataPageVO;
-import com.github.starhq.template.model.vo.dict.data.DictDataSimpleVO;
+import com.github.starhq.template.model.dto.DictDataDTO;
+import com.github.starhq.template.model.dto.DictDataPageRequest;
+import com.github.starhq.template.model.vo.DictDataPageVO;
+import com.github.starhq.template.model.vo.DictDataSimpleVO;
 import com.github.starhq.template.service.DictDataService;
 import org.springframework.stereotype.Service;
 

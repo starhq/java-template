@@ -2,7 +2,7 @@ package com.github.starhq.template.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.github.starhq.template.entity.SysResource;
-import com.github.starhq.template.model.vo.resource.ResourceCheckVO;
+import com.github.starhq.template.model.vo.ResourceCheckVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -98,7 +98,7 @@ public interface SysResourceMapper extends BaseMapper<SysResource> {
      * <pre>
      * {@code
      * <!-- resources/mapper/SysResourceMapper.xml -->
-     * <select id="selectResourcesByRoleId" resultType="com.github.starhq.template.model.vo.resource.ResourceCheckVO">
+     * <select id="selectResourcesByRoleId" resultType="com.github.starhq.template.model.vo.ResourceCheckVO">
      *     SELECT
      *         r.id, r.name, r.url, r.methods, r.description, r.status,
      *         CASE WHEN rr.role_id IS NOT NULL THEN true ELSE false END as checked

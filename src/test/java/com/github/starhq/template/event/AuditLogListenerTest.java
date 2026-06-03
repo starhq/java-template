@@ -1,6 +1,7 @@
 package com.github.starhq.template.event;
 
 import com.github.starhq.template.entity.SysAuditLog;
+import com.github.starhq.template.event.domain.AuditLogEvent;
 import com.github.starhq.template.event.listener.AuditLogListener;
 import com.github.starhq.template.mapper.SysAuditLogMapper;
 import org.junit.jupiter.api.Test;

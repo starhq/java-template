@@ -1,7 +1,7 @@
 package com.github.starhq.template.service;
 
 import com.github.starhq.template.config.security.jwt.JwtToken;
-import com.github.starhq.template.model.dto.user.LoginDTO;
+import com.github.starhq.template.model.dto.LoginDTO;
 
 /**
  * Service interface for user authentication and JWT token issuance.

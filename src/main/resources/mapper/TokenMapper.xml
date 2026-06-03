@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.github.starhq.template.mapper.SysTokenMapper">
 
-    <select id="selectTokenPage" resultType="com.github.starhq.template.model.vo.token.TokenPageVO">
+    <select id="selectTokenPage" resultType="com.github.starhq.template.model.vo.TokenPageVO">
         SELECT 
             st.id,
             st.expired_at,

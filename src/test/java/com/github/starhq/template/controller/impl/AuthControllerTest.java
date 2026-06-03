@@ -1,11 +1,11 @@
 package com.github.starhq.template.controller.impl;
 
-import com.github.starhq.template.common.captcha.util.RandomUtil;
-import com.github.starhq.template.config.messages.MessageUtils;
+import com.github.starhq.template.common.util.RandomUtil;
+import com.github.starhq.template.config.i18n.MessageUtils;
 import com.github.starhq.template.config.security.jwt.JwtToken;
 import com.github.starhq.template.controller.AuthController;
-import com.github.starhq.template.model.dto.user.LoginDTO;
-import com.github.starhq.template.model.dto.user.ResetPasswordDTO;
+import com.github.starhq.template.model.dto.LoginDTO;
+import com.github.starhq.template.model.dto.ResetPasswordDTO;
 import com.github.starhq.template.service.AuthService;
 import com.github.starhq.template.service.CaptchaService;
 import com.github.starhq.template.service.LoginService;

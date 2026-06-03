@@ -1,11 +1,11 @@
 package com.github.starhq.template.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.github.starhq.template.model.dto.page.PageRequest;
-import com.github.starhq.template.model.dto.resource.ResourceDTO;
+import com.github.starhq.template.model.dto.PageRequest;
+import com.github.starhq.template.model.dto.ResourceDTO;
 import com.github.starhq.template.model.vo.Result;
-import com.github.starhq.template.model.vo.resource.ResourcePageVO;
-import com.github.starhq.template.model.vo.resource.ResourceSimpleVO;
+import com.github.starhq.template.model.vo.ResourcePageVO;
+import com.github.starhq.template.model.vo.ResourceSimpleVO;
 import com.github.starhq.template.service.ResourceService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

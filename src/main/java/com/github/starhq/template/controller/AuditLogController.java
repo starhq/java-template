@@ -1,9 +1,9 @@
 package com.github.starhq.template.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.github.starhq.template.model.dto.auditlog.AuditLogPageRequest;
+import com.github.starhq.template.model.dto.AuditLogPageRequest;
 import com.github.starhq.template.model.vo.Result;
-import com.github.starhq.template.model.vo.auditlog.AuditLogPageVO;
+import com.github.starhq.template.model.vo.AuditLogPageVO;
 import com.github.starhq.template.service.AuditLogService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

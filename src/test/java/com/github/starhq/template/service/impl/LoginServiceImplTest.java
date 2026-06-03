@@ -4,7 +4,7 @@ import com.github.starhq.template.common.enums.ErrorCode;
 import com.github.starhq.template.common.exception.BusinessException;
 import com.github.starhq.template.common.exception.CustomException;
 import com.github.starhq.template.config.security.jwt.JwtToken;
-import com.github.starhq.template.model.dto.user.LoginDTO;
+import com.github.starhq.template.model.dto.LoginDTO;
 import com.github.starhq.template.service.CaptchaService;
 import com.github.starhq.template.service.TokenService;
 import org.junit.jupiter.api.BeforeEach;

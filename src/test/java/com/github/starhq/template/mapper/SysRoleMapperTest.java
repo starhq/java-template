@@ -2,7 +2,7 @@ package com.github.starhq.template.mapper;
 
 import com.github.starhq.template.BaseMapperTestConfiguration;
 import com.github.starhq.template.entity.SysRole;
-import com.github.starhq.template.model.vo.role.RoleCheckVO;
+import com.github.starhq.template.model.vo.RoleCheckVO;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 

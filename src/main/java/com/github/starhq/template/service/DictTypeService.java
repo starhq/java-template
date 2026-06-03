@@ -4,11 +4,11 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.github.starhq.template.common.exception.BusinessException;
 import com.github.starhq.template.entity.SysDictType;
-import com.github.starhq.template.model.dto.dict.type.DictTypeDTO;
-import com.github.starhq.template.model.dto.page.PageRequest;
-import com.github.starhq.template.model.vo.dict.type.DictTypePageVO;
-import com.github.starhq.template.model.vo.dict.type.DictTypeSimpleVO;
-import com.github.starhq.template.model.vo.dict.type.DictTypeWithDataVO;
+import com.github.starhq.template.model.dto.DictTypeDTO;
+import com.github.starhq.template.model.dto.PageRequest;
+import com.github.starhq.template.model.vo.DictTypePageVO;
+import com.github.starhq.template.model.vo.DictTypeSimpleVO;
+import com.github.starhq.template.model.vo.DictTypeWithDataVO;
 
 import java.io.Serializable;
 import java.util.List;

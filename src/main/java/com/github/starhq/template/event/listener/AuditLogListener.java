@@ -1,7 +1,7 @@
 package com.github.starhq.template.event.listener;
 
 import com.github.starhq.template.entity.SysAuditLog;
-import com.github.starhq.template.event.AuditLogEvent;
+import com.github.starhq.template.event.domain.AuditLogEvent;
 import com.github.starhq.template.mapper.SysAuditLogMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

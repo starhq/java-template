@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.github.starhq.template.mapper.SysButtonMapper">
 
-    <select id="selectButtonsByRoleId" resultType="com.github.starhq.template.model.vo.button.ButtonCheckVO">
+    <select id="selectButtonsByRoleId" resultType="com.github.starhq.template.model.vo.ButtonCheckVO">
         SELECT sb.id,
            sb.name,
         <!-- 动态判断：如果有roleId，就判断关联表；如果没有，直接返回false -->

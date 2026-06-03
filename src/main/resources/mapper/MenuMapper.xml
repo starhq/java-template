@@ -16,7 +16,7 @@
             ${ew.customSqlSegment}
     </select>
 
-     <select id="selectMenusByRoleId" resultType="com.github.starhq.template.model.vo.menu.tree.MenuCheckVO">
+     <select id="selectMenusByRoleId" resultType="com.github.starhq.template.model.vo.MenuCheckVO">
          SELECT sm.id,
            sm.name,
            sm.parent_id,

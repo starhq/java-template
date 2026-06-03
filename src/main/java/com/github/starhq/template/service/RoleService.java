@@ -4,11 +4,11 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.github.starhq.template.common.exception.BusinessException;
 import com.github.starhq.template.entity.SysRole;
-import com.github.starhq.template.model.dto.page.PageRequest;
-import com.github.starhq.template.model.dto.role.RoleDTO;
-import com.github.starhq.template.model.vo.role.RoleCheckVO;
-import com.github.starhq.template.model.vo.role.RolePageVO;
-import com.github.starhq.template.model.vo.role.RoleSimpleVO;
+import com.github.starhq.template.model.dto.PageRequest;
+import com.github.starhq.template.model.dto.RoleDTO;
+import com.github.starhq.template.model.vo.RoleCheckVO;
+import com.github.starhq.template.model.vo.RolePageVO;
+import com.github.starhq.template.model.vo.RoleSimpleVO;
 
 import java.io.Serializable;
 import java.util.List;

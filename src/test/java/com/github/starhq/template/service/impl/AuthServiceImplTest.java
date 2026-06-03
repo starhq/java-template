@@ -11,7 +11,7 @@ import com.github.starhq.template.entity.SysUser;
 import com.github.starhq.template.event.EventService;
 import com.github.starhq.template.mapper.SysTokenMapper;
 import com.github.starhq.template.mapper.SysUserMapper;
-import com.github.starhq.template.model.dto.user.ResetPasswordDTO;
+import com.github.starhq.template.model.dto.ResetPasswordDTO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

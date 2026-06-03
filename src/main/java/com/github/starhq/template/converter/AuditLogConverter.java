@@ -1,7 +1,7 @@
 package com.github.starhq.template.converter;
 
 import com.github.starhq.template.entity.SysAuditLog;
-import com.github.starhq.template.model.vo.auditlog.AuditLogPageVO;
+import com.github.starhq.template.model.vo.AuditLogPageVO;
 import org.mapstruct.Mapper;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 import org.mapstruct.ReportingPolicy;

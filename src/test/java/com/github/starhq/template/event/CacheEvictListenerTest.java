@@ -1,5 +1,6 @@
 package com.github.starhq.template.event;
 
+import com.github.starhq.template.event.domain.CacheEvictEvent;
 import com.github.starhq.template.event.listener.CacheEvictListener;
 import com.github.starhq.template.helper.CacheHelper;
 import org.junit.jupiter.api.Test;

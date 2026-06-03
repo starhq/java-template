@@ -2,9 +2,9 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.github.starhq.template.mapper.SysDictTypeMapper">
 
-    <resultMap id="dictTypeResultMap" type="com.github.starhq.template.model.vo.dict.type.DictTypeWithDataVO">
+    <resultMap id="dictTypeResultMap" type="com.github.starhq.template.model.vo.DictTypeWithDataVO">
         <result property="dictType" column="type"/>
-        <collection property="dataList" ofType="com.github.starhq.template.model.vo.dict.type.DictDataVO">
+        <collection property="dataList" ofType="com.github.starhq.template.model.vo.DictDataVO">
             <result property="dictLabel" column="dd_label"/>
             <result property="dictValue" column="dd_value"/>
         </collection>

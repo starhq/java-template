@@ -3,8 +3,8 @@ package com.github.starhq.template.service;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.github.starhq.template.model.dto.auditlog.AuditLogPageRequest;
-import com.github.starhq.template.model.vo.auditlog.AuditLogPageVO;
+import com.github.starhq.template.model.dto.AuditLogPageRequest;
+import com.github.starhq.template.model.vo.AuditLogPageVO;
 
 /**
  * Service interface for audit log management and compliance reporting.

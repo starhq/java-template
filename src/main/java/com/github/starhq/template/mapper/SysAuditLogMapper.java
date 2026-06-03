@@ -6,7 +6,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.github.starhq.template.entity.SysAuditLog;
-import com.github.starhq.template.model.vo.auditlog.AuditLogPageVO;
+import com.github.starhq.template.model.vo.AuditLogPageVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -99,7 +99,7 @@ public interface SysAuditLogMapper extends BaseMapper<SysAuditLog> {
      * <pre>
      * {@code
      * <!-- resources/mapper/SysAuditLogMapper.xml -->
-     * <select id="selectAuditLogPage" resultType="com.github.starhq.template.model.vo.auditlog.AuditLogPageVO">
+     * <select id="selectAuditLogPage" resultType="com.github.starhq.template.model.vo.AuditLogPageVO">
      *     SELECT
      *         a.id, a.action, a.target_type, a.target_id, a.value,
      *         a.created_at, a.created_by, u.username as creatorName

@@ -2,12 +2,12 @@ package com.github.starhq.template.controller.impl;
 
 import com.github.starhq.template.common.constant.TestConstant;
 import com.github.starhq.template.common.enums.OpenStyle;
-import com.github.starhq.template.config.messages.MessageUtils;
+import com.github.starhq.template.config.i18n.MessageUtils;
 import com.github.starhq.template.controller.MenuController;
-import com.github.starhq.template.model.dto.menu.MenuDTO;
-import com.github.starhq.template.model.dto.page.PageRequest;
-import com.github.starhq.template.model.vo.menu.MenuSimpleVO;
-import com.github.starhq.template.model.vo.menu.tree.MenuListVO;
+import com.github.starhq.template.model.dto.MenuDTO;
+import com.github.starhq.template.model.dto.PageRequest;
+import com.github.starhq.template.model.vo.MenuSimpleVO;
+import com.github.starhq.template.model.vo.MenuListVO;
 import com.github.starhq.template.service.MenuService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

@@ -3,10 +3,10 @@ package com.github.starhq.template.service;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.github.starhq.template.entity.SysUser;
-import com.github.starhq.template.model.dto.page.KeyWordPageRequest;
-import com.github.starhq.template.model.dto.user.UserDTO;
-import com.github.starhq.template.model.vo.user.UserPageVO;
-import com.github.starhq.template.model.vo.user.UserSimpleVO;
+import com.github.starhq.template.model.dto.KeyWordPageRequest;
+import com.github.starhq.template.model.dto.UserDTO;
+import com.github.starhq.template.model.vo.UserPageVO;
+import com.github.starhq.template.model.vo.UserSimpleVO;
 
 import java.io.Serializable;
 

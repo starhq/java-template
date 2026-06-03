@@ -1,7 +1,7 @@
 package com.github.starhq.template.common.captcha;
 
 
-import com.github.starhq.template.common.captcha.util.ImageUtil;
+import com.github.starhq.template.common.util.ImageUtil;
 
 import java.awt.*;
 import java.io.IOException;

@@ -4,10 +4,10 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.github.starhq.template.common.exception.BusinessException;
 import com.github.starhq.template.entity.SysDictData;
-import com.github.starhq.template.model.dto.dict.data.DictDataDTO;
-import com.github.starhq.template.model.dto.dict.data.DictDataPageRequest;
-import com.github.starhq.template.model.vo.dict.data.DictDataPageVO;
-import com.github.starhq.template.model.vo.dict.data.DictDataSimpleVO;
+import com.github.starhq.template.model.dto.DictDataDTO;
+import com.github.starhq.template.model.dto.DictDataPageRequest;
+import com.github.starhq.template.model.vo.DictDataPageVO;
+import com.github.starhq.template.model.vo.DictDataSimpleVO;
 
 import java.io.Serializable;
 

@@ -2,6 +2,9 @@ package com.github.starhq.template.event;
 
 import com.github.starhq.template.entity.SysApiLog;
 import com.github.starhq.template.entity.SysAuditLog;
+import com.github.starhq.template.event.domain.ApiLogEvent;
+import com.github.starhq.template.event.domain.AuditLogEvent;
+import com.github.starhq.template.event.domain.CacheEvictEvent;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

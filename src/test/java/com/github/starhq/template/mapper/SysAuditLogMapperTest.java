@@ -6,7 +6,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.github.starhq.template.BaseMapperTestConfiguration;
 import com.github.starhq.template.common.enums.TargetType;
 import com.github.starhq.template.entity.SysAuditLog;
-import com.github.starhq.template.model.vo.auditlog.AuditLogPageVO;
+import com.github.starhq.template.model.vo.AuditLogPageVO;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 

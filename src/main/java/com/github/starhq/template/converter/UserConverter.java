@@ -6,9 +6,9 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
 import org.mapstruct.ReportingPolicy;
 
 import com.github.starhq.template.entity.SysUser;
-import com.github.starhq.template.model.dto.user.UserDTO;
-import com.github.starhq.template.model.vo.user.UserPageVO;
-import com.github.starhq.template.model.vo.user.UserSimpleVO;
+import com.github.starhq.template.model.dto.UserDTO;
+import com.github.starhq.template.model.vo.UserPageVO;
+import com.github.starhq.template.model.vo.UserSimpleVO;
 
 /**
  * MapStruct converter interface for transforming {@link SysUser} entities

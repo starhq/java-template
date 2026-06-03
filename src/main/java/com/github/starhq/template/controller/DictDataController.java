@@ -1,11 +1,11 @@
 package com.github.starhq.template.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.github.starhq.template.model.dto.dict.data.DictDataDTO;
-import com.github.starhq.template.model.dto.dict.data.DictDataPageRequest;
+import com.github.starhq.template.model.dto.DictDataDTO;
+import com.github.starhq.template.model.dto.DictDataPageRequest;
 import com.github.starhq.template.model.vo.Result;
-import com.github.starhq.template.model.vo.dict.data.DictDataPageVO;
-import com.github.starhq.template.model.vo.dict.data.DictDataSimpleVO;
+import com.github.starhq.template.model.vo.DictDataPageVO;
+import com.github.starhq.template.model.vo.DictDataSimpleVO;
 import com.github.starhq.template.service.DictDataService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

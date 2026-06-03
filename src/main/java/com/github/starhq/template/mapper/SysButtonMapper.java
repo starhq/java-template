@@ -8,7 +8,7 @@ import org.apache.ibatis.annotations.Param;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.github.starhq.template.entity.SysButton;
-import com.github.starhq.template.model.vo.button.ButtonCheckVO;
+import com.github.starhq.template.model.vo.ButtonCheckVO;
 
 /**
  * MyBatis-Plus mapper interface for {@link SysButton} entity with permission-specific queries.
@@ -96,7 +96,7 @@ public interface SysButtonMapper extends BaseMapper<SysButton> {
      * <pre>
      * {@code
      * <!-- resources/mapper/SysButtonMapper.xml -->
-     * <select id="selectButtonsByRoleId" resultType="com.github.starhq.template.model.vo.button.ButtonCheckVO">
+     * <select id="selectButtonsByRoleId" resultType="com.github.starhq.template.model.vo.ButtonCheckVO">
      *     SELECT
      *         b.id, b.menu_id, b.name, b.code, b.description,
      *         CASE WHEN rb.role_id IS NOT NULL THEN true ELSE false END as checked

@@ -7,7 +7,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.github.starhq.template.common.constant.CacheConstant;
 import com.github.starhq.template.entity.BaseEntity;
 import com.github.starhq.template.helper.CacheHelper;
-import com.github.starhq.template.model.dto.page.PageRequest;
+import com.github.starhq.template.model.dto.PageRequest;
 import com.github.starhq.template.model.vo.BaseAuditVO;
 import org.springframework.beans.factory.annotation.Autowired;
 

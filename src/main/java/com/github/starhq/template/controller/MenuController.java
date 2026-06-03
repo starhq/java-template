@@ -1,10 +1,10 @@
 package com.github.starhq.template.controller;
 
-import com.github.starhq.template.model.dto.menu.MenuDTO;
-import com.github.starhq.template.model.dto.page.PageRequest;
+import com.github.starhq.template.model.dto.MenuDTO;
+import com.github.starhq.template.model.dto.PageRequest;
 import com.github.starhq.template.model.vo.Result;
-import com.github.starhq.template.model.vo.menu.MenuSimpleVO;
-import com.github.starhq.template.model.vo.menu.tree.MenuListVO;
+import com.github.starhq.template.model.vo.MenuSimpleVO;
+import com.github.starhq.template.model.vo.MenuListVO;
 import com.github.starhq.template.service.MenuService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

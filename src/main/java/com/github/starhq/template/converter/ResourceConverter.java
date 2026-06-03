@@ -2,10 +2,10 @@ package com.github.starhq.template.converter;
 
 import com.github.starhq.template.common.enums.HttpMethod;
 import com.github.starhq.template.entity.SysResource;
-import com.github.starhq.template.model.dto.resource.ResourceDTO;
-import com.github.starhq.template.model.dto.resource.ResourceSimpleDTO;
-import com.github.starhq.template.model.vo.resource.ResourcePageVO;
-import com.github.starhq.template.model.vo.resource.ResourceSimpleVO;
+import com.github.starhq.template.model.dto.ResourceDTO;
+import com.github.starhq.template.model.dto.ResourceSimpleDTO;
+import com.github.starhq.template.model.vo.ResourcePageVO;
+import com.github.starhq.template.model.vo.ResourceSimpleVO;
 import org.mapstruct.*;
 
 import java.util.Arrays;

@@ -1,10 +1,10 @@
 package com.github.starhq.template.converter;
 
 import com.github.starhq.template.entity.SysMenu;
-import com.github.starhq.template.model.dto.menu.MenuDTO;
-import com.github.starhq.template.model.vo.menu.MenuSimpleVO;
-import com.github.starhq.template.model.vo.menu.tree.LeftNavVO;
-import com.github.starhq.template.model.vo.menu.tree.MenuListVO;
+import com.github.starhq.template.model.dto.MenuDTO;
+import com.github.starhq.template.model.vo.MenuSimpleVO;
+import com.github.starhq.template.model.vo.LeftNavVO;
+import com.github.starhq.template.model.vo.MenuListVO;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;

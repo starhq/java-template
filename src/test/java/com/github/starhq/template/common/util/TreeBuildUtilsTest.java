@@ -1,6 +1,6 @@
 package com.github.starhq.template.common.util;
 
-import com.github.starhq.template.model.vo.tree.Tree;
+import com.github.starhq.template.model.vo.Tree;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

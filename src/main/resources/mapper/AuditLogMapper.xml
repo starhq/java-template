@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.github.starhq.template.mapper.SysAuditLogMapper">
 
-    <select id="selectAuditLogPage" resultType="com.github.starhq.template.model.vo.auditlog.AuditLogPageVO">
+    <select id="selectAuditLogPage" resultType="com.github.starhq.template.model.vo.AuditLogPageVO">
         SELECT sal.id,
                sal.action,
                sal.target_id,

@@ -5,7 +5,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.github.starhq.template.BaseMapperTestConfiguration;
 import com.github.starhq.template.entity.SysToken;
-import com.github.starhq.template.model.vo.token.TokenPageVO;
+import com.github.starhq.template.model.vo.TokenPageVO;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 

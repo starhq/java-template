@@ -2,8 +2,8 @@ package com.github.starhq.template.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.github.starhq.template.entity.SysDictType;
-import com.github.starhq.template.model.vo.dict.data.DictDataSimpleVO;
-import com.github.starhq.template.model.vo.dict.type.DictTypeWithDataVO;
+import com.github.starhq.template.model.vo.DictDataSimpleVO;
+import com.github.starhq.template.model.vo.DictTypeWithDataVO;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;

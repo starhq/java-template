@@ -5,7 +5,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.github.starhq.template.BaseMapperTestConfiguration;
 import com.github.starhq.template.common.enums.OpenStyle;
 import com.github.starhq.template.entity.SysMenu;
-import com.github.starhq.template.model.vo.menu.tree.MenuCheckVO;
+import com.github.starhq.template.model.vo.MenuCheckVO;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 

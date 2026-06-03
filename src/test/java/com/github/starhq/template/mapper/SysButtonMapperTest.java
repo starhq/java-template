@@ -2,7 +2,7 @@ package com.github.starhq.template.mapper;
 
 import com.github.starhq.template.BaseMapperTestConfiguration;
 import com.github.starhq.template.entity.SysButton;
-import com.github.starhq.template.model.vo.button.ButtonCheckVO;
+import com.github.starhq.template.model.vo.ButtonCheckVO;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 

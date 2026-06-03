@@ -1,7 +1,7 @@
 package com.github.starhq.template.common.captcha;
 
 
-import com.github.starhq.template.common.captcha.util.RandomUtil;
+import com.github.starhq.template.common.util.RandomUtil;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;

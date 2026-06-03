@@ -1,7 +1,7 @@
 package com.github.starhq.template.common.exception;
 
 import com.github.starhq.template.common.enums.ErrorCode;
-import com.github.starhq.template.config.messages.MessageUtils;
+import com.github.starhq.template.config.i18n.MessageUtils;
 import com.github.starhq.template.model.vo.Result;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

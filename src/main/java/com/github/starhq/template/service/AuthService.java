@@ -1,8 +1,8 @@
 package com.github.starhq.template.service;
 
 import com.github.starhq.template.common.exception.BusinessException;
-import com.github.starhq.template.model.dto.user.ResetPasswordDTO;
-import com.github.starhq.template.model.dto.user.UserDTO;
+import com.github.starhq.template.model.dto.ResetPasswordDTO;
+import com.github.starhq.template.model.dto.UserDTO;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 

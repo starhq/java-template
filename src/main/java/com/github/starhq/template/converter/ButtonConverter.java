@@ -1,9 +1,9 @@
 package com.github.starhq.template.converter;
 
 import com.github.starhq.template.entity.SysButton;
-import com.github.starhq.template.model.dto.button.ButtonDTO;
-import com.github.starhq.template.model.vo.button.ButtonPageVO;
-import com.github.starhq.template.model.vo.button.ButtonSimpleVO;
+import com.github.starhq.template.model.dto.ButtonDTO;
+import com.github.starhq.template.model.vo.ButtonPageVO;
+import com.github.starhq.template.model.vo.ButtonSimpleVO;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;

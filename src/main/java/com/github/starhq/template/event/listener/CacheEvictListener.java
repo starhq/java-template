@@ -1,6 +1,6 @@
 package com.github.starhq.template.event.listener;
 
-import com.github.starhq.template.event.CacheEvictEvent;
+import com.github.starhq.template.event.domain.CacheEvictEvent;
 import com.github.starhq.template.helper.CacheHelper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

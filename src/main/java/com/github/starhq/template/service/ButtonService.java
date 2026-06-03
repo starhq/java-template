@@ -3,11 +3,11 @@ package com.github.starhq.template.service;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.github.starhq.template.entity.SysButton;
-import com.github.starhq.template.model.dto.button.ButtonDTO;
-import com.github.starhq.template.model.dto.button.ButtonPageRequest;
-import com.github.starhq.template.model.vo.button.ButtonCheckVO;
-import com.github.starhq.template.model.vo.button.ButtonPageVO;
-import com.github.starhq.template.model.vo.button.ButtonSimpleVO;
+import com.github.starhq.template.model.dto.ButtonDTO;
+import com.github.starhq.template.model.dto.ButtonPageRequest;
+import com.github.starhq.template.model.vo.ButtonCheckVO;
+import com.github.starhq.template.model.vo.ButtonPageVO;
+import com.github.starhq.template.model.vo.ButtonSimpleVO;
 
 import java.io.Serializable;
 import java.util.List;

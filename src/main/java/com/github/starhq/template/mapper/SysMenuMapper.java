@@ -5,7 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.github.starhq.template.entity.SysMenu;
-import com.github.starhq.template.model.vo.menu.tree.MenuCheckVO;
+import com.github.starhq.template.model.vo.MenuCheckVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -155,7 +155,7 @@ public interface SysMenuMapper extends BaseMapper<SysMenu> {
      * <pre>
      * {@code
      * <!-- resources/mapper/SysMenuMapper.xml -->
-     * <select id="selectMenusByRoleId" resultType="com.github.starhq.template.model.vo.menu.tree.MenuCheckVO">
+     * <select id="selectMenusByRoleId" resultType="com.github.starhq.template.model.vo.MenuCheckVO">
      *     SELECT
      *         m.id, m.parent_id, m.name, m.url, m.icon, m.sort_order, m.status,
      *         CASE WHEN rm.role_id IS NOT NULL THEN true ELSE false END as checked

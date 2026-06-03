@@ -6,7 +6,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.github.starhq.template.entity.SysToken;
-import com.github.starhq.template.model.vo.token.TokenPageVO;
+import com.github.starhq.template.model.vo.TokenPageVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -107,7 +107,7 @@ public interface SysTokenMapper extends BaseMapper<SysToken> {
      * <pre>
      * {@code
      * <!-- resources/mapper/SysTokenMapper.xml -->
-     * <select id="selectTokenPage" resultType="com.github.starhq.template.model.vo.token.TokenPageVO">
+     * <select id="selectTokenPage" resultType="com.github.starhq.template.model.vo.TokenPageVO">
      *     SELECT
      *         t.id, t.user_id, t.token, t.token_type, t.status,
      *         t.expires_at, t.created_at, t.created_by, u.username as creatorName

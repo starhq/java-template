@@ -2,7 +2,7 @@ package com.github.starhq.template.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.github.starhq.template.entity.SysRole;
-import com.github.starhq.template.model.vo.role.RoleCheckVO;
+import com.github.starhq.template.model.vo.RoleCheckVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -97,7 +97,7 @@ public interface SysRoleMapper extends BaseMapper<SysRole> {
      * <pre>
      * {@code
      * <!-- resources/mapper/SysRoleMapper.xml -->
-     * <select id="selectRolesByUserId" resultType="com.github.starhq.template.model.vo.role.RoleCheckVO">
+     * <select id="selectRolesByUserId" resultType="com.github.starhq.template.model.vo.RoleCheckVO">
      *     SELECT
      *         r.id, r.code, r.name, r.description, r.is_default, r.status, r.sort_order,
      *         CASE WHEN ur.user_id IS NOT NULL THEN true ELSE false END as checked

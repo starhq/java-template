@@ -11,7 +11,7 @@ import org.springframework.security.web.access.AccessDeniedHandler;
 import com.github.starhq.template.common.enums.ErrorCode;
 import com.github.starhq.template.common.util.HttpUtils;
 import com.github.starhq.template.common.util.SecurityContextUtils;
-import com.github.starhq.template.config.messages.MessageUtils;
+import com.github.starhq.template.config.i18n.MessageUtils;
 import com.github.starhq.template.model.vo.Result;
 
 import jakarta.servlet.ServletException;

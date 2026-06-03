@@ -1,9 +1,9 @@
 package com.github.starhq.template.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.github.starhq.template.model.dto.page.KeyWordPageRequest;
+import com.github.starhq.template.model.dto.KeyWordPageRequest;
 import com.github.starhq.template.model.vo.Result;
-import com.github.starhq.template.model.vo.token.TokenPageVO;
+import com.github.starhq.template.model.vo.TokenPageVO;
 import com.github.starhq.template.service.TokenService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

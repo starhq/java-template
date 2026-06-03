@@ -1,7 +1,7 @@
 package com.github.starhq.template.event.listener;
 
 import com.github.starhq.template.entity.SysApiLog;
-import com.github.starhq.template.event.ApiLogEvent;
+import com.github.starhq.template.event.domain.ApiLogEvent;
 import com.github.starhq.template.mapper.SysApiLogMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

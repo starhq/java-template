@@ -2,7 +2,7 @@ package com.github.starhq.template.mapper;
 
 import com.github.starhq.template.BaseMapperTestConfiguration;
 import com.github.starhq.template.entity.SysDictType;
-import com.github.starhq.template.model.vo.dict.type.DictTypeWithDataVO;
+import com.github.starhq.template.model.vo.DictTypeWithDataVO;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 

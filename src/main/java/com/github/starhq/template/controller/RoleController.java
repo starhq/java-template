@@ -1,14 +1,14 @@
 package com.github.starhq.template.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.github.starhq.template.model.dto.page.PageRequest;
-import com.github.starhq.template.model.dto.role.RoleDTO;
+import com.github.starhq.template.model.dto.PageRequest;
+import com.github.starhq.template.model.dto.RoleDTO;
 import com.github.starhq.template.model.vo.Result;
-import com.github.starhq.template.model.vo.button.ButtonCheckVO;
-import com.github.starhq.template.model.vo.menu.tree.MenuCheckVO;
-import com.github.starhq.template.model.vo.resource.ResourceCheckVO;
-import com.github.starhq.template.model.vo.role.RolePageVO;
-import com.github.starhq.template.model.vo.role.RoleSimpleVO;
+import com.github.starhq.template.model.vo.ButtonCheckVO;
+import com.github.starhq.template.model.vo.MenuCheckVO;
+import com.github.starhq.template.model.vo.ResourceCheckVO;
+import com.github.starhq.template.model.vo.RolePageVO;
+import com.github.starhq.template.model.vo.RoleSimpleVO;
 import com.github.starhq.template.service.ButtonService;
 import com.github.starhq.template.service.MenuService;
 import com.github.starhq.template.service.ResourceService;

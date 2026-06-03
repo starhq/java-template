@@ -1,7 +1,7 @@
 package com.github.starhq.template.converter;
 
 import com.github.starhq.template.entity.SysToken;
-import com.github.starhq.template.model.dto.token.TokenSimpleDTO;
+import com.github.starhq.template.model.dto.TokenSimpleDTO;
 import org.mapstruct.Mapper;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 import org.mapstruct.ReportingPolicy;

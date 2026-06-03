@@ -1,9 +1,9 @@
 package com.github.starhq.template.converter;
 
 import com.github.starhq.template.entity.SysRole;
-import com.github.starhq.template.model.dto.role.RoleDTO;
-import com.github.starhq.template.model.vo.role.RolePageVO;
-import com.github.starhq.template.model.vo.role.RoleSimpleVO;
+import com.github.starhq.template.model.dto.RoleDTO;
+import com.github.starhq.template.model.vo.RolePageVO;
+import com.github.starhq.template.model.vo.RoleSimpleVO;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;
